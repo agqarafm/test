@@ -1,106 +1,373 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kart Hesablayıcı • Smart Qalıq</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Qalıq</title>
   <style>
-    .slide-in { animation: slide-in 0.4s ease forwards; }
-    @keyframes slide-in { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    :root{
+      --bg-from:#eff6ff; /* blue-50 */
+      --bg-to:#f5f3ff;   /* purple-50 */
+      --blue-700:#1d4ed8;
+      --purple-700:#6d28d9;
+      --green-600:#16a34a;
+      --purple-600:#7c3aed;
+      --green-500:#22c55e;
+      --purple-500:#8b5cf6;
+      --blue-600:#2563eb;
+      --gray-700:#374151;
+      --ring-blue:#60a5fa;
+      --ring-green:#86efac;
+      --ring-purple:#c4b5fd;
+      --card-bg:#ffffff;
+      --shadow: 0 10px 25px rgba(0,0,0,.08);
+      --shadow-lg: 0 14px 30px rgba(0,0,0,.12);
+      --radius: 1rem; /* rounded-2xl */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(90deg,var(--bg-from),var(--bg-to));
+    }
+
+    .container{ min-height:100vh; padding:24px; display:grid; gap:24px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+    @media (max-width: 900px){ .container{ grid-template-columns: 1fr; } }
+
+    .card{ background:var(--card-bg); border-radius: var(--radius); padding:24px; box-shadow:var(--shadow); transition: box-shadow .25s ease, transform .2s ease; }
+    .card:hover{ box-shadow:var(--shadow-lg); transform: translateY(-4px); }
+
+    h2{ margin:0 0 16px; font-size: 1.5rem; line-height:1.2; }
+    .title-blue{ color: var(--blue-700); }
+    .title-purple{ color: var(--purple-700); }
+
+    label{ display:block; font-weight:600; color:var(--gray-700); margin-bottom:6px; }
+    .field{ margin-bottom:12px; }
+    input[type="number"], textarea{
+      width:100%; border:1px solid #e5e7eb; padding:10px 12px; border-radius:12px; outline:none; transition: box-shadow .2s, border-color .2s;
+    }
+    input[type="number"]:focus, textarea:focus{ border-color:#bfdbfe; box-shadow:0 0 0 3px var(--ring-blue); }
+
+    .btn{ display:inline-flex; align-items:center; justify-content:center; width:100%; padding:12px 14px; font-weight:600; color:#fff; border:none; border-radius:14px; cursor:pointer; transition: transform .08s ease, filter .2s ease; box-shadow: 0 6px 14px rgba(0,0,0,.08); }
+    .btn:active{ transform: scale(.95); }
+    .btn-blue{ background: var(--blue-600); }
+    .btn-green{ background: var(--green-500); }
+    .btn-purple{ background: var(--purple-500); }
+    .btn-red{ background: #dc2626; }
+
+    .sum{ margin-top:12px; font-weight:800; font-size:1.125rem; }
+    .sum-blue{ color:#1e40af; }
+    .sum-green{ color:#15803d; }
+    .sum-purple{ color:#6b21a8; }
+
+    /* inner cards (Nağd/Kart) */
+    .subcard{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 6px 16px rgba(0,0,0,.08); }
+    .subgrid{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:24px; }
+    @media (max-width: 700px){ .subgrid{ grid-template-columns: 1fr; } }
+
+    .subcard h3{ margin:0 0 8px; font-weight:700; }
+    .h3-green{ color: var(--green-600); }
+    .h3-purple{ color: var(--purple-600); }
+
+    /* hover scale like framer-motion whileHover */
+    .hover-scale{ transition: transform .2s ease; }
+    .hover-scale:hover{ transform: scale(1.03); }
+    .btn-wrap:hover .btn{ transform: scale(1.02); }
+
+    /* entry animations similar to framer-motion */
+    .from-left, .from-right, .fade-in{ opacity:0; transform: translateY(0); }
+    .from-left{ transform: translateX(-40px); }
+    .from-right{ transform: translateX(40px); }
+    .fade-in{ transform: translateY(10px); }
+    .appear{ opacity:1 !important; transform: translateX(0) translateY(0) !important; transition: opacity .6s ease, transform .6s ease; }
+
+    /* result popup */
+    .popup-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s ease; backdrop-filter: blur(2px); }
+    .popup-overlay.active{ opacity:1; pointer-events:auto; }
+    .popup{ background:#fff; padding:24px; border-radius:16px; box-shadow:var(--shadow-lg); transform:scale(0.85) translateY(10px); transition:transform .25s ease; max-width:320px; text-align:center; }
+    .popup-overlay.active .popup{ transform:scale(1) translateY(0); }
+
+    /* calendar */
+    .calendar-wrap{ display:flex; align-items:center; justify-content:center; margin:12px auto 0; }
+    .calendar{ margin:20px auto; max-width:420px; background:#fff; padding:16px; border-radius:16px; box-shadow:var(--shadow); text-align:center; animation:fadeIn .6s ease; }
+    .calendar h3{ margin:6px 0 12px; }
+    .calendar table{ width:100%; border-collapse:collapse; }
+    .calendar th, .calendar td{ width:14.28%; padding:10px; position:relative; cursor:pointer; border-radius:10px; transition:transform .2s ease; overflow:hidden; }
+    .calendar th{ color:#374151; font-weight:700; }
+    .calendar td:hover{ transform:translateY(-2px); }
+    .calendar td .ripple{ position:absolute; border-radius:50%; transform:translate(-50%,-50%); animation:ripple .6s ease-out; background:rgba(99,102,241,.25); pointer-events:none; }
+    .today{ background:linear-gradient(135deg,#6366f1,#9333ea); color:#fff; font-weight:800; box-shadow:0 0 12px rgba(147,51,234,0.6); }
+
+    /* notes */
+    .notes{ margin:16px auto 28px; max-width:420px; background:#fff; padding:16px; border-radius:16px; box-shadow:var(--shadow); animation:fadeInUp .6s ease; }
+    .notes textarea{ width:100%; height:90px; border-radius:12px; padding:10px; border:1px solid #e5e7eb; }
+    .note-actions{ display:flex; gap:8px; margin-top:8px; }
+
+    /* edit popup */
+    .edit-popup{ position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .edit-popup.active{ opacity:1; pointer-events:auto; }
+    .edit-box{ background:#fff; padding:20px; border-radius:16px; box-shadow:var(--shadow-lg); transform:scale(0.7) rotate(-6deg); transition:transform .25s ease; max-width:420px; width:90vw; }
+    .edit-popup.active .edit-box{ transform:scale(1) rotate(0); }
+
+    @keyframes fadeIn{from{opacity:0; transform:translateY(-10px);}to{opacity:1; transform:translateY(0);}}
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(10px);}to{opacity:1; transform:translateY(0);}}
+    @keyframes ripple{from{width:0;height:0;opacity:.6;}to{width:200px;height:200px;opacity:0;}}
   </style>
 </head>
-<body class="bg-gradient-to-br from-sky-50 via-white to-sky-100 min-h-screen text-slate-800">
-  <!-- Login -->
-  <div id="loginGate" class="fixed inset-0 flex items-center justify-center bg-slate-900/80 z-50">
-    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm slide-in">
-      <div class="flex items-center gap-2 mb-4"><i data-lucide="lock" class="w-6 h-6 text-sky-600"></i><h1 class="font-semibold text-xl">Giriş</h1></div>
-      <input id="accessCodeInput" type="password" placeholder="Kod" class="w-full rounded-xl border px-3 py-2 mb-3">
-      <button id="loginBtn" class="w-full rounded-xl bg-sky-600 text-white py-2">Daxil ol</button>
-      <p class="text-xs text-slate-500 mt-3">Defolt kod: <b>yoxdu</b></p>
-      <p id="loginError" class="text-rose-600 text-sm hidden mt-2">Kod yanlışdır.</p>
+<body>
+  <main class="container">
+    <!-- Sol tərəf -->
+    <section id="left" class="from-left">
+      <div class="card">
+        <h2 class="title-blue">Adlara görə hesab</h2>
+        <div class="field fade-in" style="transition-delay:.0s"><label for="arzu">Arzu</label><input id="arzu" type="number" placeholder="0 AZN" /></div>
+        <div class="field fade-in" style="transition-delay:.15s"><label for="aide">Aide</label><input id="aide" type="number" placeholder="0 AZN" /></div>
+        <div class="field fade-in" style="transition-delay:.3s"><label for="gulshad">Gulshad</label><input id="gulshad" type="number" placeholder="0 AZN" /></div>
+        <div class="btn-wrap"><button id="sumBtn" class="btn btn-blue">Hesabla</button></div>
+        <div class="btn-wrap" style="margin-top:8px"><button id="clearValues" class="btn btn-red">Sil</button></div>
+        <p id="sumOut" class="sum sum-blue">Cəm: 0 AZN</p>
+      </div>
+    </section>
+
+    <!-- Sağ tərəf -->
+    <section id="right" class="from-right">
+      <div class="card">
+        <h2 class="title-purple">Smart qalığı hesabla</h2>
+        <div class="subgrid">
+          <!-- Nağd -->
+          <div class="hover-scale">
+            <div class="subcard">
+              <h3 class="h3-green">Nağd</h3>
+              <input id="c1" type="number" placeholder="0 AZN" />
+              <div style="height:8px"></div>
+              <input id="c2" type="number" placeholder="0 AZN" />
+              <div class="btn-wrap" style="margin-top:8px"><button id="cashBtn" class="btn btn-green">Hesabla</button></div>
+              <div class="btn-wrap" style="margin-top:8px"><button id="clearCash" class="btn btn-red">Sil</button></div>
+              <p id="cashOut" class="sum sum-green">Cəm: 0 AZN</p>
+            </div>
+          </div>
+          <!-- Kart -->
+          <div class="hover-scale">
+            <div class="subcard">
+              <h3 class="h3-purple">Kart</h3>
+              <input id="k1" type="number" placeholder="0 AZN" />
+              <div style="height:8px"></div>
+              <input id="k2" type="number" placeholder="0 AZN" />
+              <div class="btn-wrap" style="margin-top:8px"><button id="cardBtn" class="btn btn-purple">Hesabla</button></div>
+              <div class="btn-wrap" style="margin-top:8px"><button id="clearCard" class="btn btn-red">Sil</button></div>
+              <p id="cardOut" class="sum sum-purple">Cəm: 0 AZN</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Təqvim və qeyd -->
+  <div class="calendar-wrap">
+    <div class="calendar" id="calendar"></div>
+  </div>
+  <div class="notes">
+    <textarea id="noteBox" placeholder="Qeyd yaz..."></textarea>
+    <div class="note-actions">
+      <button id="editNote" class="btn btn-blue" style="width:auto">Düzəliş et</button>
+      <button id="clearNote" class="btn btn-red" style="width:auto">Sil</button>
     </div>
   </div>
 
-  <main class="max-w-5xl mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4">Kart Hesablayıcı</h2>
-    <div class="grid md:grid-cols-3 gap-4 mb-6">
-      <!-- Gülşad -->
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="font-semibold mb-2">Gülşad</h3>
-        <input id="input-gulsad" type="number" placeholder="Məbləğ" class="w-full rounded-xl border px-3 py-2 mb-2">
-      </div>
-      <!-- Aidə -->
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="font-semibold mb-2">Aidə</h3>
-        <input id="input-aide" type="number" placeholder="Məbləğ" class="w-full rounded-xl border px-3 py-2 mb-2">
-      </div>
-      <!-- Arzu -->
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="font-semibold mb-2">Arzu</h3>
-        <input id="input-arzu" type="number" placeholder="Məbləğ" class="w-full rounded-xl border px-3 py-2 mb-2">
-      </div>
+  <!-- Nəticə Popup -->
+  <div id="popup" class="popup-overlay">
+    <div class="popup">
+      <p id="popupMsg">Nəticə</p>
+      <div style="margin-top:12px"><button id="closePopup" class="btn btn-blue">Bağla</button></div>
     </div>
-    <button id="addBtn" class="bg-sky-600 text-white px-4 py-2 rounded-xl"><i data-lucide="plus"></i> Əlavə Et</button>
-    <div class="mt-4 grid md:grid-cols-4 gap-4">
-      <div class="bg-white p-4 rounded-xl shadow"><div class="text-slate-500 text-sm">Gülşad cəmi</div><div id="sum-gulsad" class="text-xl font-semibold">0 AZN</div></div>
-      <div class="bg-white p-4 rounded-xl shadow"><div class="text-slate-500 text-sm">Aidə cəmi</div><div id="sum-aide" class="text-xl font-semibold">0 AZN</div></div>
-      <div class="bg-white p-4 rounded-xl shadow"><div class="text-slate-500 text-sm">Arzu cəmi</div><div id="sum-arzu" class="text-xl font-semibold">0 AZN</div></div>
-      <div class="bg-sky-50 p-4 rounded-xl shadow"><div class="text-slate-500 text-sm">Ümumi cəm</div><div id="sum-total" class="text-xl font-semibold">0 AZN</div></div>
-    </div>
+  </div>
 
-    <!-- Smart Qalığ -->
-    <h2 class="text-2xl font-bold my-6">Smart Qalıq</h2>
-    <div class="bg-white p-6 rounded-2xl shadow space-y-3">
-      <div class="grid md:grid-cols-2 gap-3">
-        <input id="cash1" type="number" placeholder="Nağd 1" class="rounded-xl border px-3 py-2">
-        <input id="cash2" type="number" placeholder="Nağd 2" class="rounded-xl border px-3 py-2">
-        <input id="card1" type="number" placeholder="Kart 1" class="rounded-xl border px-3 py-2">
-        <input id="card2" type="number" placeholder="Kart 2" class="rounded-xl border px-3 py-2">
-      </div>
-      <button id="calcSmart" class="bg-sky-600 text-white px-4 py-2 rounded-xl"><i data-lucide="calculator"></i> Hesabla</button>
-      <div class="grid md:grid-cols-3 gap-4 mt-4">
-        <div class="p-3 rounded-xl bg-slate-50"><div class="text-slate-500 text-sm">Nağd toplam</div><div id="smartCash" class="text-lg font-semibold">0 AZN</div></div>
-        <div class="p-3 rounded-xl bg-slate-50"><div class="text-slate-500 text-sm">Kart toplam</div><div id="smartCard" class="text-lg font-semibold">0 AZN</div></div>
-        <div class="p-3 rounded-xl bg-slate-50"><div class="text-slate-500 text-sm">Ümumi</div><div id="smartGrand" class="text-lg font-semibold">0 AZN</div></div>
+  <!-- Edit popup -->
+  <div id="editPopup" class="edit-popup">
+    <div class="edit-box">
+      <h3 style="margin:0 0 8px">Qeydi dəyiş</h3>
+      <textarea id="editArea" style="width:100%; height:120px"></textarea>
+      <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end">
+        <button id="saveEdit" class="btn btn-green" style="width:auto">Yadda saxla</button>
+        <button id="closeEdit" class="btn btn-purple" style="width:auto">Bağla</button>
       </div>
     </div>
-  </main>
+  </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
-    let state = { access:'1234', sums:[0,0,0] };
+    // ==== State (localStorage açarları) ====
+    const LS_VALUES = 'values';
+    const LS_CASH = 'cash';
+    const LS_CARD = 'card';
+    const LS_NOTE = 'note';
 
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const code = document.getElementById('accessCodeInput').value.trim();
-      if(code===state.access){ document.getElementById('loginGate').classList.add('hidden'); } else { document.getElementById('loginError').classList.remove('hidden'); }
-    });
+    const els = {
+      arzu: document.getElementById('arzu'),
+      aide: document.getElementById('aide'),
+      gulshad: document.getElementById('gulshad'),
+      sumBtn: document.getElementById('sumBtn'),
+      sumOut: document.getElementById('sumOut'),
+      clearValues: document.getElementById('clearValues'),
+      c1: document.getElementById('c1'),
+      c2: document.getElementById('c2'),
+      cashBtn: document.getElementById('cashBtn'),
+      cashOut: document.getElementById('cashOut'),
+      clearCash: document.getElementById('clearCash'),
+      k1: document.getElementById('k1'),
+      k2: document.getElementById('k2'),
+      cardBtn: document.getElementById('cardBtn'),
+      cardOut: document.getElementById('cardOut'),
+      clearCard: document.getElementById('clearCard'),
+      left: document.getElementById('left'),
+      right: document.getElementById('right'),
+      popup: document.getElementById('popup'),
+      popupMsg: document.getElementById('popupMsg'),
+      closePopup: document.getElementById('closePopup'),
+      calendar: document.getElementById('calendar'),
+      noteBox: document.getElementById('noteBox'),
+      editNote: document.getElementById('editNote'),
+      clearNote: document.getElementById('clearNote'),
+      editPopup: document.getElementById('editPopup'),
+      editArea: document.getElementById('editArea'),
+      saveEdit: document.getElementById('saveEdit'),
+      closeEdit: document.getElementById('closeEdit'),
+    };
 
-    function format(n){return Number(n).toLocaleString('az-Latn-AZ',{minimumFractionDigits:2})+' AZN'}
+    // ==== Load from localStorage ====
+    function loadLS(){
+      try{
+        const v = JSON.parse(localStorage.getItem(LS_VALUES) || '{}');
+        if(typeof v.Arzu !== 'undefined') els.arzu.value = v.Arzu;
+        if(typeof v.Aide !== 'undefined') els.aide.value = v.Aide;
+        if(typeof v.Gulshad !== 'undefined') els.gulshad.value = v.Gulshad;
+        const cash = JSON.parse(localStorage.getItem(LS_CASH) || '{}');
+        if(typeof cash.c1 !== 'undefined') els.c1.value = cash.c1;
+        if(typeof cash.c2 !== 'undefined') els.c2.value = cash.c2;
+        const card = JSON.parse(localStorage.getItem(LS_CARD) || '{}');
+        if(typeof card.k1 !== 'undefined') els.k1.value = card.k1;
+        if(typeof card.k2 !== 'undefined') els.k2.value = card.k2;
+        const note = localStorage.getItem(LS_NOTE);
+        if(note !== null) els.noteBox.value = note;
+      }catch(e){ /* ignore */ }
+    }
 
-    document.getElementById('addBtn').addEventListener('click', () => {
-      const g = parseFloat(document.getElementById('input-gulsad').value)||0;
-      const a = parseFloat(document.getElementById('input-aide').value)||0;
-      const r = parseFloat(document.getElementById('input-arzu').value)||0;
-      state.sums[0]+=g; state.sums[1]+=a; state.sums[2]+=r;
-      document.getElementById('sum-gulsad').textContent=format(state.sums[0]);
-      document.getElementById('sum-aide').textContent=format(state.sums[1]);
-      document.getElementById('sum-arzu').textContent=format(state.sums[2]);
-      document.getElementById('sum-total').textContent=format(state.sums[0]+state.sums[1]+state.sums[2]);
-      document.getElementById('input-gulsad').value=''; document.getElementById('input-aide').value=''; document.getElementById('input-arzu').value='';
-    });
+    function saveValues(){
+      const v = { Arzu: els.arzu.value, Aide: els.aide.value, Gulshad: els.gulshad.value };
+      localStorage.setItem(LS_VALUES, JSON.stringify(v));
+    }
+    function saveCash(){
+      const v = { c1: els.c1.value, c2: els.c2.value };
+      localStorage.setItem(LS_CASH, JSON.stringify(v));
+    }
+    function saveCard(){
+      const v = { k1: els.k1.value, k2: els.k2.value };
+      localStorage.setItem(LS_CARD, JSON.stringify(v));
+    }
+    function saveNote(){ localStorage.setItem(LS_NOTE, els.noteBox.value || ''); }
 
-    document.getElementById('calcSmart').addEventListener('click', () => {
-      const c1=parseFloat(document.getElementById('cash1').value)||0;
-      const c2=parseFloat(document.getElementById('cash2').value)||0;
-      const k1=parseFloat(document.getElementById('card1').value)||0;
-      const k2=parseFloat(document.getElementById('card2').value)||0;
-      const smartCash=c1+c2; const smartCard=k1+k2; const smartGrand=smartCash+smartCard;
-      document.getElementById('smartCash').textContent=format(smartCash);
-      document.getElementById('smartCard').textContent=format(smartCard);
-      document.getElementById('smartGrand').textContent=format(smartGrand);
-    });
+    ['arzu','aide','gulshad'].forEach(id=> els[id].addEventListener('input', saveValues));
+    ['c1','c2'].forEach(id=> els[id].addEventListener('input', saveCash));
+    ['k1','k2'].forEach(id=> els[id].addEventListener('input', saveCard));
+    els.noteBox.addEventListener('input', saveNote);
+
+    // ==== Helpers ====
+    function parseN(v){ const n = parseFloat(v); return Number.isFinite(n) ? n : 0; }
+
+    function showPopup(msg){
+      els.popupMsg.textContent = msg;
+      els.popup.classList.add('active');
+    }
+
+    // ==== Handlers ====
+    function handleSum(){
+      const total = parseN(els.arzu.value) + parseN(els.aide.value) + parseN(els.gulshad.value);
+      els.sumOut.textContent = `Cəm: ${total} AZN`;
+      showPopup(`Adlara görə cəm: ${total} AZN`);
+    }
+    function handleCash(){
+      const total = parseN(els.c1.value) + parseN(els.c2.value);
+      els.cashOut.textContent = `Cəm: ${total} AZN`;
+      showPopup(`Nağd cəm: ${total} AZN`);
+    }
+    function handleCard(){
+      const total = parseN(els.k1.value) + parseN(els.k2.value);
+      els.cardOut.textContent = `Cəm: ${total} AZN`;
+      showPopup(`Kart cəm: ${total} AZN`);
+    }
+
+    function clearValues(){ els.arzu.value = els.aide.value = els.gulshad.value = ''; els.sumOut.textContent = 'Cəm: 0 AZN'; localStorage.removeItem(LS_VALUES); }
+    function clearCash(){ els.c1.value = els.c2.value = ''; els.cashOut.textContent = 'Cəm: 0 AZN'; localStorage.removeItem(LS_CASH); }
+    function clearCard(){ els.k1.value = els.k2.value = ''; els.cardOut.textContent = 'Cəm: 0 AZN'; localStorage.removeItem(LS_CARD); }
+
+    els.sumBtn.addEventListener('click', handleSum);
+    els.cashBtn.addEventListener('click', handleCash);
+    els.cardBtn.addEventListener('click', handleCard);
+    els.clearValues.addEventListener('click', clearValues);
+    els.clearCash.addEventListener('click', clearCash);
+    els.clearCard.addEventListener('click', clearCard);
+    els.closePopup.addEventListener('click', ()=> els.popup.classList.remove('active'));
+
+    // ==== Entry animations (framer-motion əvəzi) ====
+    function onReady(){
+      loadLS();
+      requestAnimationFrame(()=>{
+        document.getElementById('left').classList.add('appear');
+        document.getElementById('right').classList.add('appear');
+        document.querySelectorAll('.fade-in').forEach(el=>{
+          const d = parseFloat(el.style.transitionDelay || '0');
+          setTimeout(()=> el.classList.add('appear'), (d*1000) || 150);
+        });
+      });
+    }
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', onReady);
+    }else{ onReady(); }
+
+    // ==== Calendar ====
+    function buildCalendar(){
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const firstDay = new Date(year, month, 1).getDay(); // 0 bazar
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+      const monthNames=['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+      const dayNames=['B','B.e','Ç.a','Ç','C.a','C','Ş'];
+
+      let html = `<h3>${monthNames[month]} ${year}</h3><table><tr>` + dayNames.map(d=>`<th>${d}</th>`).join('') + '</tr><tr>';
+      for(let i=0;i<(firstDay||7)-1;i++){ html += '<td></td>'; }
+      for(let d=1; d<=daysInMonth; d++){
+        const isToday = d === now.getDate();
+        html += `<td class="${isToday ? 'today':''}" data-day="${d}">${d}</td>`;
+        if((d+firstDay-1)%7===0) html+='</tr><tr>';
+      }
+      html += '</tr></table>';
+      els.calendar.innerHTML = html;
+
+      els.calendar.querySelectorAll('td').forEach(td=>{
+        td.addEventListener('click', (e)=>{
+          if(!td.textContent) return;
+          // ripple effect
+          const r = document.createElement('span');
+          r.className = 'ripple';
+          const rect = td.getBoundingClientRect();
+          r.style.left = (e.clientX - rect.left) + 'px';
+          r.style.top = (e.clientY - rect.top) + 'px';
+          td.appendChild(r);
+          setTimeout(()=> r.remove(), 600);
+
+          td.classList.add('today');
+          setTimeout(()=> td.classList.remove('today'), 700);
+        });
+      });
+    }
+    buildCalendar();
+
+    // ==== Notes / Edit ====
+    els.editNote.addEventListener('click', ()=>{ els.editArea.value = els.noteBox.value; els.editPopup.classList.add('active'); });
+    els.saveEdit.addEventListener('click', ()=>{ els.noteBox.value = els.editArea.value; saveNote(); els.editPopup.classList.remove('active'); showPopup('Qeyd yeniləndi ✔'); });
+    els.closeEdit.addEventListener('click', ()=> els.editPopup.classList.remove('active'));
+    els.clearNote.addEventListener('click', ()=>{ els.noteBox.value=''; saveNote(); });
   </script>
 </body>
 </html>
