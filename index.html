@@ -1,106 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="az">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Sual-Cavab</title>
-<style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; margin:0; padding:0; }
-    header { background:#4CAF50; color:white; padding:15px; text-align:center; font-size:24px; }
-    .container { max-width:800px; margin:20px auto; background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2);}
-    .question { border-bottom:1px solid #ddd; padding:10px 0; }
-    .question:last-child { border-bottom:none; }
-    .question p { margin:5px 0; }
-    input[type="text"] { width:70%; padding:8px; margin-right:10px; }
-    button { padding:8px 12px; cursor:pointer; background:#4CAF50; color:white; border:none; border-radius:4px; }
-    .admin-panel { display:none; margin-top:20px; background:#e3f2fd; padding:15px; border-radius:8px; }
-    .admin-panel input { margin-bottom:10px; width:100%; }
-    .admin-panel h3 { margin-top:0; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sadə Login / Register</title>
+  <style>
+    body { font-family: Arial, sans-serif; display:flex; min-height:100vh; align-items:center; justify-content:center; background:#f4f4f4; }
+    .card { background:#fff; padding:20px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:320px; }
+    input { width:100%; padding:8px; margin:8px 0; box-sizing:border-box; }
+    button { width:100%; padding:10px; margin-top:8px; }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <h3>Qeydiyyat</h3>
+    <form id="registerForm">
+      <input type="text" id="regUser" placeholder="İstifadəçi adı" required />
+      <input type="password" id="regPass" placeholder="Parol" required />
+      <button type="submit">Qeydiyyatdan keç</button>
+    </form>
 
-<header>Online Sual-Cavab</header>
-<div class="container">
+    <hr/>
 
-    <div id="questions"></div>
+    <h3>Giriş</h3>
+    <form id="loginForm">
+      <input type="text" id="logUser" placeholder="İstifadəçi adı" required />
+      <input type="password" id="logPass" placeholder="Parol" required />
+      <button type="submit">Giriş</button>
+    </form>
 
-    <div style="margin-top:20px;">
-        <input type="text" id="newQuestion" placeholder="Yeni sual əlavə et">
-        <button onclick="addQuestion()">Əlavə et</button>
-    </div>
+    <p id="msg" style="color:green;"></p>
+  </div>
 
-    <div style="margin-top:20px;">
-        <input type="password" id="adminPass" placeholder="Admin parolu daxil et">
-        <button onclick="toggleAdmin()">Admin Panel</button>
-    </div>
-
-    <div class="admin-panel" id="adminPanel">
-        <h3>Admin Panel</h3>
-        <input type="number" id="editIndex" placeholder="Düzəliş etmək istədiyin sual nömrəsi (0-dan başlayır)">
-        <input type="text" id="editQuestion" placeholder="Yeni sual mətnini daxil et">
-        <button onclick="editQuestion()">Düzəliş et</button>
-        <input type="number" id="deleteIndex" placeholder="Silmək istədiyin sual nömrəsi (0-dan başlayır)">
-        <button onclick="deleteQuestion()">Sil</button>
-    </div>
-
-</div>
-
-<script>
-let questions = ["Nümunə sual: HTML nədir?"];
-
-function renderQuestions() {
-    const container = document.getElementById('questions');
-    container.innerHTML = '';
-    questions.forEach((q, index) => {
-        container.innerHTML += `
-            <div class="question">
-                <p><strong>Sual ${index+1}:</strong> ${q}</p>
-                <input type="text" placeholder="Cavabınızı yazın">
-                <button onclick="alert('Cavab qeydə alındı!')">Cavab ver</button>
-            </div>
-        `;
+  <script>
+    const msg = document.getElementById('msg');
+    document.getElementById('registerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('regUser').value;
+      const password = document.getElementById('regPass').value;
+      const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      msg.textContent = data.message || '';
     });
-}
 
-function addQuestion() {
-    const newQ = document.getElementById('newQuestion').value;
-    if(newQ.trim() !== '') {
-        questions.push(newQ);
-        document.getElementById('newQuestion').value = '';
-        renderQuestions();
-    }
-}
-
-function toggleAdmin() {
-    const pass = document.getElementById('adminPass').value;
-    if(pass === "1234") { // admin parolu
-        document.getElementById('adminPanel').style.display = 'block';
-    } else {
-        alert("Yanlış parol!");
-    }
-}
-
-function editQuestion() {
-    const index = parseInt(document.getElementById('editIndex').value);
-    const text = document.getElementById('editQuestion').value;
-    if(questions[index] && text.trim() !== '') {
-        questions[index] = text;
-        renderQuestions();
-    }
-}
-
-function deleteQuestion() {
-    const index = parseInt(document.getElementById('deleteIndex').value);
-    if(questions[index]) {
-        questions.splice(index,1);
-        renderQuestions();
-    }
-}
-
-// Başlanğıc render
-renderQuestions();
-</script>
-
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('logUser').value;
+      const password = document.getElementById('logPass').value;
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      msg.style.color = data.success ? 'green' : 'red';
+      msg.textContent = data.message || '';
+    });
+  </script>
 </body>
 </html>
