@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kart və Smart Hesablama Saytı</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #3498db);
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(44, 62, 80, 0.95);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    header a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #1abc9c;
+      transition: 0.4s;
+    }
+    header a:hover::after {
+      width: 100%;
+    }
+    header a:hover {
+      color: #1abc9c;
+      transform: translateY(-3px);
+    }
+    .section {
+      display: none;
+      padding: 30px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    .active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      background: rgba(255,255,255,0.95);
+      padding: 25px;
+      margin: 20px auto;
+      max-width: 700px;
+      border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      backdrop-filter: blur(5px);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    input:focus, textarea:focus {
+      border-color: #1abc9c;
+      box-shadow: 0 0 8px rgba(26,188,156,0.5);
+      outline: none;
+    }
+    button {
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #16a085, #1abc9c);
+    }
+    .calendar {
+      text-align: center;
+      font-size: 18px;
+    }
+    .today {
+      background: #1abc9c;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    ul.notes {
+      list-style: none;
+      padding: 0;
+    }
+    ul.notes li {
+      background: #ecf0f1;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+    }
+    ul.notes li:hover {
+      background: #dfe6e9;
+    }
+    ul.notes li button {
+      width: auto;
+      padding: 6px 12px;
+      background: #e74c3c;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    ul.notes li button:hover {
+      background: #c0392b;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a onclick="showSection('kart')"><i class="fa-solid fa-credit-card"></i> Kart məbləği</a>
+  <a onclick="showSection('smart')"><i class="fa-solid fa-wallet"></i> Smart qalığ</a>
+  <a onclick="showSection('qeydler')"><i class="fa-solid fa-note-sticky"></i> Qeydlər</a>
+  <a onclick="showSection('teqvim')"><i class="fa-solid fa-calendar-days"></i> Təqvim</a>
+  <a onclick="showSection('nezaret')"><i class="fa-solid fa-clipboard-list"></i> Qeydlərə nəzarət</a>
+</header>
+
+<!-- Kart məbləği -->
+<div id="kart" class="section active">
+  <div class="card">
+    <h2><i class="fa-solid fa-credit-card"></i> Kart məbləği</h2>
+    <label>Arzu:</label>
+    <input type="number" id="arzu" placeholder="Məbləğ daxil edin...">
+    <label>Aidə:</label>
+    <input type="number" id="aide" placeholder="Məbləğ daxil edin...">
+    <label>Gülşad:</label>
+    <input type="number" id="gulshad" placeholder="Məbləğ daxil edin...">
+    <button onclick="hesablaKart()"><i class="fa-solid fa-calculator"></i> Hesabla</button>
+    <button onclick="temizleKart()"><i class="fa-solid fa-eraser"></i> Təmizlə</button>
+    <h3 id="kartNəticə"></h3>
+  </div>
+</div>
+
+<!-- Smart qalığ -->
+<div id="smart" class="section">
+  <div class="card">
+    <h2><i class="fa-solid fa-wallet"></i> Smart qalığ</h2>
+    <label>Nağd 1:</label>
+    <input type="number" id="nagd1" placeholder="Nağd məbləğ...">
+    <label>Nağd 2:</label>
+    <input type="number" id="nagd2" placeholder="Nağd məbləğ...">
+    <label>Kart 1:</label>
+    <input type="number" id="kart1" placeholder="Kart məbləğ...">
+    <label>Kart 2:</label>
+    <input type="number" id="kart2" placeholder="Kart məbləğ...">
+    <button onclick="hesablaSmart()"><i class="fa-solid fa-calculator"></i> Hesabla</button>
+    <h3 id="smartNəticə"></h3>
+  </div>
+</div>
+
+<!-- Qeydlər -->
+<div id="qeydler" class="section">
+  <div class="card">
+    <h2><i class="fa-solid fa-note-sticky"></i> Qeydlər</h2>
+    <textarea id="qeydInput" placeholder="Qeyd yaz..."></textarea>
+    <button onclick="yaddaSaxla()"><i class="fa-solid fa-floppy-disk"></i> Yadda saxla</button>
+    <button onclick="duzelisEt()"><i class="fa-solid fa-pen"></i> Düzəliş et</button>
+    <button onclick="silQeyd()"><i class="fa-solid fa-trash"></i> Sil</button>
+  </div>
+</div>
+
+<!-- Təqvim -->
+<div id="teqvim" class="section">
+  <div class="card calendar">
+    <h2><i class="fa-solid fa-calendar-days"></i> Təqvim</h2>
+    <p id="bugun"></p>
+  </div>
+</div>
+
+<!-- Qeydlərə nəzarət -->
+<div id="nezaret" class="section">
+  <div class="card">
+    <h2><i class="fa-solid fa-clipboard-list"></i> Qeydlərə nəzarət</h2>
+    <ul id="notesList" class="notes"></ul>
+  </div>
+</div>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function hesablaKart(){
+    let a = Number(document.getElementById('arzu').value) || 0;
+    let b = Number(document.getElementById('aide').value) || 0;
+    let c = Number(document.getElementById('gulshad').value) || 0;
+    document.getElementById('kartNəticə').innerText = "Cəm: " + (a+b+c) + " AZN";
+  }
+  function temizleKart(){
+    document.getElementById('arzu').value = '';
+    document.getElementById('aide').value = '';
+    document.getElementById('gulshad').value = '';
+    document.getElementById('kartNəticə').innerText = '';
+  }
+
+  function hesablaSmart(){
+    let n1 = Number(document.getElementById('nagd1').value) || 0;
+    let n2 = Number(document.getElementById('nagd2').value) || 0;
+    let k1 = Number(document.getElementById('kart1').value) || 0;
+    let k2 = Number(document.getElementById('kart2').value) || 0;
+    let nagdCem = n1 + n2;
+    let kartCem = k1 + k2;
+    document.getElementById('smartNəticə').innerText = `Nağd: ${nagdCem} AZN | Kart: ${kartCem} AZN`;
+  }
+
+  let qeydler = [];
+  function yaddaSaxla(){
+    let text = document.getElementById('qeydInput').value;
+    if(text){
+      qeydler.push(text);
+      updateNotes();
+      document.getElementById('qeydInput').value = '';
+    }
+  }
+  function duzelisEt(){
+    let text = document.getElementById('qeydInput').value;
+    if(qeydler.length>0){
+      qeydler[qeydler.length-1] = text;
+      updateNotes();
+    }
+  }
+  function silQeyd(){
+    qeydler.pop();
+    updateNotes();
+  }
+  function updateNotes(){
+    let ul = document.getElementById('notesList');
+    ul.innerHTML = '';
+    qeydler.forEach((q,idx)=>{
+      let li = document.createElement('li');
+      li.textContent = q;
+      let btn = document.createElement('button');
+      btn.innerHTML = '<i class="fa-solid fa-trash"></i> Sil';
+      btn.onclick = ()=>{ qeydler.splice(idx,1); updateNotes(); };
+      li.appendChild(btn);
+      ul.appendChild(li);
+    })
+  }
+
+  document.getElementById('bugun').innerHTML = "Bugün: <span class='today'>"+ new Date().toLocaleDateString()+"</span>";
+</script>
+
+</body>
+</html>
