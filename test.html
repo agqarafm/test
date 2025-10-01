@@ -31,11 +31,11 @@
       background-color: var(--bg); color: var(--text); transition: background-color .3s, color .3s;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; line-height:1.6;
     }
-    .container{ max-width:1200px; margin:40px auto; padding:0 20px; display: none; /* YENİ: Başlanğıcda gizli */ }
+    .container{ max-width:1200px; margin:40px auto; padding:0 20px; display: none; /* Başlanğıcda gizli */ }
     h1,h2,h3{ margin:0 0 10px; font-weight:700; }
     p.muted{ color: var(--text-muted); font-size:15px; margin-top:0; margin-bottom:15px; }
 
-    /* YENİ: GİRİŞ EKRANI STİLLƏRİ */
+    /* GİRİŞ EKRANI STİLLƏRİ */
     #login-screen{
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       height: 100vh; text-align: center;
@@ -56,11 +56,11 @@
       backdrop-filter:saturate(1.5) blur(8px);
     }
     .brand{ display:flex; gap:12px; align-items:center; font-weight:700; font-size:1.4em; }
-    .tabs{ display:flex; gap:8px; background: var(--bg); border-radius:99px; padding:6px; }
+    .tabs{ display:flex; gap:8px; background: var(--bg); border-radius:99px; padding:6px; overflow-x: auto; }
     .tab{
       padding:12px 20px; border-radius: 999px; cursor:pointer; background: transparent; border:none;
       color:var(--text-muted); transition: all var(--transition-fast); user-select:none;
-      font-weight:600; font-size:15px;
+      font-weight:600; font-size:15px; white-space: nowrap;
     }
     .tab:hover{ color:var(--text); }
     .tab.active{ background:var(--primary); color:white; box-shadow: var(--shadow-sm); }
@@ -87,6 +87,7 @@
     .col-6{ grid-column: span 6; } .col-7{ grid-column: span 7; } .col-8{ grid-column: span 8; }
     .col-12{ grid-column: span 12; }
     @media (max-width: 992px){ .col-3, .col-4, .col-5, .col-6, .col-7, .col-8{ grid-column: span 6; } }
+    @media (max-width: 768px){ .nav{ flex-direction: column; align-items: stretch; } .tabs{ justify-content: center;} }
     @media (max-width: 640px){ .col-3, .col-4, .col-5, .col-6, .col-7, .col-8{ grid-column: span 12; } }
 
     /* ==========================================================================
@@ -157,8 +158,18 @@
     #daily-ledger-entries .entry-item { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
     #daily-ledger-entries .entry-item .input { flex:1; }
     #daily-ledger-summary { border-top:1px solid var(--border); margin-top:20px; padding-top:20px; }
-    /* YENİ: Diaqram üçün konteyner */
     #ledger-chart-container { position: relative; height: 200px; margin-top: 20px; }
+
+    /* Büdcə Planlayıcı */
+    .budget-summary-card { text-align: center; padding: 20px; background-color: var(--bg-alt); border-radius: var(--radius-md); }
+    .budget-summary-card h4 { margin:0 0 5px; font-size:16px; color: var(--text-muted); }
+    .budget-summary-card p { margin:0; font-size:28px; font-weight:700; }
+    .category-item { display:flex; align-items:center; gap:15px; padding:10px 0; border-bottom: 1px solid var(--border); }
+    .category-item:last-child { border-bottom: none; }
+    .category-info { flex-grow:1; }
+    .category-info .name { font-weight: 600; }
+    .progress-bar { width:100%; background: var(--border); border-radius:99px; height: 8px; overflow:hidden; margin-top:5px; }
+    .progress-bar-fill { height:100%; background: var(--primary); border-radius:99px; transition: width .3s; }
   </style>
 </head>
 <body>
@@ -181,7 +192,7 @@
       <div class="tabs" role="tablist">
         <button class="tab active" data-target="#tab-billing" role="tab">Ümumi Hesab</button>
         <button class="tab" data-target="#tab-ledger" role="tab">Günlük Kassa</button>
-        <button class="tab" data-target="#tab-tools" role="tab">Alətlər</button>
+        <button class="tab" data-target="#tab-budget" role="tab">Büdcə Planlayıcı</button> <button class="tab" data-target="#tab-tools" role="tab">Alətlər</button>
         <button class="tab" data-target="#tab-notes" role="tab">Qeydlər</button>
         <button class="tab" data-target="#tab-settings" role="tab">Parametrlər</button>
       </div>
@@ -246,6 +257,59 @@
             </div>
         </div>
     </section>
+
+    <section id="tab-budget" class="panel">
+        <div class="card">
+             <div class="card-header">
+                <h2 class="headline">Büdcə Planlayıcı</h2>
+                <p class="muted">Aylıq gəlir və xərc limitlərinizi təyin edərək maliyyənizi idarə edin.</p>
+            </div>
+            <div class="grid">
+                <div class="col-4">
+                     <label for="budget-income">Aylıq Ümumi Gəlir (<span class="currency-symbol">₼</span>)</label>
+                     <input type="number" id="budget-income" class="input" placeholder="Məs: 2500">
+                </div>
+                <div class="col-8">
+                    <div class="grid" style="gap:15px;">
+                       <div class="col-4">
+                           <div class="budget-summary-card">
+                               <h4>Büdcələşdirilmiş</h4>
+                               <p id="summary-budget-allocated" style="color:var(--primary);">0.00</p>
+                           </div>
+                       </div>
+                       <div class="col-4">
+                           <div class="budget-summary-card">
+                               <h4>Xərclənən (Tezliklə)</h4>
+                               <p id="summary-budget-spent" style="color:var(--warning);">0.00</p>
+                           </div>
+                       </div>
+                       <div class="col-4">
+                           <div class="budget-summary-card">
+                               <h4>Qalıq</h4>
+                               <p id="summary-budget-remaining" style="color:var(--success);">0.00</p>
+                           </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="grid">
+                <div class="col-7">
+                    <h3 class="headline">Xərc Kateqoriyaları</h3>
+                    <div id="budget-categories-list" class="mt-20"></div>
+                </div>
+                <div class="col-5">
+                    <h3 class="headline">Yeni Kateqoriya</h3>
+                    <label for="category-name" class="mt-20">Kateqoriya Adı</label>
+                    <input type="text" id="category-name" class="input" placeholder="Məs: Kommunal Xərclər">
+                    <label for="category-amount" class="mt-20">Ayrılmış Məbləğ (<span class="currency-symbol">₼</span>)</label>
+                    <input type="number" id="category-amount" class="input" placeholder="Məs: 150">
+                    <button id="add-budget-category" class="btn w-full mt-20">Kateqoriya Əlavə Et</button>
+                </div>
+            </div>
+        </div>
+    </section>
     
     <section id="tab-tools" class="panel">
         <div class="grid">
@@ -285,6 +349,34 @@
                     <div id="salary-result" class="mt-20"></div>
                 </div>
             </div>
+            <div class="col-12">
+                 <div class="card">
+                    <div class="card-header">
+                        <h2 class="headline">İnvestisiya Kalkulyatoru (Mürəkkəb Faiz)</h2>
+                        <p class="muted">Yatırımınızın gələcək dəyərini mürəkkəb faiz ilə hesablayın.</p>
+                    </div>
+                    <div class="grid">
+                        <div class="col-3">
+                            <label for="inv-principal">İlkin Məbləğ (<span class="currency-symbol">₼</span>)</label>
+                            <input type="number" id="inv-principal" class="input" placeholder="1000">
+                        </div>
+                        <div class="col-3">
+                            <label for="inv-contribution">Aylıq Əlavə (<span class="currency-symbol">₼</span>)</label>
+                            <input type="number" id="inv-contribution" class="input" placeholder="100">
+                        </div>
+                        <div class="col-3">
+                             <label for="inv-interest">İllik Gəlirlilik (%)</label>
+                            <input type="number" id="inv-interest" class="input" placeholder="8">
+                        </div>
+                        <div class="col-3">
+                            <label for="inv-term">Müddət (il)</label>
+                            <input type="number" id="inv-term" class="input" placeholder="10">
+                        </div>
+                    </div>
+                    <button class="btn w-full mt-20" id="calculate-investment">Hesabla</button>
+                    <div id="investment-result" class="mt-20"></div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -309,34 +401,59 @@
     </section>
 
     <section id="tab-settings" class="panel">
+      <div class="grid">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                  <h2 class="headline">Ümumi Parametrlər</h2>
+                  <p class="muted">Tətbiqin mövzusunu dəyişin və məlumatlarınızı idarə edin.</p>
+                </div>
+                
+                <label for="currency-select">Valyuta Simvolu</label>
+                <select id="currency-select" class="input">
+                    <option value="₼">AZN (₼)</option>
+                    <option value="$">USD ($)</option>
+                    <option value="€">EUR (€)</option>
+                </select>
+                
+                <h3 class="mt-20">Məlumatların İdarə Edilməsi</h3>
+                <p class="muted">Bütün məlumatlarınızı bir fayl kimi yükləyə və ya əvvəlki nüsxəni bərpa edə bilərsiniz.</p>
+                <div class="d-flex gap-10">
+                  <button class="btn ghost" id="export-data">Məlumatları İxrac Et (JSON)</button>
+                  <button class="btn ghost" id="import-data-btn">Məlumatları İdxal Et (JSON)</button>
+                  <input type="file" id="import-file-input" accept=".json" style="display:none;">
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="headline">Təhlükəsizlik</h2>
+                    <p class="muted">Tətbiqə giriş şifrəsini dəyişin.</p>
+                </div>
+                <div>
+                    <label for="current-password">Mövcud Şifrə</label>
+                    <input type="password" id="current-password" class="input" placeholder="••••••••">
+                </div>
+                <div class="mt-20">
+                    <label for="new-password">Yeni Şifrə</label>
+                    <input type="password" id="new-password" class="input" placeholder="••••••••">
+                </div>
+                <div class="mt-20">
+                    <label for="confirm-password">Yeni Şifrə (Təkrar)</label>
+                    <input type="password" id="confirm-password" class="input" placeholder="••••••••">
+                </div>
+                <button class="btn w-full mt-20" id="change-password-btn">Şifrəni Dəyiş</button>
+            </div>
+        </div>
+      </div>
       <div class="card">
-        <div class="card-header">
-          <h2 class="headline">Parametrlər</h2>
-          <p class="muted">Tətbiqin mövzusunu dəyişin və məlumatlarınızı idarə edin.</p>
-        </div>
-        
-        <div class="col-4">
-            <label for="currency-select">Valyuta Simvolu</label>
-            <select id="currency-select" class="input">
-                <option value="₼">AZN (₼)</option>
-                <option value="$">USD ($)</option>
-                <option value="€">EUR (€)</option>
-            </select>
-        </div>
-        
-        <h3 class="mt-20">Məlumatların İdarə Edilməsi</h3>
-        <p class="muted">Bütün məlumatlarınızı (hesablar, qeydlər və s.) bir fayl kimi yükləyə və ya əvvəlki nüsxəni bərpa edə bilərsiniz.</p>
-        <div class="d-flex gap-10">
-          <button class="btn ghost" id="export-data">Məlumatları İxrac Et (JSON)</button>
-          <button class="btn ghost" id="import-data-btn">Məlumatları İdxal Et (JSON)</button>
-          <input type="file" id="import-file-input" accept=".json" style="display:none;">
-        </div>
-        
-        <h3 class="mt-20">Təhlükəli Zona</h3>
-        <p class="muted">Bu əməliyyatlar geri qaytarıla bilməz.</p>
+        <h3>Təhlükəli Zona</h3>
+        <p class="muted">Bu əməliyyatlar geri qaytarıla bilməz. Məlumatları silməzdən əvvəl ixrac etməyiniz tövsiyə olunur.</p>
         <div class="d-flex gap-10" style="flex-wrap: wrap;">
             <button class="btn danger" data-action="clear-billing">Ümumi Hesab Məlumatlarını Sil</button>
             <button class="btn danger" data-action="clear-ledger">Günlük Kassa Məlumatlarını Sil</button>
+            <button class="btn danger" data-action="clear-budget">Büdcə Məlumatlarını Sil</button>
             <button class="btn danger" data-action="clear-notes">Qeydləri Sil</button>
             <button class="btn danger" data-action="clear-all">BÜTÜN MƏLUMATLARI SİL</button>
         </div>
@@ -367,15 +484,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     const App = {
         config: {
-            currencySymbol: '₼' // Default
+            currencySymbol: '₼'
         },
         utils: {
-            toNum(v) { /* ... mövcud kod ... */ },
+            toNum(v) { if (v == null || v === '') return 0; const s = String(v).replace(/\s+/g, '').replace(/,/g, '.'); const n = parseFloat(s); return Number.isFinite(n) ? n : 0; },
             fmt(n) { return `${new Intl.NumberFormat('az-AZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0)} ${App.config.currencySymbol}`; },
-            fmtDate(timestamp) { /* ... mövcud kod ... */ },
-            save(key, value) { /* ... mövcud kod ... */ },
-            load(key, defaultValue = null) { /* ... mövcud kod ... */ },
-            toast(message, type = 'success') { /* ... mövcud kod ... */ },
+            fmtDate(timestamp) { return new Date(timestamp).toLocaleString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); },
+            save(key, value) { localStorage.setItem(key, JSON.stringify(value)); },
+            load(key, defaultValue = null) { try { const value = JSON.parse(localStorage.getItem(key)); return value ?? defaultValue; } catch (e) { console.error('Yaddaşdan yükləmə xətası:', e); return defaultValue; } },
+            toast(message, type = 'success') { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message; container.appendChild(toast); setTimeout(() => { toast.classList.add('show'); }, 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000); },
             modal: {
                 open(title, html, showCopy = false) {
                     document.getElementById('modal-title').textContent = title;
@@ -383,34 +500,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('modal-copy').style.display = showCopy ? 'inline-flex' : 'none';
                     document.getElementById('modal-backdrop').classList.add('show');
                 },
-                close() { /* ... mövcud kod ... */ }
+                close() { document.getElementById('modal-backdrop').classList.remove('show'); }
             }
         },
         init() {
             this.auth.init();
         },
-        // YENİ: Əsas tətbiqi başlatan funksiya
         launch() {
             this.theme.init();
-            this.settings.init(); // Valyuta üçün birinci bu işə düşməlidir
+            this.settings.init(); // Valyuta və şifrə üçün birinci bu işə düşməlidir
             this.navigation.init();
             this.sharedBilling.init();
             this.dailyLedger.init();
+            this.budgetPlanner.init(); // YENİ
             this.notes.init();
             this.tools.init();
             document.getElementById('app-container').style.display = 'block';
         }
     };
 
-    // KODUN QALAN HİSSƏSİ...
-    // Bu hissədə dəyişməyən kodlar yerləşir. Ancaq aydınlıq üçün, onları tam olaraq
-    // aşağıda yerləşdirirəm və yalnız dəyişən və ya yeni əlavə olunan hissələri qeyd edirəm.
-
     // ==========================================================================
-    // YENİ: 0. GİRİŞ (AUTHENTICATION) MODULU
+    // 0. GİRİŞ (AUTHENTICATION) MODULU (Təkmilləşdirilmiş)
     // ==========================================================================
     App.auth = {
-        ACCESS_CODE: '1234',
         init() {
             if (sessionStorage.getItem('pro-calculator-auth') === 'ok') {
                 document.getElementById('login-screen').style.display = 'none';
@@ -425,7 +537,9 @@ document.addEventListener('DOMContentLoaded', () => {
         login() {
             const passwordInput = document.getElementById('login-password');
             const errorEl = document.getElementById('login-error');
-            if (passwordInput.value === this.ACCESS_CODE) {
+            const savedPassword = App.utils.load('app_password', '1234'); // Şifrəni yaddaşdan oxu
+
+            if (passwordInput.value === savedPassword) {
                 sessionStorage.setItem('pro-calculator-auth', 'ok');
                 document.getElementById('login-screen').style.animation = 'fadeOut 0.5s forwards';
                 setTimeout(() => {
@@ -439,14 +553,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Mövcud App.utils-ə sadəcə fmt funksiyasını dəyişdim (yuxarıda göstərilib)
-    App.utils.toNum = (v) => { if (v == null || v === '') return 0; const s = String(v).replace(/\s+/g, '').replace(/,/g, '.'); const n = parseFloat(s); return Number.isFinite(n) ? n : 0; };
-    App.utils.fmtDate = (timestamp) => new Date(timestamp).toLocaleString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    App.utils.save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-    App.utils.load = (key, defaultValue = null) => { try { const value = JSON.parse(localStorage.getItem(key)); return value ?? defaultValue; } catch (e) { console.error('Yaddaşdan yükləmə xətası:', e); return defaultValue; } };
-    App.utils.toast = (message, type = 'success') => { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message; container.appendChild(toast); setTimeout(() => { toast.classList.add('show'); }, 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000); };
-    App.utils.modal.close = () => { document.getElementById('modal-backdrop').classList.remove('show'); };
-    
     App.theme = {
         init() { this.toggleButton = document.getElementById('theme-toggle'); this.currentTheme = App.utils.load('theme', 'light'); this.applyTheme(); this.toggleButton.addEventListener('click', () => this.toggleTheme()); },
         applyTheme() { document.documentElement.className = this.currentTheme; App.utils.save('theme', this.currentTheme); },
@@ -469,42 +575,31 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modal-close').addEventListener('click', App.utils.modal.close);
             document.getElementById('modal-backdrop').addEventListener('click', (e) => { if (e.target.id === 'modal-backdrop') App.utils.modal.close(); });
             
-            // YENİ: Modal kopyalama düyməsi
             document.getElementById('modal-copy').addEventListener('click', () => {
                 const title = document.getElementById('modal-title').textContent;
                 const body = document.getElementById('modal-body').innerText;
                 navigator.clipboard.writeText(`${title}\n\n${body}`).then(() => {
                     App.utils.toast('Nəticə panoya kopyalandı.');
-                }).catch(err => {
-                    App.utils.toast('Kopyalama uğursuz oldu.', 'error');
-                });
+                }).catch(() => App.utils.toast('Kopyalama uğursuz oldu.', 'error'));
             });
         }
     };
     
-    // TƏKMİLLƏŞDİRİLMİŞ: ÜMUMİ HESAB MODULU
     App.sharedBilling = {
         key: 'sharedBilling_v2', historyKey: 'billingHistory_v2',
-        init() { /* ... mövcud kod ... */ },
-        addParticipant(name = '', amount = '') { /* ... mövcud kod ... */ },
-        removeParticipant(event) { /* ... mövcud kod ... */ },
-        saveState() { /* ... mövcud kod ... */ },
-        loadState() { /* ... mövcud kod ... */ },
-        reset() { /* ... mövcud kod ... */ },
+        init() { this.container = document.getElementById('participants-container'); this.addBtn = document.getElementById('add-participant'); this.calcBtn = document.getElementById('btn-billing-calc'); this.resetBtn = document.getElementById('btn-billing-reset'); this.addBtn.addEventListener('click', () => this.addParticipant()); this.calcBtn.addEventListener('click', () => this.calculate()); this.resetBtn.addEventListener('click', () => this.reset()); this.loadState(); this.renderHistory(); },
+        addParticipant(name = '', amount = '') { const id = `p_${Date.now()}_${Math.random()}`; const participantHTML = `<div class="input-group mt-20" data-id="${id}"><input type="text" class="input participant-name" placeholder="İştirakçının adı" value="${name}"><input type="number" class="input participant-amount" placeholder="0.00" value="${amount}"><button class="btn danger sm remove-participant">&times;</button></div>`; this.container.insertAdjacentHTML('beforeend', participantHTML); this.container.querySelector(`[data-id="${id}"] .remove-participant`).addEventListener('click', (e) => this.removeParticipant(e)); this.container.querySelectorAll('input').forEach(input => input.addEventListener('input', () => this.saveState())); },
+        removeParticipant(event) { event.target.closest('.input-group').remove(); this.saveState(); },
+        saveState() { const participants = Array.from(this.container.querySelectorAll('.input-group')).map(p => ({ name: p.querySelector('.participant-name').value, amount: p.querySelector('.participant-amount').value })); App.utils.save(this.key, participants); },
+        loadState() { const participants = App.utils.load(this.key, [{name: '', amount: ''}, {name: '', amount: ''}]); this.container.innerHTML = ''; if (participants && participants.length > 0) { participants.forEach(p => this.addParticipant(p.name, p.amount)); } else { this.addParticipant('', ''); this.addParticipant('', ''); } },
+        reset() { if (confirm('Bütün iştirakçılar və məbləğlər silinsin?')) { App.utils.save(this.key, []); this.loadState(); App.utils.toast('Forma sıfırlandı.'); } },
         calculate() {
-          const participants = Array.from(this.container.querySelectorAll('.input-group')).map(p => ({
-            name: p.querySelector('.participant-name').value.trim() || 'Adsız',
-            amount: App.utils.toNum(p.querySelector('.participant-amount').value)
-          }));
+          const participants = Array.from(this.container.querySelectorAll('.input-group')).map(p => ({ name: p.querySelector('.participant-name').value.trim() || 'Adsız', amount: App.utils.toNum(p.querySelector('.participant-amount').value) }));
           const total = participants.reduce((sum, p) => sum + p.amount, 0);
           if (total === 0) { App.utils.toast('Hesablamaq üçün məbləğ daxil edilməyib.', 'error'); return; }
           const average = total / participants.length;
           const debtors = []; const creditors = [];
-          participants.forEach(p => {
-            const balance = p.amount - average;
-            if (balance < 0) { debtors.push({ name: p.name, amount: -balance }); } 
-            else if (balance > 0) { creditors.push({ name: p.name, amount: balance }); }
-          });
+          participants.forEach(p => { const balance = p.amount - average; if (balance < 0) { debtors.push({ name: p.name, amount: -balance }); } else if (balance > 0) { creditors.push({ name: p.name, amount: balance }); } });
           let transactions = '';
           while(debtors.length > 0 && creditors.length > 0) {
               const debtor = debtors[0]; const creditor = creditors[0];
@@ -516,61 +611,29 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           const titleInput = document.getElementById('billing-title');
           const title = titleInput.value.trim() || 'Adsız Hesablama';
-          let resultHTML = `
-            <div class="result-row"><span>Ümumi Xərc:</span><strong>${App.utils.fmt(total)}</strong></div>
-            <div class="result-row"><span>Hər kəsə düşən:</span><strong>${App.utils.fmt(average)}</strong></div>
-            <h4 style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">Ödənişlər:</h4>
-            ${transactions || '<p class="muted">Hər kəs bərabər ödəyib, borc yoxdur.</p>'}`;
-          
-          App.utils.modal.open(`Nəticə: ${title}`, resultHTML, true); // YENİ: Kopyalama düyməsini göstər
+          let resultHTML = `<div class="result-row"><span>Ümumi Xərc:</span><strong>${App.utils.fmt(total)}</strong></div><div class="result-row"><span>Hər kəsə düşən:</span><strong>${App.utils.fmt(average)}</strong></div><h4 style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">Ödənişlər:</h4>${transactions || '<p class="muted">Hər kəs bərabər ödəyib, borc yoxdur.</p>'}`;
+          App.utils.modal.open(`Nəticə: ${title}`, resultHTML, true);
           this.saveToHistory({ title, total, average, transactions, date: Date.now(), participants});
           titleInput.value = '';
         },
-        saveToHistory(result) { /* ... mövcud kod ... */ },
+        saveToHistory(result) { let history = App.utils.load(this.historyKey, []); history.unshift(result); history = history.slice(0, 20); App.utils.save(this.historyKey, history); this.renderHistory(); },
         renderHistory() {
             const history = App.utils.load(this.historyKey, []);
             const container = document.getElementById('billing-history');
-            container.innerHTML = '';
-            if (history.length === 0) { container.innerHTML = '<p class="muted" style="text-align:center;">Hələ heç bir hesablama yadda saxlanmayıb.</p>'; return; }
+            container.innerHTML = history.length === 0 ? '<p class="muted" style="text-align:center;">Hələ heç bir hesablama yadda saxlanmayıb.</p>' : '';
             history.forEach((item, index) => {
-                // TƏKMİLLƏŞDİRİLMİŞ: Valyuta simvolunu nəzərə almaq üçün text-in içindəki formatlamanı dəyişirik
-                const transactionsText = item.transactions.replace(/<strong>([\d.,\s]+)<\/strong>/g, (match, p1) => `<strong>${App.utils.fmt(parseFloat(p1.replace(',','.')))}</strong>`);
-                const itemHTML = `
-                    <div class="list-item">
-                      <div class="list-item-content">
-                        <div class="title">${item.title}</div>
-                        <div class="date">${App.utils.fmtDate(item.date)} • Ümumi: ${App.utils.fmt(item.total)}</div>
-                        <div class="text">${transactionsText}</div>
-                      </div>
-                      <div class="list-item-actions"><button class="btn danger sm" data-index="${index}">Sil</button></div>
-                    </div>`;
+                const transactionsText = item.transactions.replace(/<strong[^>]*>([^<]+)<\/strong>/g, (match, content) => `<strong>${App.utils.fmt(App.utils.toNum(content))}</strong>`);
+                const itemHTML = `<div class="list-item"><div class="list-item-content"><div class="title">${item.title}</div><div class="date">${App.utils.fmtDate(item.date)} • Ümumi: ${App.utils.fmt(item.total)}</div><div class="text">${transactionsText}</div></div><div class="list-item-actions"><button class="btn danger sm" data-index="${index}">Sil</button></div></div>`;
                 container.insertAdjacentHTML('beforeend', itemHTML);
             });
             container.querySelectorAll('.btn.danger').forEach(btn => btn.addEventListener('click', (e) => this.deleteFromHistory(e.target.dataset.index)));
         },
-        deleteFromHistory(index) { /* ... mövcud kod ... */ }
+        deleteFromHistory(index) { if (confirm('Bu tarixçə qeydini silmək istəyirsiniz?')) { let history = App.utils.load(this.historyKey, []); history.splice(index, 1); App.utils.save(this.historyKey, history); this.renderHistory(); App.utils.toast('Tarixçə qeydi silindi.'); } }
     };
-    // Mövcud funksiyaları doldururam
-    App.sharedBilling.init = function() { this.container = document.getElementById('participants-container'); this.addBtn = document.getElementById('add-participant'); this.calcBtn = document.getElementById('btn-billing-calc'); this.resetBtn = document.getElementById('btn-billing-reset'); this.addBtn.addEventListener('click', () => this.addParticipant()); this.calcBtn.addEventListener('click', () => this.calculate()); this.resetBtn.addEventListener('click', () => this.reset()); this.loadState(); this.renderHistory(); };
-    App.sharedBilling.addParticipant = function(name = '', amount = '') { const id = `p_${Date.now()}_${Math.random()}`; const participantHTML = `<div class="input-group mt-20" data-id="${id}"><input type="text" class="input participant-name" placeholder="İştirakçının adı" value="${name}"><input type="number" class="input participant-amount" placeholder="0.00" value="${amount}"><button class="btn danger sm remove-participant">&times;</button></div>`; this.container.insertAdjacentHTML('beforeend', participantHTML); this.container.querySelector(`[data-id="${id}"] .remove-participant`).addEventListener('click', (e) => this.removeParticipant(e)); this.container.querySelectorAll('input').forEach(input => input.addEventListener('input', () => this.saveState())); };
-    App.sharedBilling.removeParticipant = function(event) { event.target.closest('.input-group').remove(); this.saveState(); };
-    App.sharedBilling.saveState = function() { const participants = Array.from(this.container.querySelectorAll('.input-group')).map(p => ({ name: p.querySelector('.participant-name').value, amount: p.querySelector('.participant-amount').value })); App.utils.save(this.key, participants); };
-    App.sharedBilling.loadState = function() { const participants = App.utils.load(this.key, [{name: '', amount: ''}, {name: '', amount: ''}]); this.container.innerHTML = ''; if (participants && participants.length > 0) { participants.forEach(p => this.addParticipant(p.name, p.amount)); } else { this.addParticipant('', ''); this.addParticipant('', ''); } };
-    App.sharedBilling.reset = function() { if (confirm('Bütün iştirakçılar və məbləğlər silinsin?')) { App.utils.save(this.key, []); this.loadState(); App.utils.toast('Forma sıfırlandı.'); } };
-    App.sharedBilling.saveToHistory = function(result) { let history = App.utils.load(this.historyKey, []); history.unshift(result); history = history.slice(0, 20); App.utils.save(this.historyKey, history); this.renderHistory(); };
-    App.sharedBilling.deleteFromHistory = function(index) { if (confirm('Bu tarixçə qeydini silmək istəyirsiniz?')) { let history = App.utils.load(this.historyKey, []); history.splice(index, 1); App.utils.save(this.historyKey, history); this.renderHistory(); App.utils.toast('Tarixçə qeydi silindi.'); } };
 
-    // TƏKMİLLƏŞDİRİLMİŞ: GÜNLÜK KASSA MODULU
     App.dailyLedger = {
-        key: 'dailyLedger_v2',
-        chartInstance: null,
-        init() {
-            this.container = document.getElementById('daily-ledger-entries');
-            document.getElementById('add-ledger-cash').addEventListener('click', () => this.addEntry('cash'));
-            document.getElementById('add-ledger-card').addEventListener('click', () => this.addEntry('card'));
-            document.getElementById('btn-ledger-reset').addEventListener('click', () => this.reset());
-            this.loadState();
-        },
+        key: 'dailyLedger_v2', chartInstance: null,
+        init() { this.container = document.getElementById('daily-ledger-entries'); document.getElementById('add-ledger-cash').addEventListener('click', () => this.addEntry('cash')); document.getElementById('add-ledger-card').addEventListener('click', () => this.addEntry('card')); document.getElementById('btn-ledger-reset').addEventListener('click', () => this.reset()); this.loadState(); },
         addEntry(type, desc = '', amount = '') {
             const id = `e_${Date.now()}_${Math.random()}`;
             const entryHTML = `<div class="entry-item" data-type="${type}" data-id="${id}"><span style="font-weight:600; min-width:50px;">${type === 'cash' ? 'Nağd' : 'Kart'}:</span><input type="text" class="input ledger-desc" placeholder="Təsvir" value="${desc}"><input type="number" class="input ledger-amount" placeholder="0.00" value="${amount}"><button class="btn danger sm remove-ledger-entry">&times;</button></div>`;
@@ -579,140 +642,203 @@ document.addEventListener('DOMContentLoaded', () => {
             entryElement.querySelectorAll('input').forEach(input => input.addEventListener('input', () => { this.saveState(); this.updateSummary(); }));
             entryElement.querySelector('.remove-ledger-entry').addEventListener('click', e => { e.target.closest('.entry-item').remove(); this.saveState(); this.updateSummary(); });
         },
-        saveState() { /* ... mövcud kod ... */ },
-        loadState() { /* ... mövcud kod ... */ },
+        saveState() { const entries = Array.from(this.container.querySelectorAll('.entry-item')).map(item => ({ type: item.dataset.type, desc: item.querySelector('.ledger-desc').value, amount: item.querySelector('.ledger-amount').value })); App.utils.save(this.key, entries); },
+        loadState() { const entries = App.utils.load(this.key, []); this.container.innerHTML = ''; if (entries.length > 0) { entries.forEach(e => this.addEntry(e.type, e.desc, e.amount)); } this.updateSummary(); },
         updateSummary() {
-            const entries = Array.from(this.container.querySelectorAll('.entry-item')).map(item => ({
-                type: item.dataset.type,
-                amount: App.utils.toNum(item.querySelector('.ledger-amount').value)
-            }));
+            const entries = Array.from(this.container.querySelectorAll('.entry-item')).map(item => ({ type: item.dataset.type, amount: App.utils.toNum(item.querySelector('.ledger-amount').value) }));
             const cashTotal = entries.filter(e => e.type === 'cash').reduce((sum, e) => sum + e.amount, 0);
             const cardTotal = entries.filter(e => e.type === 'card').reduce((sum, e) => sum + e.amount, 0);
             document.getElementById('summary-cash').textContent = App.utils.fmt(cashTotal);
             document.getElementById('summary-card').textContent = App.utils.fmt(cardTotal);
             document.getElementById('summary-diff').textContent = App.utils.fmt(cashTotal - cardTotal);
             document.getElementById('summary-total').textContent = App.utils.fmt(cashTotal + cardTotal);
-            
-            this.renderChart(cashTotal, cardTotal); // YENİ: Diaqramı yenilə
+            this.renderChart(cashTotal, cardTotal);
         },
-        // YENİ: Diaqram çəkmə funksiyası
         renderChart(cash, card) {
             const ctx = document.getElementById('ledger-chart').getContext('2d');
-            const data = {
-                labels: ['Nağd', 'Kart'],
-                datasets: [{
-                    data: [cash, card],
-                    backgroundColor: ['rgba(23, 201, 100, 0.8)', 'rgba(74, 108, 253, 0.8)'],
-                    borderColor: [ 'var(--success)', 'var(--primary)'],
-                    borderWidth: 1
-                }]
-            };
-            if(this.chartInstance) {
-                this.chartInstance.data = data;
-                this.chartInstance.update();
-            } else {
-                this.chartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: data,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom', labels: { color: 'var(--text-muted)' } } }
-                    }
-                });
-            }
+            const data = { labels: ['Nağd', 'Kart'], datasets: [{ data: [cash, card], backgroundColor: ['rgba(23, 201, 100, 0.8)', 'rgba(74, 108, 253, 0.8)'], borderColor: [ 'var(--success)', 'var(--primary)'], borderWidth: 1 }] };
+            if(this.chartInstance) { this.chartInstance.data = data; this.chartInstance.update(); } 
+            else { this.chartInstance = new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: 'var(--text-muted)' } } } } }); }
         },
         reset() { if (confirm('Bütün günlük kassa məlumatları silinsin?')) { App.utils.save(this.key, []); this.loadState(); App.utils.toast('Günlük kassa sıfırlandı.'); } }
     };
-    App.dailyLedger.saveState = function() { const entries = Array.from(this.container.querySelectorAll('.entry-item')).map(item => ({ type: item.dataset.type, desc: item.querySelector('.ledger-desc').value, amount: item.querySelector('.ledger-amount').value })); App.utils.save(this.key, entries); };
-    App.dailyLedger.loadState = function() { const entries = App.utils.load(this.key, []); this.container.innerHTML = ''; if (entries.length > 0) { entries.forEach(e => this.addEntry(e.type, e.desc, e.amount)); } this.updateSummary(); };
+    
+    // ==========================================================================
+    // YENİ MODUL: BÜDCƏ PLANLAYICI
+    // ==========================================================================
+    App.budgetPlanner = {
+        key: 'budgetPlanner_v1',
+        init() {
+            this.incomeInput = document.getElementById('budget-income');
+            this.categoryNameInput = document.getElementById('category-name');
+            this.categoryAmountInput = document.getElementById('category-amount');
+            this.addCategoryBtn = document.getElementById('add-budget-category');
+            this.categoriesListEl = document.getElementById('budget-categories-list');
 
-    // YENİ: ALƏTLƏR MODULU
+            this.incomeInput.addEventListener('input', () => this.saveState());
+            this.addCategoryBtn.addEventListener('click', () => this.addCategory());
+            
+            this.loadState();
+        },
+        addCategory() {
+            const name = this.categoryNameInput.value.trim();
+            const amount = App.utils.toNum(this.categoryAmountInput.value);
+
+            if (!name || amount <= 0) {
+                App.utils.toast('Kateqoriya adı və məbləği düzgün daxil edilməlidir.', 'error');
+                return;
+            }
+            const state = this.getState();
+            state.categories.push({ id: `cat_${Date.now()}`, name, amount });
+            App.utils.save(this.key, state);
+            this.render();
+            this.categoryNameInput.value = '';
+            this.categoryAmountInput.value = '';
+            App.utils.toast('Yeni kateqoriya əlavə edildi.');
+        },
+        deleteCategory(id) {
+            if (!confirm('Bu kateqoriyanı silməyə əminsiniz?')) return;
+            const state = this.getState();
+            state.categories = state.categories.filter(c => c.id !== id);
+            App.utils.save(this.key, state);
+            this.render();
+            App.utils.toast('Kateqoriya silindi.');
+        },
+        getState() {
+            return App.utils.load(this.key, { income: 0, categories: [] });
+        },
+        saveState() {
+            const state = {
+                income: App.utils.toNum(this.incomeInput.value),
+                categories: this.getState().categories
+            };
+            App.utils.save(this.key, state);
+            this.updateSummary();
+        },
+        loadState() {
+            const state = this.getState();
+            this.incomeInput.value = state.income || '';
+            this.render();
+        },
+        render() {
+            const state = this.getState();
+            this.categoriesListEl.innerHTML = '';
+            if (state.categories.length === 0) {
+                this.categoriesListEl.innerHTML = '<p class="muted" style="text-align:center;">Heç bir xərc kateqoriyası əlavə edilməyib.</p>';
+            } else {
+                state.categories.forEach(cat => {
+                    const itemHTML = `
+                        <div class="category-item" data-id="${cat.id}">
+                            <div class="category-info">
+                                <div class="d-flex justify-between align-center">
+                                    <span class="name">${cat.name}</span>
+                                    <strong>${App.utils.fmt(cat.amount)}</strong>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-bar-fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <button class="btn danger sm btn-delete-category">&times;</button>
+                        </div>
+                    `;
+                    this.categoriesListEl.insertAdjacentHTML('beforeend', itemHTML);
+                });
+            }
+            this.categoriesListEl.querySelectorAll('.btn-delete-category').forEach(btn => {
+                btn.addEventListener('click', e => this.deleteCategory(e.target.closest('.category-item').dataset.id));
+            });
+            this.updateSummary();
+        },
+        updateSummary() {
+            const state = this.getState();
+            const income = state.income;
+            const totalAllocated = state.categories.reduce((sum, cat) => sum + cat.amount, 0);
+            const remaining = income - totalAllocated;
+
+            document.getElementById('summary-budget-allocated').textContent = App.utils.fmt(totalAllocated);
+            document.getElementById('summary-budget-remaining').textContent = App.utils.fmt(remaining);
+        }
+    };
+
     App.tools = {
         init() {
             document.getElementById('calculate-loan').addEventListener('click', () => this.calculateLoan());
             document.getElementById('calculate-salary').addEventListener('click', () => this.calculateSalary());
+            document.getElementById('calculate-investment').addEventListener('click', () => this.calculateInvestment()); // YENİ
         },
         calculateLoan() {
             const amount = App.utils.toNum(document.getElementById('loan-amount').value);
             const interest = App.utils.toNum(document.getElementById('loan-interest').value);
             const term = App.utils.toNum(document.getElementById('loan-term').value);
             const resultEl = document.getElementById('loan-result');
-
-            if (amount <= 0 || interest <= 0 || term <= 0) {
-                resultEl.innerHTML = '<p style="color:var(--danger);">Bütün xanaları düzgün doldurun.</p>';
-                return;
-            }
-
+            if (amount <= 0 || interest <= 0 || term <= 0) { resultEl.innerHTML = '<p style="color:var(--danger);">Bütün xanaları düzgün doldurun.</p>'; return; }
             const monthlyInterest = interest / 100 / 12;
             const monthlyPayment = amount * monthlyInterest * Math.pow(1 + monthlyInterest, term) / (Math.pow(1 + monthlyInterest, term) - 1);
             const totalPayment = monthlyPayment * term;
             const totalInterest = totalPayment - amount;
-
-            resultEl.innerHTML = `
-                <div class="result-row total"><span>Aylıq Ödəniş:</span><strong>${App.utils.fmt(monthlyPayment)}</strong></div>
-                <div class="result-row"><span>Ümumi Ödəniş:</span><strong>${App.utils.fmt(totalPayment)}</strong></div>
-                <div class="result-row"><span>Cəmi Faiz:</span><strong>${App.utils.fmt(totalInterest)}</strong></div>
-            `;
+            resultEl.innerHTML = `<div class="result-row total"><span>Aylıq Ödəniş:</span><strong>${App.utils.fmt(monthlyPayment)}</strong></div><div class="result-row"><span>Ümumi Ödəniş:</span><strong>${App.utils.fmt(totalPayment)}</strong></div><div class="result-row"><span>Cəmi Faiz:</span><strong>${App.utils.fmt(totalInterest)}</strong></div>`;
         },
         calculateSalary() {
              const netSalary = App.utils.toNum(document.getElementById('net-salary').value);
             const resultEl = document.getElementById('salary-result');
-            
-            if (netSalary <= 0) {
-                resultEl.innerHTML = '<p style="color:var(--danger);">Xalis əmək haqqını daxil edin.</p>';
+            if (netSalary <= 0) { resultEl.innerHTML = '<p style="color:var(--danger);">Xalis əmək haqqını daxil edin.</p>'; return; }
+            let grossSalary = netSalary;
+            for (let i = 0; i < 10; i++) { // Iterative approach for precision
+                let incomeTax = (grossSalary > 2500) ? (350 + (grossSalary - 2500) * 0.25) : Math.max(0, (grossSalary - 200) * 0.14);
+                const socialSecurity = grossSalary < 8000 ? grossSalary * 0.03 : 240 + (grossSalary - 8000) * 0.1;
+                const unemployment = grossSalary * 0.005;
+                const healthInsurance = grossSalary < 8000 ? grossSalary * 0.02 : 160;
+                grossSalary = netSalary + incomeTax + socialSecurity + unemployment + healthInsurance;
+            }
+            const finalIncomeTax = (grossSalary > 2500) ? (350 + (grossSalary - 2500) * 0.25) : Math.max(0, (grossSalary - 200) * 0.14);
+            const finalSocialSecurity = grossSalary < 8000 ? grossSalary * 0.03 : 240 + (grossSalary - 8000) * 0.1;
+            const finalUnemployment = grossSalary * 0.005;
+            const finalHealthInsurance = grossSalary < 8000 ? grossSalary * 0.02 : 160;
+            const finalTotalDeductions = finalIncomeTax + finalSocialSecurity + finalUnemployment + finalHealthInsurance;
+            resultEl.innerHTML = `<div class="result-row total"><span>Ümumi Əmək Haqqı (Bruto):</span><strong>${App.utils.fmt(grossSalary)}</strong></div><h4 style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">Tutulmalar:</h4><div class="result-row"><span>Gəlir Vergisi:</span><strong>${App.utils.fmt(finalIncomeTax)}</strong></div><div class="result-row"><span>DSMF:</span><strong>${App.utils.fmt(finalSocialSecurity)}</strong></div><div class="result-row"><span>İşsizlikdən sığorta:</span><strong>${App.utils.fmt(finalUnemployment)}</strong></div><div class="result-row"><span>İcbari Tibbi Sığorta:</span><strong>${App.utils.fmt(finalHealthInsurance)}</strong></div><div class="result-row total"><span>Cəmi Tutulma:</span><strong>${App.utils.fmt(finalTotalDeductions)}</strong></div>`;
+        },
+        // YENİ FUNKSİYA
+        calculateInvestment() {
+            const principal = App.utils.toNum(document.getElementById('inv-principal').value);
+            const contribution = App.utils.toNum(document.getElementById('inv-contribution').value);
+            const interest = App.utils.toNum(document.getElementById('inv-interest').value);
+            const term = App.utils.toNum(document.getElementById('inv-term').value);
+            const resultEl = document.getElementById('investment-result');
+
+            if (principal < 0 || contribution < 0 || interest <= 0 || term <= 0) {
+                resultEl.innerHTML = '<p style="color:var(--danger);">Bütün xanaları düzgün doldurun.</p>';
                 return;
             }
 
-            // Hesablama (2025-ci il üçün proqnozlaşdırılan qanunvericiliyə əsasən təxmini)
-            // Bu hissə qanunvericilik dəyişdikcə yenilənməlidir.
-            let grossSalary;
-            const nonTaxableMinimum = 200; // Şərti olaraq
+            const rate = interest / 100;
+            const n = 12; // Mürəkkəbləşmə periodu (aylıq)
+            const t = term; // İl
             
-            // Tərs mühəndisliklə brutonu tapmaq üçün iterativ yanaşma
-            grossSalary = netSalary; // Başlanğıc təxmin
-            for (let i = 0; i < 10; i++) { // Bir neçə iterasiya dəqiqliyi artırır
-                let incomeTax = 0;
-                if (grossSalary > 2500) {
-                    incomeTax = 350 + (grossSalary - 2500) * 0.25;
-                } else {
-                    incomeTax = (grossSalary - nonTaxableMinimum) * 0.14;
-                }
-                
-                const socialSecurity = grossSalary * 0.03;
-                const unemployment = grossSalary * 0.005;
-                const healthInsurance = grossSalary * 0.02;
-
-                const totalDeductions = incomeTax + socialSecurity + unemployment + healthInsurance;
-                grossSalary = netSalary + totalDeductions;
-            }
-
-            const finalIncomeTax = (grossSalary > 2500) ? (350 + (grossSalary - 2500) * 0.25) : (grossSalary - nonTaxableMinimum) * 0.14;
-            const finalSocialSecurity = grossSalary * 0.03;
-            const finalUnemployment = grossSalary * 0.005;
-            const finalHealthInsurance = grossSalary * 0.02;
-            const finalTotalDeductions = finalIncomeTax + finalSocialSecurity + finalUnemployment + finalHealthInsurance;
+            // Mürəkkəb faiz düsturu (aylıq əlavələrlə)
+            let futureValue = principal * Math.pow(1 + rate / n, n * t);
+            let futureValueOfSeries = contribution * ((Math.pow(1 + rate / n, n * t) - 1) / (rate / n));
             
+            const totalFutureValue = futureValue + futureValueOfSeries;
+            const totalContributions = principal + (contribution * 12 * term);
+            const totalInterest = totalFutureValue - totalContributions;
+
             resultEl.innerHTML = `
-                <div class="result-row total"><span>Ümumi Əmək Haqqı (Bruto):</span><strong>${App.utils.fmt(grossSalary)}</strong></div>
-                <h4 style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">Tutulmalar:</h4>
-                <div class="result-row"><span>Gəlir Vergisi:</span><strong>${App.utils.fmt(finalIncomeTax)}</strong></div>
-                <div class="result-row"><span>DSMF:</span><strong>${App.utils.fmt(finalSocialSecurity)}</strong></div>
-                <div class="result-row"><span>İşsizlikdən sığorta:</span><strong>${App.utils.fmt(finalUnemployment)}</strong></div>
-                <div class="result-row"><span>İcbari Tibbi Sığorta:</span><strong>${App.utils.fmt(finalHealthInsurance)}</strong></div>
-                <div class="result-row total"><span>Cəmi Tutulma:</span><strong>${App.utils.fmt(finalTotalDeductions)}</strong></div>
+                <div class="result-row total"><span>Gələcək Dəyər:</span><strong>${App.utils.fmt(totalFutureValue)}</strong></div>
+                <div class="result-row"><span>Cəmi Yatırım:</span><strong>${App.utils.fmt(totalContributions)}</strong></div>
+                <div class="result-row"><span>Cəmi Faiz Gəliri:</span><strong>${App.utils.fmt(totalInterest)}</strong></div>
             `;
         }
     };
 
-    App.notes = { /* ... mövcud kodun eynisi ... */ };
-    App.notes.key = 'notes_v2';
-    App.notes.init = function() { this.listEl = document.getElementById('notes-list'); document.getElementById('add-note').addEventListener('click', () => this.add()); document.getElementById('note-search').addEventListener('input', (e) => this.render(e.target.value)); this.render(); };
-    App.notes.render = function(searchTerm = '') { let notes = App.utils.load(this.key, []); this.listEl.innerHTML = ''; notes.sort((a,b) => (b.pinned || 0) - (a.pinned || 0) || b.date - a.date); if (searchTerm) { searchTerm = searchTerm.toLowerCase(); notes = notes.filter(n => n.title.toLowerCase().includes(searchTerm) || n.text.toLowerCase().includes(searchTerm)); } if (notes.length === 0) { this.listEl.innerHTML = '<p class="muted" style="text-align:center;">Heç bir qeyd tapılmadı.</p>'; return; } notes.forEach(note => { const noteEl = document.createElement('div'); noteEl.className = 'list-item'; noteEl.innerHTML = `<div class="list-item-content"><div class="title">${note.title || 'Başlıqsız Qeyd'}</div><div class="date">${App.utils.fmtDate(note.date)}</div><textarea class="text" readonly>${note.text}</textarea></div><div class="list-item-actions"><button class="btn ghost sm btn-pin">${note.pinned ? 'Sancaqdan Çıxar' : 'Sancaqla'}</button><button class="btn ghost sm btn-edit">Düzəliş Et</button><button class="btn danger sm btn-delete">Sil</button></div>`; this.listEl.appendChild(noteEl); noteEl.querySelector('.btn-edit').addEventListener('click', e => this.edit(e, note.id)); noteEl.querySelector('.btn-delete').addEventListener('click', () => this.delete(note.id)); noteEl.querySelector('.btn-pin').addEventListener('click', () => this.togglePin(note.id)); }); };
-    App.notes.add = function() { const titleInput = document.getElementById('note-title'); const textInput = document.getElementById('note-text'); if (!textInput.value.trim()) { App.utils.toast('Qeyd mətni boş ola bilməz.', 'error'); return; } const notes = App.utils.load(this.key, []); notes.push({ id: `n_${Date.now()}`, title: titleInput.value.trim(), text: textInput.value.trim(), date: Date.now(), pinned: false, }); App.utils.save(this.key, notes); titleInput.value = ''; textInput.value = ''; this.render(); App.utils.toast('Yeni qeyd əlavə edildi.'); };
-    App.notes.edit = function(event, id) { const button = event.target; const itemEl = button.closest('.list-item'); const textarea = itemEl.querySelector('.text'); if (textarea.readOnly) { textarea.readOnly = false; textarea.focus(); button.textContent = 'Saxla'; button.classList.remove('ghost'); } else { textarea.readOnly = true; button.textContent = 'Düzəliş Et'; button.classList.add('ghost'); const notes = App.utils.load(this.key, []); const note = notes.find(n => n.id === id); if (note) { note.text = textarea.value; App.utils.save(this.key, notes); App.utils.toast('Qeyd yeniləndi.'); } } };
-    App.notes.delete = function(id) { if (confirm('Bu qeydi silmək istədiyinizə əminsiniz?')) { let notes = App.utils.load(this.key, []); notes = notes.filter(n => n.id !== id); App.utils.save(this.key, notes); this.render(); App.utils.toast('Qeyd silindi.'); } };
-    App.notes.togglePin = function(id) { const notes = App.utils.load(this.key, []); const note = notes.find(n => n.id === id); if (note) { note.pinned = !note.pinned; App.utils.save(this.key, notes); this.render(); App.utils.toast(note.pinned ? 'Qeyd sancaqlanıb.' : 'Qeyd sancaqdan çıxarıldı.'); } };
+    App.notes = {
+        key: 'notes_v2',
+        init() { this.listEl = document.getElementById('notes-list'); document.getElementById('add-note').addEventListener('click', () => this.add()); document.getElementById('note-search').addEventListener('input', (e) => this.render(e.target.value)); this.render(); },
+        render(searchTerm = '') { let notes = App.utils.load(this.key, []); this.listEl.innerHTML = ''; notes.sort((a,b) => (b.pinned || 0) - (a.pinned || 0) || b.date - a.date); if (searchTerm) { searchTerm = searchTerm.toLowerCase(); notes = notes.filter(n => n.title.toLowerCase().includes(searchTerm) || n.text.toLowerCase().includes(searchTerm)); } if (notes.length === 0) { this.listEl.innerHTML = '<p class="muted" style="text-align:center;">Heç bir qeyd tapılmadı.</p>'; return; } notes.forEach(note => { const noteEl = document.createElement('div'); noteEl.className = 'list-item'; noteEl.innerHTML = `<div class="list-item-content"><div class="title">${note.title || 'Başlıqsız Qeyd'}</div><div class="date">${App.utils.fmtDate(note.date)}</div><textarea class="text" readonly>${note.text}</textarea></div><div class="list-item-actions"><button class="btn ghost sm btn-pin">${note.pinned ? 'Sancaqdan Çıxar' : 'Sancaqla'}</button><button class="btn ghost sm btn-edit">Düzəliş Et</button><button class="btn danger sm btn-delete">Sil</button></div>`; this.listEl.appendChild(noteEl); noteEl.querySelector('.btn-edit').addEventListener('click', e => this.edit(e, note.id)); noteEl.querySelector('.btn-delete').addEventListener('click', () => this.delete(note.id)); noteEl.querySelector('.btn-pin').addEventListener('click', () => this.togglePin(note.id)); }); },
+        add() { const titleInput = document.getElementById('note-title'); const textInput = document.getElementById('note-text'); if (!textInput.value.trim()) { App.utils.toast('Qeyd mətni boş ola bilməz.', 'error'); return; } const notes = App.utils.load(this.key, []); notes.push({ id: `n_${Date.now()}`, title: titleInput.value.trim(), text: textInput.value.trim(), date: Date.now(), pinned: false, }); App.utils.save(this.key, notes); titleInput.value = ''; textInput.value = ''; this.render(); App.utils.toast('Yeni qeyd əlavə edildi.'); },
+        edit(event, id) { const button = event.target; const itemEl = button.closest('.list-item'); const textarea = itemEl.querySelector('.text'); if (textarea.readOnly) { textarea.readOnly = false; textarea.focus(); button.textContent = 'Saxla'; button.classList.remove('ghost'); } else { textarea.readOnly = true; button.textContent = 'Düzəliş Et'; button.classList.add('ghost'); const notes = App.utils.load(this.key, []); const note = notes.find(n => n.id === id); if (note) { note.text = textarea.value; App.utils.save(this.key, notes); App.utils.toast('Qeyd yeniləndi.'); } } },
+        delete(id) { if (confirm('Bu qeydi silmək istədiyinizə əminsiniz?')) { let notes = App.utils.load(this.key, []); notes = notes.filter(n => n.id !== id); App.utils.save(this.key, notes); this.render(); App.utils.toast('Qeyd silindi.'); } },
+        togglePin(id) { const notes = App.utils.load(this.key, []); const note = notes.find(n => n.id === id); if (note) { note.pinned = !note.pinned; App.utils.save(this.key, notes); this.render(); App.utils.toast(note.pinned ? 'Qeyd sancaqlanıb.' : 'Qeyd sancaqdan çıxarıldı.'); } }
+    };
     
     // TƏKMİLLƏŞDİRİLMİŞ: PARAMETRLƏR MODULU
     App.settings = {
@@ -722,10 +848,39 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('import-file-input').addEventListener('change', (e) => this.importData(e));
             document.querySelectorAll('[data-action^="clear-"]').forEach(btn => btn.addEventListener('click', () => this.clearData(btn.dataset.action)));
             
-            // YENİ: Valyuta seçimi
+            // Valyuta seçimi
             this.currencySelect = document.getElementById('currency-select');
             this.loadCurrency();
             this.currencySelect.addEventListener('change', () => this.saveCurrency());
+
+            // YENİ: Şifrə dəyişikliyi
+            document.getElementById('change-password-btn').addEventListener('click', () => this.changePassword());
+        },
+        changePassword() {
+            const currentPassInput = document.getElementById('current-password');
+            const newPassInput = document.getElementById('new-password');
+            const confirmPassInput = document.getElementById('confirm-password');
+
+            const savedPassword = App.utils.load('app_password', '1234');
+            
+            if (currentPassInput.value !== savedPassword) {
+                App.utils.toast('Mövcud şifrə yanlışdır.', 'error');
+                return;
+            }
+            if (newPassInput.value.length < 4) {
+                App.utils.toast('Yeni şifrə ən az 4 simvoldan ibarət olmalıdır.', 'error');
+                return;
+            }
+            if (newPassInput.value !== confirmPassInput.value) {
+                App.utils.toast('Yeni şifrələr uyğun gəlmir.', 'error');
+                return;
+            }
+
+            App.utils.save('app_password', newPassInput.value);
+            App.utils.toast('Şifrə uğurla dəyişdirildi.', 'success');
+            currentPassInput.value = '';
+            newPassInput.value = '';
+            confirmPassInput.value = '';
         },
         loadCurrency() {
             const savedCurrency = App.utils.load('currency_symbol', '₼');
@@ -742,13 +897,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Valyuta dəyişdikdə nəticələri yenidən render etmək
             if (document.querySelector('#tab-billing.open')) App.sharedBilling.renderHistory();
             if (document.querySelector('#tab-ledger.open')) App.dailyLedger.updateSummary();
+            if (document.querySelector('#tab-budget.open')) App.budgetPlanner.render();
+
         },
         exportData() {
             const data = {
-                theme: App.utils.load('theme'), currency: App.utils.load('currency_symbol'),
+                theme: App.utils.load('theme'), currency: App.utils.load('currency_symbol'), password: App.utils.load('app_password'),
                 sharedBilling: App.utils.load(App.sharedBilling.key),
                 billingHistory: App.utils.load(App.sharedBilling.historyKey),
-                dailyLedger: App.utils.load(App.dailyLedger.key), notes: App.utils.load(App.notes.key)
+                dailyLedger: App.utils.load(App.dailyLedger.key),
+                budgetPlanner: App.utils.load(App.budgetPlanner.key),
+                notes: App.utils.load(App.notes.key)
             };
             const dataStr = JSON.stringify(data, null, 2);
             const blob = new Blob([dataStr], {type: "application/json"});
@@ -765,9 +924,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (confirm('Mövcud məlumatlar bu fayldakılarla əvəz olunsun? Bu əməliyyat geri qaytarıla bilməz.')) {
                         if (data.theme) App.utils.save('theme', data.theme);
                         if (data.currency) App.utils.save('currency_symbol', data.currency);
+                        if (data.password) App.utils.save('app_password', data.password);
                         if (data.sharedBilling) App.utils.save(App.sharedBilling.key, data.sharedBilling);
                         if (data.billingHistory) App.utils.save(App.sharedBilling.historyKey, data.billingHistory);
                         if (data.dailyLedger) App.utils.save(App.dailyLedger.key, data.dailyLedger);
+                        if (data.budgetPlanner) App.utils.save(App.budgetPlanner.key, data.budgetPlanner);
                         if (data.notes) App.utils.save(App.notes.key, data.notes);
                         App.utils.toast('Məlumatlar uğurla idxal edildi. Səhifə yenilənir...', 'success');
                         setTimeout(() => location.reload(), 2000);
@@ -780,14 +941,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const actions = {
                 'clear-billing': { keys: [App.sharedBilling.key, App.sharedBilling.historyKey], name: 'Ümumi Hesab'},
                 'clear-ledger': { keys: [App.dailyLedger.key], name: 'Günlük Kassa' },
+                'clear-budget': { keys: [App.budgetPlanner.key], name: 'Büdcə' },
                 'clear-notes': { keys: [App.notes.key], name: 'Qeydlər' },
-                'clear-all': { keys: [App.sharedBilling.key, App.sharedBilling.historyKey, App.dailyLedger.key, App.notes.key, 'currency_symbol'], name: 'Bütün Tətbiq' }
+                'clear-all': { keys: [App.sharedBilling.key, App.sharedBilling.historyKey, App.dailyLedger.key, App.notes.key, App.budgetPlanner.key, 'currency_symbol', 'app_password'], name: 'Bütün Tətbiq' }
             };
             const toClear = actions[action];
             if (toClear && confirm(`${toClear.name} məlumatlarını silməyə əminsiniz? Bu əməliyyat geri qaytarılmır.`)) {
                 toClear.keys.forEach(key => localStorage.removeItem(key));
                 App.utils.toast(`${toClear.name} məlumatları silindi. Səhifə yenilənir...`);
-                setTimeout(() => location.reload(), 2000);
+                setTimeout(() => location.reload(), 1500);
             }
         }
     };
