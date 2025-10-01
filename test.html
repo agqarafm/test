@@ -3,269 +3,208 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kart məbləğ • Smart qalıq • Qeydlər</title>
+  <title>Kalkulyator | Kart · Qalıq · Qeydlər</title>
   <style>
-    /* ---------------------------------- */
-    /* 1. RƏNG DƏYİŞƏNLƏRİ (Mövzu Dəstəyi) */
-    /* ---------------------------------- */
+    /*
+     * Yeni Dizayn: Neon Stil Tünd Mövzu
+     */
     :root{
-      /* Tünd Mövzu (Default) */
-      --bg: #0b1020;
-      --bg-gradient-1: #1a2550;
-      --bg-gradient-2: #271a50;
-      --panel: #131a2e;
-      --panel-2: #0f1528;
-      --input-bg: #0c1327;
-      --card-bg: #0e1530;
-      --border: #223057;
-      --border-dark: #24325d;
-      --text: #e8eeff;
-      --muted: #9fb0ffb3;
-      --primary: #6b8bff;
-      --primary-2: #86a3ff;
-      --ring: #a2b6ff55;
-      --shadow: 0 10px 25px rgba(0,0,0,.35), 0 6px 12px rgba(8,15,40,.5);
-      --radius: 18px;
-      --danger: #ff4d4f;
+      --bg-color: #0d1222;            /* Əsas Fon */
+      --panel-bg: #1a223a;            /* Panel Fonu */
+      --card-bg: #151c33;             /* Kart Fonu */
+      --text-main: #f0f4ff;           /* Əsas Mətn */
+      --text-muted: #94a3b8;          /* İkinci Dərəcəli Mətn */
+      --accent-color: #8c9eff;        /* Vurğu / Neon Mavi */
+      --accent-shadow: 0 0 10px rgba(140, 158, 255, 0.5); /* Vurğu Kölgəsi */
+      --border-color: #2e3a5a;
+      --shadow-lg: 0 10px 30px rgba(0,0,0,.45);
+      --radius-xl: 16px;
     }
 
-    /* Açıq Mövzu */
-    .light-mode{
-      --bg: #f5f8ff;
-      --bg-gradient-1: #dbe4ff;
-      --bg-gradient-2: #e0d9ff;
-      --panel: #ffffff;
-      --panel-2: #f8f8ff;
-      --input-bg: #f0f4ff;
-      --card-bg: #ffffff;
-      --border: #ccd8f0;
-      --border-dark: #b8c7e6;
-      --text: #0d1326;
-      --muted: #5e6b8c;
-      --primary: #4a75ff;
-      --primary-2: #3060ff;
-      --ring: #4a75ff44;
-      --shadow: 0 8px 20px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
-    }
-    
-    /* ---------------------------------- */
-    /* 2. ÜMUMİ STİLLƏR */
-    /* ---------------------------------- */
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{ box-sizing: border-box; }
+    html,body{ height: 100%; }
     body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 10% -10%, var(--bg-gradient-1) 0%, transparent 55%),
-                  radial-gradient(1200px 600px at 90% -10%, var(--bg-gradient-2) 0%, transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-      transition: background-color .4s ease, color .4s ease;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1000px 500px at 5% 5%, #182343 0%, transparent 45%),
+                  radial-gradient(1000px 500px at 95% 5%, #2a1843 0%, transparent 45%),
+                  var(--bg-color);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
     }
 
-    .container{ max-width:1100px; margin:40px auto; padding:0 16px; }
+    .container{ max-width: 1000px; margin: 40px auto; padding: 0 16px; }
 
-    /* Header / Menyu çubuğu */
+    /* Navigasiya / Menyu */
     .nav{
-      position:sticky; top:10px; z-index:50;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
-      border:1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding:12px; border-radius: calc(var(--radius) + 6px);
-      backdrop-filter:saturate(1.2) blur(6px);
-      transition: box-shadow .4s ease, background .4s ease, border-color .4s ease;
+      position: sticky; top: 20px; z-index: 50;
+      display: flex; gap: 16px; align-items: center; justify-content: space-between;
+      background: rgba(26, 34, 58, 0.8);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      padding: 14px 18px; border-radius: 20px;
+      backdrop-filter: blur(8px);
     }
-    .brand{ display:flex; gap:10px; align-items:center; font-weight:700; letter-spacing:.2px; }
-    .tabs{ display:flex; gap:8px; }
+    .brand{ display: flex; gap: 10px; align-items: center; font-weight: 700; font-size: 1.15em; }
+    .brand svg{ fill: var(--accent-color); filter: drop-shadow(0 0 5px var(--accent-color)); }
+
+    .tabs{ display: flex; gap: 10px; }
 
     .tab{
-      position:relative; isolation:isolate;
-      display:inline-flex; align-items:center; gap:10px; 
-      padding:12px 16px; border-radius: 999px; cursor:pointer;
-      background: var(--input-bg);
-      border:1px solid var(--border); color:var(--text);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .4s ease;
-      user-select:none;
-      box-shadow: inset 0 0 0 0 rgba(107,139,255,.0);
+      padding: 10px 18px; border-radius: 999px; cursor: pointer;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-weight: 600;
+      transition: all .2s ease;
+      user-select: none;
+      box-shadow: inset 0 0 0 0 transparent;
     }
-    .tab:hover{ transform: translateY(-1px); border-color:var(--primary); box-shadow: inset 0 0 24px var(--primary-2)14; }
-    .tab.active{ border-color:var(--primary-2); box-shadow: inset 0 0 32px var(--primary)26; }
-    .tab:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
-
-    .tab.active::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        border-radius: inherit;
-        background: radial-gradient(circle at 50% 50%, var(--primary)33, transparent 70%);
-        opacity: 0.5;
-        z-index: -2;
-        transition: opacity 0.3s ease;
+    .tab:hover{
+      border-color: var(--accent-color);
+      color: var(--text-main);
+      box-shadow: 0 0 15px rgba(140, 158, 255, 0.2);
+    }
+    .tab.active{
+      border-color: var(--accent-color);
+      color: var(--text-main);
+      box-shadow: var(--accent-shadow), inset 0 0 15px rgba(140, 158, 255, 0.4);
+      background: #232c45;
     }
 
-    .tab .pill{
-      position:absolute; inset:auto 8px -8px auto; 
-      background:linear-gradient(90deg,var(--primary),var(--primary-2));
-      width: 22px; height: 22px; border-radius:999px; opacity:0; transform: translateY(6px) scale(.6);
-      transition: .35s ease;
-      box-shadow: 0 6px 18px var(--primary)77;
-      z-index:-1;
-    }
-    .tab:hover .pill, .tab.active .pill{ opacity:.9; transform: translateY(0) scale(1); }
-
-    .tab .label{ font-weight:600; letter-spacing:.2px; }
-
-    /* Açılan panel (dropdown) */
-    .dropdown{ position:relative; margin-top:14px; }
+    /* Açılan Panel */
+    .dropdown{ margin-top: 20px; }
     .panel{
-      overflow:hidden; 
-      max-height:0; opacity:0; transform: translateY(-8px) scale(.98);
-      transition: max-height .6s cubic-bezier(.25, .8, .25, 1), opacity .5s ease, transform .5s ease;
-      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
-      border:1px solid var(--border); border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-height: 0; opacity: 0; transform: translateY(-10px);
+      transition: max-height .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease, transform .4s ease;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
     }
-    .panel.open{ max-height: 1000px; opacity:1; transform: translateY(0) scale(1); }
-    .panel-inner{ padding: 22px; display:grid; gap:18px; }
+    .panel.open{ max-height: 1200px; opacity: 1; transform: translateY(0); }
+    .panel-inner{ padding: 24px; display: grid; gap: 20px; }
 
-    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .grid{ display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
     .col-4{ grid-column: span 4; }
     .col-6{ grid-column: span 6; }
     .col-12{ grid-column: span 12; }
     @media (max-width: 860px){ .col-4, .col-6{ grid-column: span 12; } }
 
     .card{
-      background: var(--card-bg); border:1px solid var(--border); border-radius: calc(var(--radius) - 6px);
-      padding:16px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-      transition: background .4s ease, border-color .4s ease;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 18px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
     }
 
-    .headline{ font-size:18px; font-weight:700; margin:2px 0 10px; }
-    .muted{ color:var(--muted); font-size:13px; }
+    .headline{ font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--accent-color); }
+    .muted{ color: var(--text-muted); font-size: 14px; }
 
-    label{ color:var(--muted); display:flex; gap:8px; align-items:center; font-weight:600; margin-bottom:6px; }
+    label{ display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
 
     .input{
-      width:100%; padding:12px 14px; border-radius:12px; outline:none; 
-      background:var(--input-bg); color:var(--text); font-size:16px; border:1px solid var(--border);
-      transition: box-shadow .2s ease, border-color .2s ease, transform .1s ease, background .4s ease, color .4s ease;
-      font-variant-numeric: tabular-nums;
+      width: 100%; padding: 12px 14px; border-radius: 10px; outline: none;
+      background: #101529; color: var(--text-main); font-size: 16px; border: 1px solid var(--border-color);
+      transition: box-shadow .2s ease, border-color .2s ease;
     }
-    .input:focus{ border-color:var(--primary-2); box-shadow: 0 0 0 6px var(--ring); }
-    .input:enabled { border-color:var(--primary); }
-    .input:enabled:focus{ background: var(--panel); }
+    .input:focus{ border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(140, 158, 255, 0.3); }
 
-    .row{ display:flex; gap:10px; align-items:center; }
+    .row{ display: flex; gap: 10px; align-items: center; }
 
     .btn{
-      display:inline-flex; align-items:center; gap:10px; 
-      padding:12px 16px; border-radius:12px; cursor:pointer; border:1px solid var(--border-dark); 
-      background:linear-gradient(180deg, var(--panel), var(--panel-2)); color:var(--text); font-weight:700;
-      transition: transform .12s ease, filter .2s ease, box-shadow .2s ease, border-color .2s ease, background .4s ease, color .4s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 10px; cursor: pointer; border: none;
+      background: linear-gradient(135deg, #7c8fff 0%, #a2b6ff 100%);
+      color: var(--bg-color); font-weight: 700;
+      transition: transform .12s ease, box-shadow .2s ease, opacity .2s;
+      box-shadow: 0 6px 15px rgba(140, 158, 255, 0.35);
     }
-    .btn:hover{ filter:brightness(1.1); border-color:var(--primary); box-shadow: 0 10px 24px var(--primary)22; }
-    .btn:active{ transform: translateY(1px) scale(.99); }
-    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+    .btn:hover{ opacity: .9; }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 3px 10px rgba(140, 158, 255, 0.35); }
 
-    .btn.ghost{ background:var(--input-bg); border-color:var(--border); font-weight:600; }
+    .btn.ghost{
+      background: transparent; border: 1px solid var(--border-color); color: var(--text-main);
+      box-shadow: none; font-weight: 600;
+    }
+    .btn.ghost:hover{ background: #232c45; border-color: var(--accent-color); }
 
-    .tag{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:var(--input-bg); color:var(--muted); transition: background .4s ease, border-color .4s ease; }
-    .tag .date-stamp{ color:var(--primary-2); font-weight: 500;}
+    .tag{ font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid #3d4a6c; background: #1f2740; color: var(--text-muted); }
 
     /* Modal */
-    .modal-backdrop{ position:fixed; inset:0; background:rgba(4,8,20,.6); display:none; align-items:center; justify-content:center; z-index:100; }
-    .modal-backdrop.show{ display:flex; animation: fadeIn .18s ease; }
+    .modal-backdrop{ position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-backdrop.show{ display: flex; animation: fadeIn .2s ease; }
     .modal{
-      width:min(560px, calc(100vw - 28px));
-      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
-      border:1px solid var(--primary); border-radius: calc(var(--radius) + 2px);
-      box-shadow: var(--shadow);
-      transform: translateY(8px) scale(.98); opacity:0; animation: pop .2s ease forwards;
-      will-change: transform, opacity;
-      transition: background .4s ease, border-color .4s ease;
+      width: min(450px, calc(100vw - 28px));
+      background: var(--panel-bg);
+      border: 2px solid var(--accent-color);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--accent-shadow), var(--shadow-lg);
+      transform: translateY(10px) scale(.95); opacity: 0; animation: pop .25s ease forwards;
     }
-    .modal-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border-dark); }
-    .modal-title{ font-weight:800; letter-spacing:.2px; }
-    .modal-body{ padding:16px; }
+    .modal-header{ display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #3d4a6c; }
+    .modal-title{ font-weight: 800; font-size: 1.2em; color: var(--accent-color); }
+    .modal-body{ padding: 20px; }
 
-    .result-total{
-        font-size: 20px; font-weight: 800;
-        background: -webkit-linear-gradient(90deg, var(--primary), var(--primary-2));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: .5px;
-    }
+    @keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+    @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1 } }
+
+    /* Toast */
+    .toast{ position: fixed; right: 20px; bottom: 20px; background: var(--card-bg); border: 1px solid var(--accent-color); color: var(--text-main); padding: 12px 18px; border-radius: 10px; box-shadow: var(--shadow-lg), var(--accent-shadow); opacity: 0; transform: translateY(10px); transition: .3s; z-index: 120; }
+    .toast.show{ opacity: 1; transform: translateY(0); }
 
     /* Qeydlər listi */
-    .notes-list{ display:grid; gap:10px; }
-    .note-item{ 
-      display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:start; 
-      background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; 
-      transition: background .4s ease, border-color .4s ease;
+    .notes-list{ display: grid; gap: 12px; }
+    .note-item{
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;
     }
-    .note-content{ display:flex; flex-direction: column; gap: 8px; }
-    
-    .nav-util{ margin-left: auto; }
-
-    /* Rəqəm daxil edilməsi zamanı səhv haşiyəsi (Validation) */
-    .input.error { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.3); }
-
+    .note-item.editing .note-text{ border-color: #3f51b5 !important; background: #101529 !important; }
+    .note-text{ transition: all .2s; }
+    .note-actions{ display: flex; gap: 8px; flex-shrink: 0; }
   </style>
 </head>
 <body>
   <div class="container">
     <nav class="nav">
       <div class="brand" title="Tam işlək yerli yaddaşlı tətbiq">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.3L12 14.77 7.22 16.68l.91-5.3L4.27 7.62l5.34-.78L12 2z" fill="url(#g)"/>
-          <defs>
-            <linearGradient id="g" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#6b8bff"/><stop offset="1" stop-color="#86a3ff"/>
-            </linearGradient>
-          </defs>
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.3L12 14.77 7.22 16.68l.91-5.3L4.27 7.62l5.34-.78L12 2z"/>
         </svg>
-        <div>Hesablayıcı Tətbiq</div>
+        <div>Kalkulyator</div>
       </div>
-      
       <div class="tabs" role="tablist" aria-label="Menyu">
-        <button class="tab active" data-target="#tab-kart" role="tab" aria-selected="true">
-          <span class="label">Kart məbləğ</span>
-          <span class="pill" aria-hidden="true"></span>
-          <span class="glow" aria-hidden="true"></span>
-        </button>
-        <button class="tab" data-target="#tab-smart" role="tab" aria-selected="false">
-          <span class="label">Smart qalıq</span>
-          <span class="pill" aria-hidden="true"></span>
-          <span class="glow" aria-hidden="true"></span>
-        </button>
-        <button class="tab" data-target="#tab-notes" role="tab" aria-selected="false">
-          <span class="label">Qeydlər</span>
-          <span class="pill" aria-hidden="true"></span>
-          <span class="glow" aria-hidden="true"></span>
-        </button>
-      </div>
-
-      <div class="row nav-util">
-        <button class="btn ghost" id="btn-export" title="Məlumatları JSON faylı kimi endir">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </button>
-        <button class="btn ghost" id="btn-toggle-theme" title="Mövzunu dəyişdir (Açıq/Tünd)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path id="theme-icon" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-        </button>
+        <button class="tab active" data-target="#tab-kart" role="tab" aria-selected="true">Kart məbləğ</button>
+        <button class="tab" data-target="#tab-smart" role="tab" aria-selected="false">Smart qalıq</button>
+        <button class="tab" data-target="#tab-notes" role="tab" aria-selected="false">Qeydlər</button>
       </div>
     </nav>
 
     <div class="dropdown">
       <section id="tab-kart" class="panel open" aria-hidden="false">
         <div class="panel-inner">
-          <div class="headline">Kart məbləğ</div>
-          <div class="muted">Aidə, Gülşad və Arzu üçün məbləğləri daxil edin. Daxil etdiyiniz dəyərlər avtomatik yadda saxlanılır.</div>
-          <div class="grid">
-            <div class="col-4"><div class="card"><label for="aide">Aidə (₼)</label><input id="aide" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-4"><div class="card"><label for="gulshad">Gülşad (₼)</label><input id="gulshad" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-4"><div class="card"><label for="arzu">Arzu (₼)</label><input id="arzu" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-12 row" style="justify-content:space-between;">
+          <div class="headline">Kart Məbləğlərinin Cəmi</div>
+          <div class="muted">Aidə, Gülşad və Arzu üçün məbləğləri daxil edin. Dəyərlər avtomatik yadda saxlanılır.</div>
+
+          <div class="grid" style="margin-top: 10px;">
+            <div class="col-4">
+              <div class="card">
+                <label for="aide">Aidə</label>
+                <input id="aide" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="card">
+                <label for="gulshad">Gülşad</label>
+                <input id="gulshad" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="card">
+                <label for="arzu">Arzu</label>
+                <input id="arzu" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-12 row" style="justify-content:space-between; margin-top: 5px;">
               <div class="tag" id="kart-status">Avtoyaddaş aktivdir</div>
               <div class="row">
                 <button class="btn" id="btn-kart-calc">Hesabla</button>
@@ -280,14 +219,35 @@
     <div class="dropdown">
       <section id="tab-smart" class="panel" aria-hidden="true">
         <div class="panel-inner">
-          <div class="headline">Smart qalıq</div>
+          <div class="headline">Smart Qalıqların Hesablanması</div>
           <div class="muted">2 nağd və 2 kart məbləğini daxil edin. Dəyərlər avtomatik yadda saxlanılır.</div>
-          <div class="grid">
-            <div class="col-6"><div class="card"><label for="cash1">Nağd məbləğ 1 (₼)</label><input id="cash1" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-6"><div class="card"><label for="cash2">Nağd məbləğ 2 (₼)</label><input id="cash2" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-6"><div class="card"><label for="card1">Kart məbləği 1 (₼)</label><input id="card1" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-6"><div class="card"><label for="card2">Kart məbləği 2 (₼)</label><input id="card2" class="input" inputmode="decimal" placeholder="0.00" /></div></div>
-            <div class="col-12 row" style="justify-content:space-between;">
+
+          <div class="grid" style="margin-top: 10px;">
+            <div class="col-6">
+              <div class="card">
+                <label for="cash1">Nağd məbləğ 1</label>
+                <input id="cash1" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="card">
+                <label for="cash2">Nağd məbləğ 2</label>
+                <input id="cash2" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="card">
+                <label for="card1">Kart məbləği 1</label>
+                <input id="card1" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="card">
+                <label for="card2">Kart məbləği 2</label>
+                <input id="card2" class="input" inputmode="decimal" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="col-12 row" style="justify-content:space-between; margin-top: 5px;">
               <div class="tag" id="smart-status">Avtoyaddaş aktivdir</div>
               <div class="row">
                 <button class="btn" id="btn-smart-calc">Hesabla</button>
@@ -302,16 +262,18 @@
     <div class="dropdown">
       <section id="tab-notes" class="panel" aria-hidden="true">
         <div class="panel-inner">
-          <div class="headline">Qeydlər</div>
-          <div class="muted">Gündəlik qeydlərinizi yazın. Qeydlər avtomatik yadda saxlanılır; redaktə və silmə mümkündür.</div>
+          <div class="headline">Gündəlik Qeydlər</div>
+          <div class="muted">Qeydlər yerli olaraq yadda saxlanılır. Redaktə etmək və silmək mümkündür.</div>
+
           <div class="card">
-            <label for="note-text">Yeni qeyd</label>
-            <textarea id="note-text" class="input" rows="3" placeholder="Məsələn: 02.09.2025 üçün plan..."></textarea>
-            <div class="row" style="justify-content:space-between; margin-top:10px;">
+            <label for="note-text">Yeni qeyd əlavə et</label>
+            <textarea id="note-text" class="input note-text" rows="3" placeholder="Məsələn: 02.09.2025 üçün plan..."></textarea>
+            <div class="row" style="justify-content:space-between; margin-top:15px;">
               <div class="tag" id="notes-status">Avtoyaddaş aktivdir</div>
-              <button class="btn" id="add-note">Qeydi əlavə et</button>
+              <button class="btn" id="add-note">Qeydi Əlavə Et</button>
             </div>
           </div>
+
           <div class="notes-list" id="notes-list" aria-live="polite"></div>
         </div>
       </section>
@@ -328,363 +290,206 @@
     </div>
   </div>
 
-  <div class="toast" id="toast">Yadda saxlanıldı</div>
+  <div class="toast" id="toast">Əməliyyat uğurlu oldu</div>
 
   <script>
-    // ====================================================================
-    // 1. UTILITY FUNKSİYALAR (Utils)
-    // ====================================================================
+    /*
+     * JavaScript Logikası (Daha Təmiz və Modul)
+     */
 
-    // number parse & format
+    // Utilities
     const toNum = (v) => {
-        if (v == null) return 0;
-        const s = String(v).replace(/\s+/g, '').replace(/,/g, '.');
-        const n = parseFloat(s);
-        return Number.isFinite(n) ? n : 0;
+      if (v == null) return 0;
+      const s = String(v).replace(/\s+/g, '').replace(/,/g, '.');
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : 0;
     };
-
-    // Rəqəmi AZ formatında (minlik ayırıcı ilə) və Məzənnə (₼) ilə formatlaşdırır.
-    const fmt = (n, currency = true) => {
-        const value = new Intl.NumberFormat('az-AZ', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(n || 0);
-        return currency ? `${value} ₼` : value;
-    };
-
-    // storage helpers
+    const fmt = (n) => new Intl.NumberFormat('az-AZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0);
     const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
     const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d } catch { return d } };
 
-    // Toast
+    // Toast Notification
     let toastTimer;
     const toast = (msg) => {
-        const el = document.getElementById('toast');
-        el.textContent = msg; el.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => el.classList.remove('show'), 1400);
-    }
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+    };
 
     // Modal
     const modal = {
-        open(title, html) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').innerHTML = html;
-            const bd = document.getElementById('modal-backdrop');
-            bd.classList.add('show');
-            bd.setAttribute('aria-hidden', 'false');
-        },
-        close() {
-            const bd = document.getElementById('modal-backdrop');
-            bd.classList.remove('show');
-            bd.setAttribute('aria-hidden', 'true');
-        }
+      open(title, html) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').innerHTML = html;
+        const bd = document.getElementById('modal-backdrop');
+        bd.classList.add('show');
+        bd.setAttribute('aria-hidden', 'false');
+      },
+      close() {
+        const bd = document.getElementById('modal-backdrop');
+        bd.classList.remove('show');
+        bd.setAttribute('aria-hidden', 'true');
+      }
     };
 
-    // ====================================================================
-    // 2. TƏTBİQİN ƏSAS KOMPONENTLƏRİ
-    // ====================================================================
-
-    // Tabs -> açılan panellər (dropdown)
+    // TABS Logic
     document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            const target = tab.getAttribute('data-target');
-            document.querySelectorAll('.panel').forEach(p => {
-                const isTarget = '#' + p.id === target;
-                p.classList.toggle('open', isTarget);
-                p.setAttribute('aria-hidden', String(!isTarget));
-            });
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-target');
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.panel').forEach(p => {
+          const isTarget = '#' + p.id === target;
+          p.classList.toggle('open', isTarget);
+          p.setAttribute('aria-hidden', String(!isTarget));
         });
+      });
     });
 
-    // Modal close events
+    // Modal Close Listeners
     document.getElementById('modal-close').addEventListener('click', modal.close);
     document.getElementById('modal-backdrop').addEventListener('click', (e) => { if (e.target.id === 'modal-backdrop') modal.close(); });
 
+    // --- KART MƏBLƏĞ LOGIC ---
+    const idsKart = ['aide', 'gulshad', 'arzu'];
+    const keyKart = 'kartAmounts.v2';
 
-    // --------------------------------------------------------------------
-    // 2.1. HESABLAMA MODULU (Kart/Smart) + VALIDATION
-    // --------------------------------------------------------------------
-
-    function createCalculatorModule(ids, key, statusElId, calcButtonId, resetButtonId, modalTitle, calcLogic) {
-
-        function validateInput(inputElement) {
-            const value = inputElement.value;
-            // Ətraflı validasiya: rəqəm, nöqtə/vergül və yalnız iki onluq rəqəmə icazə verir.
-            const isValid = /^\s*(\d*([.,]\d{0,2})?)?\s*$/.test(value);
-            
-            if (!isValid) {
-                inputElement.classList.add('error');
-                // Səhv simvolu təmizlə
-                inputElement.value = value.replace(/[^0-9.,]/g, '').replace(/([.,])(.{0,2})[.,]/g, '$1$2');
-                setTimeout(() => inputElement.classList.remove('error'), 300);
-                // toast('Yalnız rəqəmlər daxil edilə bilər'); // Hər səhv simvol üçün toast göstərməyək
-                return false;
-            }
-            inputElement.classList.remove('error');
-            return true;
-        }
-
-        function formatInput(inputElement) {
-            const num = toNum(inputElement.value);
-            if (document.activeElement !== inputElement) {
-                inputElement.value = num === 0 ? '' : fmt(num, false);
-            }
-        }
-
-        function loadState() {
-            const st = load(key, Object.fromEntries(ids.map(id => [id, ''])));
-            ids.forEach(id => {
-                const el = document.getElementById(id);
-                el.value = st[id] ?? '';
-                formatInput(el); 
-            });
-        }
-
-        function persistState() {
-            const st = Object.fromEntries(ids.map(id => {
-                const el = document.getElementById(id);
-                return [id, el.value || ''];
-            }));
-            save(key, st);
-            document.getElementById(statusElId).textContent = 'Son yaddaş: ' + new Date().toLocaleTimeString('az-AZ');
-        }
-
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            el.addEventListener('input', (e) => {
-                validateInput(e.target);
-                persistState(); 
-            });
-            
-            el.addEventListener('blur', (e) => formatInput(e.target));
-            el.addEventListener('focus', (e) => {
-                const num = toNum(e.target.value);
-                e.target.value = num === 0 ? '' : num.toFixed(2);
-            });
-        });
-
-        document.getElementById(calcButtonId).addEventListener('click', () => {
-            const values = Object.fromEntries(ids.map(id => [id, toNum(document.getElementById(id).value)]));
-            const html = calcLogic(values);
-            modal.open(modalTitle, html);
-        });
-
-        document.getElementById(resetButtonId).addEventListener('click', () => {
-            ids.forEach(id => document.getElementById(id).value = '');
-            persistState();
-        });
-
-        loadState();
+    function loadKart() {
+      const st = load(keyKart, { aide: '', gulshad: '', arzu: '' });
+      idsKart.forEach(id => { document.getElementById(id).value = st[id] ?? '' });
+    }
+    function persistKart() {
+      const st = Object.fromEntries(idsKart.map(id => [id, document.getElementById(id).value || '']));
+      save(keyKart, st);
+      toast('Kart məbləğ yadda saxlanıldı');
+      document.getElementById('kart-status').textContent = 'Son yaddaş: ' + new Date().toLocaleTimeString('az-AZ');
     }
 
-    // KART MƏBLƏĞ Məntiqi 
-    createCalculatorModule(
-        ['aide', 'gulshad', 'arzu'],
-        'kartAmounts.v1',
-        'kart-status',
-        'btn-kart-calc',
-        'btn-kart-reset',
-        'Kart məbləğ — Yekun',
-        (v) => { 
-            const sum = v.aide + v.gulshad + v.arzu;
-            return `
-                <div class="row" style="justify-content:space-between; margin-bottom:8px;"><span>Aidə</span><strong>${fmt(v.aide)}</strong></div>
-                <div class="row" style="justify-content:space-between; margin-bottom:8px;"><span>Gülşad</span><strong>${fmt(v.gulshad)}</strong></div>
-                <div class="row" style="justify-content:space-between; margin-bottom:8px;"><span>Arzu</span><strong>${fmt(v.arzu)}</strong></div>
-                <hr style="border:0; border-top:1px solid var(--border-dark); margin:12px 0;"/>
-                <div class="row" style="justify-content:space-between;"><span>Yekun</span><strong class="result-total">${fmt(sum)}</strong></div>`;
-        }
-    );
+    idsKart.forEach(id => {
+      document.getElementById(id).addEventListener('input', persistKart);
+    });
 
-    // SMART QALIQ Məntiqi 
-    createCalculatorModule(
-        ['cash1', 'cash2', 'card1', 'card2'],
-        'smartValues.v1',
-        'smart-status',
-        'btn-smart-calc',
-        'btn-smart-reset',
-        'Smart qalıq — Nəticə',
-        (v) => { 
-            const sumCash = v.cash1 + v.cash2;
-            const sumCard = v.card1 + v.card2;
-            const total = sumCash + sumCard;
-            return `
-                <div class="row" style="justify-content:space-between; margin-bottom:8px;"><span>Nağd məbləğlər</span><strong>${fmt(sumCash)}</strong></div>
-                <div class="row" style="justify-content:space-between; margin-bottom:8px;"><span>Kart məbləğləri</span><strong>${fmt(sumCard)}</strong></div>
-                <hr style="border:0; border-top:1px solid var(--border-dark); margin:12px 0;"/>
-                <div class="row" style="justify-content:space-between;"><span>Yekun</span><strong class="result-total">${fmt(total)}</strong></div>`;
-        }
-    );
+    document.getElementById('btn-kart-calc').addEventListener('click', () => {
+      const vals = idsKart.map(id => toNum(document.getElementById(id).value));
+      const sum = vals.reduce((a, b) => a + b, 0);
+      const names = ['Aidə', 'Gülşad', 'Arzu'];
+      const detail = vals.map((val, i) => `
+        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+          <span>${names[i]}</span><strong>${fmt(val)}</strong>
+        </div>
+      `).join('') + `
+        <hr style="border:0; border-top:1px solid #3d4a6c; margin:15px 0;"/>
+        <div class="row" style="justify-content:space-between; font-size:1.4em; font-weight:700;">
+          <span>YEKUN CƏM</span><strong>${fmt(sum)}</strong>
+        </div>`;
+      modal.open('Kart Məbləğ — Nəticə', detail);
+    });
 
+    document.getElementById('btn-kart-reset').addEventListener('click', () => {
+      if(!confirm('Kart məbləğlərini sıfırlamaq istədiyinizə əminsinizmi?')) return;
+      idsKart.forEach(id => document.getElementById(id).value = '');
+      persistKart();
+    });
 
-    // --------------------------------------------------------------------
-    // 2.2. QEYDLƏR MƏNTİQİ
-    // --------------------------------------------------------------------
+    // --- SMART QALIQ LOGIC ---
+    const idsSmart = ['cash1', 'cash2', 'card1', 'card2'];
+    const keySmart = 'smartValues.v2';
 
-    const keyNotes = 'notes.v1';
+    function loadSmart() {
+      const st = load(keySmart, { cash1: '', cash2: '', card1: '', card2: '' });
+      idsSmart.forEach(id => { document.getElementById(id).value = st[id] ?? '' });
+    }
+    function persistSmart() {
+      const st = Object.fromEntries(idsSmart.map(id => [id, document.getElementById(id).value || '']));
+      save(keySmart, st);
+      toast('Smart qalıq yadda saxlanıldı');
+      document.getElementById('smart-status').textContent = 'Son yaddaş: ' + new Date().toLocaleTimeString('az-AZ');
+    }
+
+    idsSmart.forEach(id => {
+      document.getElementById(id).addEventListener('input', persistSmart);
+    });
+
+    document.getElementById('btn-smart-calc').addEventListener('click', () => {
+      const v = Object.fromEntries(idsSmart.map(id => [id, toNum(document.getElementById(id).value)]));
+      const sumCash = v.cash1 + v.cash2;
+      const sumCard = v.card1 + v.card2;
+      const total = sumCash + sumCard;
+      const html = `
+        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+          <span>Nağd Məbləğlər Cəmi</span><strong>${fmt(sumCash)}</strong>
+        </div>
+        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+          <span>Kart Məbləğləri Cəmi</span><strong>${fmt(sumCard)}</strong>
+        </div>
+        <hr style="border:0; border-top:1px solid #3d4a6c; margin:15px 0;"/>
+        <div class="row" style="justify-content:space-between; font-size:1.4em; font-weight:700;">
+          <span>Ümumi Yekun</span><strong>${fmt(total)}</strong>
+        </div>`;
+      modal.open('Smart Qalıq — Nəticə', html);
+    });
+
+    document.getElementById('btn-smart-reset').addEventListener('click', () => {
+      if(!confirm('Smart qalıq dəyərlərini sıfırlamaq istədiyinizə əminsinizmi?')) return;
+      idsSmart.forEach(id => document.getElementById(id).value = '');
+      persistSmart();
+    });
+
+    // --- QEYDLƏR LOGIC ---
+    const keyNotes = 'notes.v2';
 
     function renderNotes() {
-        const listEl = document.getElementById('notes-list');
-        const items = load(keyNotes, []);
+      const listEl = document.getElementById('notes-list');
+      const items = load(keyNotes, []);
+      if (!items.length) { listEl.innerHTML = '<div class="muted" style="text-align:center; padding:20px;">Hələ heç bir qeyd yoxdur.</div>'; return; }
+      listEl.innerHTML = '';
 
-        document.getElementById('notes-status').textContent = 'Qeyd sayı: ' + items.length;
+      for (const note of items) {
+        const wrap = document.createElement('div'); wrap.className = 'note-item'; wrap.dataset.id = note.id;
+        const textarea = document.createElement('textarea'); textarea.className = 'input note-text'; textarea.rows = 2; textarea.value = note.text; textarea.disabled = true; textarea.style.resize = 'none';
+        const actions = document.createElement('div'); actions.className = 'note-actions';
+        const btnEdit = document.createElement('button'); btnEdit.className = 'btn ghost'; btnEdit.textContent = 'Düzəliş';
+        const btnSave = document.createElement('button'); btnSave.className = 'btn'; btnSave.textContent = 'Yadda Saxla'; btnSave.style.display = 'none';
+        const btnDelete = document.createElement('button'); btnDelete.className = 'btn ghost'; btnDelete.textContent = 'Sil';
 
-        if (!items.length) { listEl.innerHTML = '<div class="muted">Hələ qeyd yoxdur.</div>'; return; }
-        listEl.innerHTML = '';
+        actions.append(btnEdit, btnSave, btnDelete);
+        wrap.append(textarea, actions); listEl.appendChild(wrap);
 
-        const dateFormatter = new Intl.DateTimeFormat('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        btnEdit.addEventListener('click', () => {
+          wrap.classList.add('editing');
+          textarea.disabled = false; textarea.focus();
+          btnEdit.style.display = 'none'; btnSave.style.display = 'inline-flex';
+        });
 
-        for (const note of items) {
-            const wrap = document.createElement('div'); wrap.className = 'note-item'; wrap.dataset.id = note.id;
-            const content = document.createElement('div'); content.className = 'note-content';
+        btnSave.addEventListener('click', () => {
+          wrap.classList.remove('editing');
+          textarea.disabled = true; btnSave.style.display = 'none'; btnEdit.style.display = 'inline-flex';
+          const all = load(keyNotes, []);
+          const idx = all.findIndex(x => x.id === note.id);
+          if (idx > -1) { all[idx].text = textarea.value; save(keyNotes, all); toast('Qeyd yeniləndi'); }
+        });
 
-            const dateSpan = document.createElement('span'); dateSpan.className = 'tag date-stamp';
-            dateSpan.textContent = 'Yaradılıb: ' + dateFormatter.format(note.createdAt);
-
-            const textarea = document.createElement('textarea'); textarea.className = 'input'; textarea.rows = 2; textarea.value = note.text; textarea.disabled = true;
-
-            content.append(dateSpan, textarea);
-
-            const actions = document.createElement('div'); actions.className = 'note-actions';
-
-            const btnEdit = document.createElement('button'); btnEdit.className = 'btn ghost'; btnEdit.textContent = 'Düzəliş';
-            const btnSave = document.createElement('button'); btnSave.className = 'btn'; btnSave.textContent = 'Yadda saxla'; btnSave.style.display = 'none';
-            const btnCancel = document.createElement('button'); btnCancel.className = 'btn ghost'; btnCancel.textContent = 'Ləğv et'; btnCancel.style.display = 'none';
-            const btnDelete = document.createElement('button'); btnDelete.className = 'btn ghost'; btnDelete.textContent = 'Sil';
-
-            actions.append(btnEdit, btnSave, btnCancel, btnDelete);
-            wrap.append(content, actions); listEl.appendChild(wrap);
-
-            btnEdit.addEventListener('click', () => {
-                textarea.disabled = false;
-                textarea.focus();
-                btnEdit.style.display = 'none';
-                btnSave.style.display = 'inline-flex';
-                btnCancel.style.display = 'inline-flex';
-                textarea.dataset.originalText = textarea.value;
-                dateSpan.textContent = 'Redaktə edilir...'; 
-            });
-
-            btnSave.addEventListener('click', () => {
-                const newText = textarea.value.trim();
-                if (!newText) { toast('Mətn boş ola bilməz'); return; }
-
-                textarea.disabled = true;
-                btnSave.style.display = 'none';
-                btnCancel.style.display = 'none';
-                btnEdit.style.display = 'inline-flex';
-
-                const all = load(keyNotes, []);
-                const idx = all.findIndex(x => x.id === note.id);
-                if (idx > -1) {
-                    all[idx].text = newText;
-                    all[idx].createdAt = Date.now();
-                    save(keyNotes, all);
-                    renderNotes();
-                    toast('Qeyd yadda saxlanıldı');
-                }
-            });
-
-            btnCancel.addEventListener('click', () => {
-                textarea.value = textarea.dataset.originalText;
-                textarea.disabled = true;
-                btnSave.style.display = 'none';
-                btnCancel.style.display = 'none';
-                btnEdit.style.display = 'inline-flex';
-                dateSpan.textContent = 'Yaradılıb: ' + dateFormatter.format(note.createdAt);
-            });
-
-            btnDelete.addEventListener('click', () => {
-                const all = load(keyNotes, []);
-                save(keyNotes, all.filter(x => x.id !== note.id));
-                renderNotes();
-                toast('Qeyd silindi');
-            });
-        }
+        btnDelete.addEventListener('click', () => {
+          if(!confirm('Bu qeydi silmək istədiyinizə əminsinizmi?')) return;
+          const all = load(keyNotes, []);
+          save(keyNotes, all.filter(x => x.id !== note.id));
+          renderNotes(); toast('Qeyd silindi');
+        });
+      }
     }
 
     document.getElementById('add-note').addEventListener('click', () => {
-        const t = document.getElementById('note-text');
-        const text = t.value.trim();
-        if (!text) { toast('Mətn boşdur'); return; }
-
-        const all = load(keyNotes, []);
-        all.unshift({ id: 'n' + Date.now(), text, createdAt: Date.now() });
-        save(keyNotes, all);
-        t.value = '';
-        renderNotes();
-        toast('Qeyd əlavə olundu');
+      const t = document.getElementById('note-text');
+      const text = t.value.trim();
+      if (!text) { toast('Qeyd mətni boş ola bilməz!'); return; }
+      const all = load(keyNotes, []);
+      all.unshift({ id: 'n' + Date.now(), text, createdAt: Date.now() });
+      save(keyNotes, all); t.value = ''; renderNotes(); toast('Yeni qeyd əlavə olundu');
     });
 
-
-    // --------------------------------------------------------------------
-    // 2.3. SİSTEM VƏ SAXLANILMA (Mövzu Dəyişdirici & Export)
-    // --------------------------------------------------------------------
-
-    // Mövzu Dəyişdiricisi
-    const keyTheme = 'appTheme';
-    const btnTheme = document.getElementById('btn-toggle-theme');
-    const themeIcon = document.getElementById('theme-icon');
-
-    function applyTheme(isLight) {
-        document.body.classList.toggle('light-mode', isLight);
-        // SVG ikonasını dəyişdir (Ay/Günəş)
-        themeIcon.setAttribute('d', isLight ? "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" : "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z");
-        btnTheme.title = isLight ? "Tünd mövzuya keç" : "Açıq mövzuya keç";
-        save(keyTheme, isLight ? 'light' : 'dark');
-    }
-
-    btnTheme.addEventListener('click', () => {
-        const isLight = document.body.classList.contains('light-mode');
-        applyTheme(!isLight);
-    });
-
-    // Local Storage Export (JSON)
-    document.getElementById('btn-export').addEventListener('click', () => {
-        const data = {};
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            try {
-                // JSON-u düzgün parse etməyə çalışır
-                data[key] = JSON.parse(localStorage.getItem(key));
-            } catch (e) {
-                // Əgər JSON deyilsə, sadə mətn kimi saxlayır
-                data[key] = localStorage.getItem(key);
-            }
-        }
-
-        const filename = `hesablayici_export_${new Date().toISOString().slice(0, 10)}.json`;
-        const jsonStr = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        toast('Məlumatlar uğurla endirildi');
-    });
-
-
-    // ====================================================================
-    // 3. İLKİN YÜKLƏNMƏ (INIT)
-    // ====================================================================
-
+    // Initial Load
     (function init() {
-        // 1. Mövzunu yüklə
-        const currentTheme = load(keyTheme, 'dark');
-        applyTheme(currentTheme === 'light');
-        
-        // 2. Qeydləri yüklə
-        renderNotes();
+      loadKart(); loadSmart(); renderNotes();
     })();
   </script>
 </body>
