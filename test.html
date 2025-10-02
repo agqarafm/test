@@ -66,7 +66,7 @@
         #app { display: flex; opacity: 0; visibility: hidden; transition: opacity 0.5s ease; }
         #app.visible { opacity: 1; visibility: visible; }
 
-        /* --- Sol Menyu (DÜZƏLİŞ EDİLDİ) --- */
+        /* --- Sol Menyu (YENİ DÜZƏLİŞ) --- */
         #sidebar {
             width: 80px; height: 100vh; background: var(--sidebar-bg);
             position: fixed; top: 0; left: 0; transition: width 0.3s ease;
@@ -75,10 +75,13 @@
         #sidebar:hover { width: 280px; }
         .sidebar-header {
             display: flex; align-items: center; color: var(--light-text-color);
-            padding: 0 20px; height: 80px;
+            height: 80px; white-space: nowrap;
         }
-        .sidebar-header .logo-icon { font-size: 2em; }
-        .sidebar-header .logo-text { font-size: 1.5em; font-weight: bold; margin-left: 15px; white-space: nowrap; }
+        .sidebar-header .logo-icon {
+            width: 80px; font-size: 2em; text-align: center; flex-shrink: 0;
+        }
+        .sidebar-header .logo-text { font-size: 1.5em; font-weight: bold; }
+        
         .menu { list-style: none; padding-top: 10px; }
         .menu-item a {
             display: flex;
@@ -91,27 +94,19 @@
         }
         .menu-item a .icon {
             width: 80px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
             font-size: 1.5em;
             flex-shrink: 0;
-            transition: width 0.3s ease;
         }
         .menu-item a .text {
             opacity: 0;
             transition: opacity 0.2s ease;
-            padding-left: 15px;
-        }
-        #sidebar:hover .menu-item a .icon {
-            width: 60px;
+            margin-left: 15px;
         }
         #sidebar:hover .menu-item a .text {
             opacity: 1;
         }
         .menu-item a:hover, .menu-item.active a { background: var(--sidebar-hover); }
-
 
         /* --- Ana Məzmun --- */
         #main-content {
