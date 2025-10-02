@@ -26,44 +26,6 @@
             border-bottom: 2px solid black;
             padding-bottom: 10px;
         }
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #d9534f;
-            /* Logo şəkli varsa, bu stilləri istifadə edin */
-            /* content: url('logo.png'); */
-            /* width: 150px; */
-            /* Bu sadəcə mətn versiyasıdır */
-            font-family: Arial, sans-serif;
-            letter-spacing: 1px;
-        }
-        .logo-text {
-             display: flex;
-             align-items: center;
-        }
-        .logo-a {
-            color: #d9534f;
-            font-size: 48px;
-            font-weight: bold;
-            font-family: 'Arial Black', Gadget, sans-serif;
-        }
-        .logo-bc {
-            display: flex;
-            flex-direction: column;
-            margin-left: -5px;
-        }
-        .logo-bc span {
-            font-family: 'Arial Black', Gadget, sans-serif;
-            font-size: 18px;
-            line-height: 0.8;
-        }
-        .logo-telecom {
-            font-family: 'Arial Black', Gadget, sans-serif;
-            font-size: 24px;
-            margin-left: 10px;
-            margin-top: 10px;
-        }
-
         .contact-info {
             font-size: 12px;
             margin-top: 10px;
@@ -122,8 +84,10 @@
         }
         .controls {
             text-align: center;
-            margin-top: 30px;
-            margin-bottom: 30px;
+            margin: 20px 0;
+            padding: 10px;
+            background: #e9e9e9;
+            border-radius: 5px;
         }
         button {
             padding: 10px 20px;
@@ -134,17 +98,31 @@
         .dynamic-input {
             width: 95%;
         }
+        .add-row-container {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .no-print button {
+             padding: 4px 8px;
+             font-size: 12px;
+             color: white;
+             background-color: #d9534f;
+             border: none;
+             border-radius: 3px;
+             cursor: pointer;
+        }
 
         @media print {
             body {
                 background-color: #fff;
                 padding: 0;
             }
-            .controls {
+            .controls, .no-print {
                 display: none;
             }
             .container {
                 border: none;
+                padding: 15mm;
             }
             input[type="text"], input[type="date"] {
                 border: none;
@@ -159,19 +137,16 @@
 <body>
 
     <div class="controls">
+        <label for="logo_uploader">Logo Yüklə: </label>
+        <input type="file" id="logo_uploader" accept="image/*" style="margin-right: 20px;">
         <button onclick="generatePDF()">PDF Hazırla</button>
         <button onclick="window.print()">Çap Et</button>
     </div>
 
     <div id="invoice" class="container">
         <div class="header">
-            <div class="logo-text">
-                 <span class="logo-a">A</span>
-                 <div class="logo-bc">
-                    <span>BC</span>
-                 </div>
-                 <span class="logo-telecom">TELECOM</span>
-            </div>
+            <img id="company_logo" src="https://via.placeholder.com/250x60.png?text=ŞİRKƏT+LOGOSU" alt="Şirkət Loqosu" style="width: 250px; height: auto; margin-bottom: 10px;">
+            
             <div class="contact-info">
                 Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
                 Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
@@ -186,7 +161,7 @@
         <h3>A R A Y I Ş</h3>
 
         <p>
-            Verilir <input type="text" id="client_name" value="RZALI FƏRHAD NEYMƏT" style="width: 250px;"> oğluna (<input type="text" id="client_id" value="4YSDYV7" style="width: 80px;">) ondan ötrü ki, “ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+            Verilir <input type="text" id="client_name" value="RZALI FƏRHAD NEYMƏT oğluna" style="width: 300px;"> (<input type="text" id="client_id" value="4YSDYV7" style="width: 80px;">) ondan ötrü ki, “ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
         </p>
 
         <table id="product_table">
@@ -198,6 +173,7 @@
                     <th>Borc</th>
                     <th>Kredit/statusu</th>
                     <th>Müqavilə nömrəsi</th>
+                    <th class="no-print"></th>
                 </tr>
             </thead>
             <tbody>
@@ -208,25 +184,14 @@
                     <td><input type="text" class="dynamic-input" value="0 AZN"></td>
                     <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
                     <td><input type="text" class="dynamic-input" value="09865656"></td>
-                </tr>
-                 <tr>
-                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
-                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
-                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
-                    <td><input type="text" class="dynamic-input" value="09865656"></td>
-                </tr>
-                 <tr>
-                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
-                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
-                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
-                    <td><input type="text" class="dynamic-input" value="09865656"></td>
+                    <td class="no-print"><button onclick="removeRow(this)">Sil</button></td>
                 </tr>
             </tbody>
         </table>
+        <div class="add-row-container no-print">
+            <button onclick="addRow()">Sətir Əlavə Et</button>
+        </div>
+
 
         <div class="footer">
             <p style="text-indent: 0;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
@@ -239,21 +204,58 @@
     </div>
 
     <script>
+        // Logo yükləmə funksiyası
+        document.getElementById('logo_uploader').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('company_logo').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Cədvələ yeni sətir əlavə etmək
+        function addRow() {
+            const tableBody = document.getElementById('product_table').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow();
+            
+            newRow.innerHTML = `
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td><input type="text" class="dynamic-input" value=""></td>
+                <td class="no-print"><button onclick="removeRow(this)">Sil</button></td>
+            `;
+        }
+
+        // Cədvəldən sətir silmək
+        function removeRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
         function generatePDF() {
-            // PDF yaratmazdan əvvəl input çərçivələrini müvəqqəti olaraq gizlədirik
-            const inputs = document.querySelectorAll('input');
+            // PDF yaratmazdan əvvəl çapda görünməyən elementləri gizlət
+            const noPrintElements = document.querySelectorAll('.no-print, .controls');
+            noPrintElements.forEach(el => el.style.display = 'none');
+            
+            // Input çərçivələrini müvəqqəti olaraq gizlət
+            const inputs = document.querySelectorAll('input[type="text"], input[type="date"]');
+            const placeholders = [];
             inputs.forEach(input => {
-                input.style.border = 'none';
-                // Değerleri doğrudan metin olarak göster
-                const parent = input.parentNode;
                 const textNode = document.createTextNode(input.value);
-                parent.insertBefore(textNode, input);
+                placeholders.push({input, textNode});
+                input.parentNode.insertBefore(textNode, input);
                 input.style.display = 'none';
             });
 
             const element = document.getElementById('invoice');
             const opt = {
-                margin:       0,
+                margin:       [10, 0, 10, 0],
                 filename:     'Temizlik_Arayisi.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
@@ -262,14 +264,11 @@
 
             // Faylı yarat
             html2pdf().from(element).set(opt).save().then(() => {
-                // PDF yaradıldıqdan sonra inputları yenidən görünən edirik
-                inputs.forEach(input => {
-                    input.style.border = '1px dashed #ccc';
-                    input.style.display = 'inline-block';
-                    // Metin düğümünü kaldır
-                    if(input.previousSibling && input.previousSibling.nodeType === 3) {
-                       input.parentNode.removeChild(input.previousSibling);
-                    }
+                // PDF yaradıldıqdan sonra elementləri geri qaytar
+                noPrintElements.forEach(el => el.style.display = ''); // or original display style
+                placeholders.forEach(p => {
+                    p.input.style.display = '';
+                    p.input.parentNode.removeChild(p.textNode);
                 });
             });
         }
