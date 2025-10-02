@@ -3,283 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arayış Forması</title>
+    <title>Arayış Sistemi</title>
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 14px;
             width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
         }
-        .header {
-            text-align: left;
-            border-bottom: 2px solid black;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+
+        /* --- Form Stili --- */
+        #form-page table {
+            width: 100%; border-collapse: collapse; margin-block: 20px;
         }
-        .header img {
-            width: 100%;
-            max-width: 750px;
+        #form-page th, #form-page td {
+            border: 1px solid black; padding: 8px; text-align: center;
         }
-        .contact-info {
-            font-size: 12px;
-            text-align: left;
-            margin-top: 5px;
-        }
-        .document-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        .info-section {
-            margin-bottom: 20px;
-        }
-        .info-section p {
-            text-indent: 20px;
-            line-height: 1.5;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            font-weight: bold;
-        }
-        .footer {
-            margin-top: 40px;
-        }
-        .footer-line {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .footer-line > span {
-            flex: 1;
-        }
-        .footer-line > span:nth-child(1) {
-            text-align: left;
-        }
-        .footer-line > span:nth-child(2) {
-            text-align: center;
+        #form-page th {
+            font-weight: bold; background-color: #f2f2f2;
         }
         .form-section {
-            margin-top: 50px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 20px; border: 1px solid #ccc; border-radius: 5px;
         }
-        .form-section h3 {
-            text-align: center;
-            margin-bottom: 20px;
+        .form-section h3, .form-section h4 {
+            text-align: center; margin-bottom: 20px;
         }
         .form-input {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
+            margin-bottom: 10px; display: flex; align-items: center;
         }
         .form-input label {
-            width: 150px;
-            font-weight: bold;
-            flex-shrink: 0;
+            width: 150px; font-weight: bold; flex-shrink: 0;
         }
         .form-input input, .form-input select {
-            padding: 5px;
+            padding: 5px; width: 100%;
         }
-        .fullname-container input {
-            width: calc(100% - 105px);
-        }
-        .fullname-container select {
-            width: 100px;
-            margin-left: 5px;
-        }
-        .form-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .form-buttons button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
+        .fullname-container { display: flex; width: 100%; }
+        .fullname-container input { width: calc(100% - 105px); }
+        .fullname-container select { width: 100px; margin-left: 5px; }
+        .form-buttons { text-align: center; margin-top: 20px; }
+        .form-buttons button { padding: 10px 20px; margin: 0 10px; cursor: pointer; }
+        .prepare-button { background-color: #4CAF50; color: white; border: none; }
+
+        /* --- Arayış Stili --- */
+        #certificate-page { display: none; } /* Başlanğıcda gizli olsun */
+        .header { border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .header img { width: 100%; max-width: 750px; }
+        .contact-info { font-size: 12px; text-align: left; margin-top: 5px; }
+        .document-title { text-align: center; font-weight: bold; font-size: 16px; margin-block: 30px; }
+        .info-section p { text-indent: 20px; line-height: 1.5; }
+        #certificate-page table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+        #certificate-page th, #certificate-page td { border: 1px solid black; padding: 8px; text-align: center; }
+        #certificate-page th { font-weight: bold; }
+        .footer { margin-top: 40px; }
+        .footer-line { display: flex; justify-content: space-between; margin-top: 20px; }
+        .footer-line > span { flex: 1; }
+        .footer-line > span:nth-child(1) { text-align: left; }
+        .footer-line > span:nth-child(2) { text-align: center; }
+        .buttons { text-align: center; margin-top: 40px; }
+
+        /* --- Çap Stili --- */
         @media print {
-            .form-section, .no-print {
-                display: none;
-            }
-            body {
-                width: 100%;
-                padding: 0;
-                margin: 0;
-            }
+            body { margin: 0; padding: 0; }
+            #form-page, .no-print { display: none !important; }
+            #certificate-page { display: block !important; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img src="logo.jpg" alt="ABC Telecom Logo">
-        <div class="contact-info">
-            Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-            Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+    <div id="form-page">
+        <div class="form-section">
+            <h3>Məlumatların Daxil Edilməsi Paneli</h3>
+            <h4>Ümumi Məlumatlar</h4>
+            <div class="form-input"> <label for="date-input">Tarix:</label> <input type="date" id="date-input"> </div>
+            <div class="form-input"> <label for="location-input">Rayon:</label> <input type="text" id="location-input" value="Oğuz Rayonu"> </div>
+            <div class="form-input"> <label for="number-input">Arayış No:</label> <input type="text" id="number-input" value="0044"> </div>
+            <div class="form-input">
+                <label for="fullname-input">Ad, Soyad, Ata adı:</label>
+                <div class="fullname-container">
+                    <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT">
+                    <select id="gender-suffix">
+                        <option value="oğluna">oğluna</option>
+                        <option value="qızına">qızına</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-input"> <label for="fin-input">FİN kod:</label> <input type="text" id="fin-input" value="4YSDYV7"> </div>
+            <div class="form-input"> <label for="manager-input">Mağaza rəhbəri:</label> <input type="text" id="manager-input" value="Elnur Mürsəlov"> </div>
+            <hr>
+            <h4>Yeni Məhsul Əlavə Et</h4>
+            <div class="form-input"> <label for="product-name">Məhsulun adı:</label> <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin"> </div>
+            <div class="form-input"> <label for="sale-date">Satış tarixi:</label> <input type="text" id="sale-date" placeholder="gg/aa/iiii"> </div>
+            <div class="form-input"> <label for="credit-value">Kredit dəyəri cəm:</label> <input type="text" id="credit-value" placeholder="Məbləğ"> </div>
+            <div class="form-input"> <label for="debt-value">Borc:</label> <input type="text" id="debt-value" value="0" readonly> </div>
+            <div class="form-input">
+                <label for="credit-status">Kredit/statusu:</label>
+                <select id="credit-status">
+                    <option value="BAĞLI">BAĞLI</option>
+                    <option value="AÇIQ">AÇIQ</option>
+                </select>
+            </div>
+            <div class="form-input"> <label for="contract-number">Müqavilə nömrəsi:</label> <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi"> </div>
+            <div class="form-buttons">
+                <button onclick="addProduct()">Məhsul Əlavə Et</button>
+                <button onclick="clearProductForm()">Formanı Təmizlə</button>
+            </div>
         </div>
+        <h4>Əlavə Edilmiş Məhsullar</h4>
+        <table id="product-table-form">
+            <thead> <tr> <th>Məhsulun adı</th> <th>Satış tarixi</th> <th>Kredit dəyəri cəm</th> <th>Borc</th> <th>Kredit/statusu</th> <th>Müqavilə nömrəsi</th> <th>Əməliyyat</th> </tr> </thead>
+            <tbody></tbody>
+        </table>
+        <div class="form-buttons"> <button onclick="generateAndShowCertificate()" class="prepare-button">Arayışı Hazırla</button> </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div style="text-align: left;">
-            <span id="doc-location">Oğuz Rayonu</span><br>
-            <span id="doc-number">0044</span>
+    <div id="certificate-page">
+        <div class="header">
+            <img src="logo.jpg" alt="ABC Telecom Logo">
+            <div class="contact-info"> Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br> Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan </div>
         </div>
-        <span id="doc-date">Tarix: 02.10.2025</span>
-    </div>
-
-    <h1 class="document-title">A R A Y I Ş</h1>
-
-    <div class="info-section">
-        <p>
-            Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
-        </p>
-    </div>
-
-    <table id="product-table">
-        <thead>
-            <tr>
-                <th>Məhsulun adı</th>
-                <th>Satış tarixi</th>
-                <th>Kredit dəyəri cəm</th>
-                <th>Borc</th>
-                <th>Kredit/statusu</th>
-                <th>Müqavilə nömrəsi</th>
-                <th class="no-print">Əməliyyat</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td class="no-print"><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <p style="margin-top: 25px;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
-
-    <div class="footer">
-        <p>Hörmətlə</p>
-        <div class="footer-line">
-            <span><b>Mağaza rəhbəri:</b></span>
-            <span id="doc-manager-name"><b>Elnur Mürsəlov</b></span>
-            <span></span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="text-align: left;"> <span id="doc-location"></span><br> <span id="doc-number"></span> </div>
+            <span id="doc-date"></span>
         </div>
-    </div>
-
-    <div class="form-section">
-        <h3>Məlumatların Daxil Edilməsi Paneli</h3>
-        <div class="form-input">
-            <label for="date-input">Tarix:</label>
-            <input type="date" id="date-input" style="width: calc(100% - 150px);">
+        <h1 class="document-title">A R A Y I Ş</h1>
+        <div class="info-section">
+            <p> Verilir <b id="doc-fullname"></b> (<b id="doc-fin"></b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib: </p>
         </div>
-        <div class="form-input">
-            <label for="location-input">Rayon:</label>
-            <input type="text" id="location-input" value="Oğuz Rayonu" style="width: calc(100% - 150px);">
+        <table id="product-table-certificate">
+            <thead> <tr> <th>Məhsulun adı</th> <th>Satış tarixi</th> <th>Kredit dəyəri cəm</th> <th>Borc</th> <th>Kredit/statusu</th> <th>Müqavilə nömrəsi</th> </tr> </thead>
+            <tbody></tbody>
+        </table>
+        <p style="margin-top: 25px;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+        <div class="footer">
+            <p>Hörmətlə</p>
+            <div class="footer-line"> <span><b>Mağaza rəhbəri:</b></span> <span id="doc-manager-name"></span> <span></span> </div>
         </div>
-        <div class="form-input">
-            <label for="number-input">Arayış No:</label>
-            <input type="text" id="number-input" value="0044" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input fullname-container">
-            <label for="fullname-input">Ad, Soyad, Ata adı:</label>
-            <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT">
-            <select id="gender-suffix">
-                <option value="oğluna">oğluna</option>
-                <option value="qızına">qızına</option>
-            </select>
-        </div>
-        <div class="form-input">
-            <label for="fin-input">FİN kod:</label>
-            <input type="text" id="fin-input" value="4YSDYV7" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input">
-            <label for="manager-input">Mağaza rəhbəri:</label>
-            <input type="text" id="manager-input" value="Elnur Mürsəlov" style="width: calc(100% - 150px);">
-        </div>
-        <hr>
-        <h4>Yeni Məhsul Əlavə Et</h4>
-        <div class="form-input">
-            <label for="product-name">Məhsulun adı:</label>
-            <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input">
-            <label for="sale-date">Satış tarixi:</label>
-            <input type="text" id="sale-date" placeholder="gg/aa/iiii" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input">
-            <label for="credit-value">Kredit dəyəri cəm:</label>
-            <input type="text" id="credit-value" placeholder="Məbləğ AZN" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input">
-            <label for="debt-value">Borc:</label>
-            <input type="text" id="debt-value" value="0 AZN" readonly style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-input">
-            <label for="credit-status">Kredit/statusu:</label>
-            <select id="credit-status" style="width: calc(100% - 150px);">
-                <option value="BAĞLI">BAĞLI</option>
-                <option value="AÇIQ">AÇIQ</option>
-            </select>
-        </div>
-        <div class="form-input">
-            <label for="contract-number">Müqavilə nömrəsi:</label>
-            <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi" style="width: calc(100% - 150px);">
-        </div>
-        <div class="form-buttons">
-            <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
-            <button onclick="addProduct()">Məhsul Əlavə Et</button>
+        <div class="buttons no-print">
             <button onclick="window.print()">Çap Et</button>
-            <button onclick="clearForm()">Təmizlə</button>
+            <button onclick="showPage('form-page')">Geri Qayıt</button>
         </div>
     </div>
 
     <script>
-        function updateDocumentInfo() {
-            const dateInput = document.getElementById('date-input').value;
-            const locationInput = document.getElementById('location-input').value;
-            const numberInput = document.getElementById('number-input').value;
-            const fullnameInput = document.getElementById('fullname-input').value;
-            const genderSuffix = document.getElementById('gender-suffix').value;
-            const finInput = document.getElementById('fin-input').value;
-            const managerInput = document.getElementById('manager-input').value;
+        // Səhifə yüklənəndə tarixi formdakı xanaya yaz
+        window.onload = function() {
+            document.getElementById('date-input').valueAsDate = new Date();
+        };
 
-            let formattedDate = '';
-            if (dateInput) {
-                const date = new Date(dateInput);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                formattedDate = `${day}.${month}.${year}`;
-            }
-
-            document.getElementById('doc-date').innerText = `Tarix: ${formattedDate}`;
-            document.getElementById('doc-location').innerText = locationInput;
-            document.getElementById('doc-number').innerText = numberInput;
-            document.getElementById('doc-fullname').innerText = `${fullnameInput} ${genderSuffix}`;
-            document.getElementById('doc-fin').innerText = finInput;
-            document.getElementById('doc-manager-name').innerHTML = `<b>${managerInput}</b>`;
+        // Səhifələri göstər/gizlə funksiyası
+        function showPage(pageId) {
+            document.getElementById('form-page').style.display = 'none';
+            document.getElementById('certificate-page').style.display = 'none';
+            document.getElementById(pageId).style.display = 'block';
         }
 
+        // Formdakı məhsul cədvəlinə məlumat əlavə et
         function addProduct() {
             const productName = document.getElementById('product-name').value;
             const saleDate = document.getElementById('sale-date').value;
@@ -293,65 +173,81 @@
                 return;
             }
 
-            const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+            const tableBody = document.getElementById('product-table-form').getElementsByTagName('tbody')[0];
             const newRow = tableBody.insertRow();
-
             newRow.innerHTML = `
-                <td>${productName}</td>
-                <td>${saleDate}</td>
-                <td>${creditValue} AZN</td>
-                <td>${debtValue}</td>
-                <td>${creditStatus}</td>
-                <td>${contractNumber}</td>
-                <td class="no-print"><button onclick="deleteRow(this)">Sil</button></td>
+                <td>${productName}</td> <td>${saleDate}</td> <td>${creditValue} AZN</td>
+                <td>${debtValue} AZN</td> <td>${creditStatus}</td> <td>${contractNumber}</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
             `;
-
-            document.getElementById('product-name').value = '';
-            document.getElementById('sale-date').value = '';
-            document.getElementById('credit-value').value = '';
-            document.getElementById('contract-number').value = '';
+            clearProductForm();
         }
 
         function deleteRow(button) {
-            const row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
+            button.closest('tr').remove();
         }
 
-        function clearForm() {
-            document.getElementById('date-input').valueAsDate = new Date();
-            document.getElementById('location-input').value = 'Oğuz Rayonu';
-            document.getElementById('number-input').value = '0044';
-            document.getElementById('fullname-input').value = 'RZALI FƏRHAD NEYMƏT';
-            document.getElementById('gender-suffix').value = 'oğluna';
-            document.getElementById('fin-input').value = '4YSDYV7';
-            document.getElementById('manager-input').value = 'Elnur Mürsəlov';
-            
+        function clearProductForm() {
             document.getElementById('product-name').value = '';
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
             document.getElementById('contract-number').value = '';
-
-            const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
-            while (tableBody.rows.length > 0) {
-               tableBody.deleteRow(0);
-            }
-            updateDocumentInfo();
         }
-        
-        window.onload = function() {
-            // Səhifə yüklənəndə yalnız tarixi yeniləyir, qalan məlumatlar statik qalır
-            document.getElementById('date-input').valueAsDate = new Date();
-            const dateInput = document.getElementById('date-input').value;
+
+        // Arayışı hazırla və göstər
+        function generateAndShowCertificate() {
+            // Məlumatları obyektdə yığ
+            const data = {
+                date: document.getElementById('date-input').value,
+                location: document.getElementById('location-input').value,
+                number: document.getElementById('number-input').value,
+                fullname: document.getElementById('fullname-input').value,
+                genderSuffix: document.getElementById('gender-suffix').value,
+                fin: document.getElementById('fin-input').value,
+                manager: document.getElementById('manager-input').value,
+                products: []
+            };
+
+            const tableRows = document.getElementById('product-table-form').getElementsByTagName('tbody')[0].rows;
+            for (let row of tableRows) {
+                data.products.push({
+                    name: row.cells[0].innerText, saleDate: row.cells[1].innerText,
+                    creditValue: row.cells[2].innerText, debt: row.cells[3].innerText,
+                    status: row.cells[4].innerText, contract: row.cells[5].innerText
+                });
+            }
+            
+            // Arayış səhifəsini bu məlumatlarla doldur
+            populateCertificate(data);
+            
+            // Arayış səhifəsini göstər
+            showPage('certificate-page');
+        }
+
+        // Arayış səhifəsindəki elementləri dolduran funksiya
+        function populateCertificate(data) {
             let formattedDate = '';
-            if (dateInput) {
-                const date = new Date(dateInput);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                formattedDate = `${day}.${month}.${year}`;
+            if (data.date) {
+                const date = new Date(data.date);
+                formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
             }
             document.getElementById('doc-date').innerText = `Tarix: ${formattedDate}`;
-        };
+            document.getElementById('doc-location').innerText = data.location;
+            document.getElementById('doc-number').innerText = data.number;
+            document.getElementById('doc-fullname').innerText = `${data.fullname} ${data.genderSuffix}`;
+            document.getElementById('doc-fin').innerText = data.fin;
+            document.getElementById('doc-manager-name').innerHTML = `<b>${data.manager}</b>`;
+
+            const tableBody = document.getElementById('product-table-certificate').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Cədvəli təmizlə
+            data.products.forEach(p => {
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `
+                    <td>${p.name}</td> <td>${p.saleDate}</td> <td>${p.creditValue}</td>
+                    <td>${p.debt}</td> <td>${p.status}</td> <td>${p.contract}</td>
+                `;
+            });
+        }
     </script>
 </body>
 </html>
