@@ -7,13 +7,21 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 14px;
-            width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
         }
-        .document-container { /* Çap ediləcək sahə üçün əlavə edildi */
-            padding: 20px;
+        .page {
+            background: white;
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        .document-container {
+             font-size: 14px;
         }
         .header {
             text-align: left;
@@ -70,6 +78,7 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #f9f9f9;
         }
         .form-section h3 {
             text-align: center;
@@ -87,6 +96,7 @@
         .form-input input, .form-input select {
             width: calc(100% - 160px);
             padding: 5px;
+            box-sizing: border-box;
         }
         .form-buttons {
             text-align: center;
@@ -101,151 +111,181 @@
         /* Çap üçün stillər */
         @media print {
             body {
+                background-color: white;
+                padding: 0;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
                 width: 100%;
+                min-height: auto;
             }
             .form-section {
                 display: none;
             }
-            #product-table th:last-child, 
+            #product-table th:last-child,
             #product-table td:last-child {
                 display: none;
             }
         }
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
     </style>
 </head>
 <body>
-    <div class="document-container">
-        <div class="header">
-            <img src="logo.jpg" alt="ABC Telecom Logo">
-            <div class="contact-info">
-                Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-                Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+    <div>
+        <div class="page">
+            <div class="document-container">
+                <div class="header">
+                    <img src="logo.jpg" alt="ABC Telecom Logo">
+                    <div class="contact-info">
+                        Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+                        Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
+                    <span id="doc-number">0044</span>
+                </div>
+
+                <h1 class="document-title">A R A Y I Ş</h1>
+
+                <div class="info-section">
+                    <p>
+                        Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+                    </p>
+                </div>
+
+                <table id="product-table">
+                    <thead>
+                        <tr>
+                            <th>Məhsulun adı</th>
+                            <th>Satış tarixi</th>
+                            <th>Kredit dəyəri cəm</th>
+                            <th>Borc</th>
+                            <th>Kredit/statusu</th>
+                            <th>Müqavilə nömrəsi</th>
+                            <th class="no-print">Əməliyyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                            <td>19/05/2025</td>
+                            <td>87.65 AZN</td>
+                            <td>0 AZN</td>
+                            <td>BAĞLI</td>
+                            <td>09865656</td>
+                            <td><button onclick="deleteRow(this)">Sil</button></td>
+                        </tr>
+                         <tr>
+                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                            <td>19/05/2025</td>
+                            <td>87.65 AZN</td>
+                            <td>0 AZN</td>
+                            <td>BAĞLI</td>
+                            <td>09865656</td>
+                            <td><button onclick="deleteRow(this)">Sil</button></td>
+                        </tr>
+                         <tr>
+                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                            <td>19/05/2025</td>
+                            <td>87.65 AZN</td>
+                            <td>0 AZN</td>
+                            <td>BAĞLI</td>
+                            <td>09865656</td>
+                            <td><button onclick="deleteRow(this)">Sil</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+
+                <div class="footer">
+                    <p>Hörmətlə</p>
+                    <div class="footer-line">
+                        <span><b>Mağaza rəhbəri:</b></span>
+                        <span><b>Elnur Mürsəlov</b></span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between;">
-            <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
-            <span id="doc-number">0044</span>
-        </div>
-
-        <h1 class="document-title">A R A Y I Ş</h1>
-
-        <div class="info-section">
-            <p>
-                Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
-            </p>
-        </div>
-
-        <table id="product-table">
-            <thead>
-                <tr>
-                    <th>Məhsulun adı</th>
-                    <th>Satış tarixi</th>
-                    <th>Kredit dəyəri cəm</th>
-                    <th>Borc</th>
-                    <th>Kredit/statusu</th>
-                    <th>Müqavilə nömrəsi</th>
-                    <th class="no-print">Əməliyyat</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                    <td>19/05/2025</td>
-                    <td>87.65 AZN</td>
-                    <td>0 AZN</td>
-                    <td>BAĞLI</td>
-                    <td>09865656</td>
-                    <td><button onclick="deleteRow(this)">Sil</button></td>
-                </tr>
-                 <tr>
-                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                    <td>19/05/2025</td>
-                    <td>87.65 AZN</td>
-                    <td>0 AZN</td>
-                    <td>BAĞLI</td>
-                    <td>09865656</td>
-                    <td><button onclick="deleteRow(this)">Sil</button></td>
-                </tr>
-                 <tr>
-                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                    <td>19/05/2025</td>
-                    <td>87.65 AZN</td>
-                    <td>0 AZN</td>
-                    <td>BAĞLI</td>
-                    <td>09865656</td>
-                    <td><button onclick="deleteRow(this)">Sil</button></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
-
-        <div class="footer">
-            <p>Hörmətlə</p>
-            <div class="footer-line">
-                <span><b>Mağaza rəhbəri:</b></span>
-                <span><b>Elnur Mürsəlov</b></span>
+        <div class="form-section">
+            <h3>Məlumatların Daxil Edilməsi Paneli</h3>
+            <div class="form-input">
+                <label for="date-input">Tarix:</label>
+                <input type="date" id="date-input">
+            </div>
+            <div class="form-input">
+                <label for="location-input">Rayon:</label>
+                <input type="text" id="location-input" value="Oğuz Rayonu">
+            </div>
+            <div class="form-input">
+                <label for="number-input">Arayış No:</label>
+                <input type="text" id="number-input" value="0044">
+            </div>
+            <div class="form-input">
+                <label for="fullname-input">Ad, Soyad, Ata adı:</label>
+                <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT oğlu">
+            </div>
+            <div class="form-input">
+                <label for="fin-input">FİN kod:</label>
+                <input type="text" id="fin-input" value="4YSDYV7">
+            </div>
+            <hr>
+            <h4>Yeni Məhsul Əlavə Et</h4>
+            <div class="form-input">
+                <label for="product-name">Məhsulun adı:</label>
+                <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin">
+            </div>
+            <div class="form-input">
+                <label for="sale-date">Satış tarixi:</label>
+                <input type="text" id="sale-date" placeholder="gg/aa/iiii">
+            </div>
+            <div class="form-input">
+                <label for="credit-value">Kredit dəyəri cəm:</label>
+                <input type="text" id="credit-value" placeholder="Məbləği daxil edin" onblur="formatCurrency(this)">
+            </div>
+            <div class="form-input">
+                <label for="debt-value">Borc:</label>
+                <input type="text" id="debt-value" placeholder="Məbləği daxil edin" onblur="formatCurrency(this)">
+            </div>
+            <div class="form-input">
+                <label for="credit-status">Kredit/statusu:</label>
+                <select id="credit-status">
+                    <option value="BAĞLI">BAĞLI</option>
+                    <option value="AÇIQ">AÇIQ</option>
+                </select>
+            </div>
+            <div class="form-input">
+                <label for="contract-number">Müqavilə nömrəsi:</label>
+                <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi">
+            </div>
+            <div class="form-buttons">
+                <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
+                <button onclick="addProduct()">Məhsul Əlavə Et</button>
+                <button onclick="window.print()">PDF Hazırla</button>
+                <button onclick="window.print()">Çap Et</button>
             </div>
         </div>
     </div>
-    <div class="form-section">
-        <h3>Məlumatların Daxil Edilməsi Paneli</h3>
-        <div class="form-input">
-            <label for="date-input">Tarix:</label>
-            <input type="date" id="date-input">
-        </div>
-        <div class="form-input">
-            <label for="location-input">Rayon:</label>
-            <input type="text" id="location-input" value="Oğuz Rayonu">
-        </div>
-        <div class="form-input">
-            <label for="number-input">Arayış No:</label>
-            <input type="text" id="number-input" value="0044">
-        </div>
-        <div class="form-input">
-            <label for="fullname-input">Ad, Soyad, Ata adı:</label>
-            <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT oğlu">
-        </div>
-        <div class="form-input">
-            <label for="fin-input">FİN kod:</label>
-            <input type="text" id="fin-input" value="4YSDYV7">
-        </div>
-        <hr>
-        <h4>Yeni Məhsul Əlavə Et</h4>
-        <div class="form-input">
-            <label for="product-name">Məhsulun adı:</label>
-            <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin">
-        </div>
-        <div class="form-input">
-            <label for="sale-date">Satış tarixi:</label>
-            <input type="text" id="sale-date" placeholder="gg/aa/iiii">
-        </div>
-        <div class="form-input">
-            <label for="credit-value">Kredit dəyəri cəm:</label>
-            <input type="text" id="credit-value" placeholder="Məbləğ AZN">
-        </div>
-        <div class="form-input">
-            <label for="debt-value">Borc:</label>
-            <input type="text" id="debt-value" placeholder="Məbləğ AZN">
-        </div>
-        <div class="form-input">
-            <label for="credit-status">Kredit/statusu:</label>
-            <input type="text" id="credit-status" placeholder="BAĞLI / AÇIQ">
-        </div>
-        <div class="form-input">
-            <label for="contract-number">Müqavilə nömrəsi:</label>
-            <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi">
-        </div>
-        <div class="form-buttons">
-            <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
-            <button onclick="addProduct()">Məhsul Əlavə Et</button>
-            <button onclick="window.print()">PDF Hazırla</button>
-            <button onclick="window.print()">Çap Et</button>
-        </div>
-    </div>
+
 
     <script>
+        function formatCurrency(input) {
+            let value = input.value.trim();
+            // Remove any existing "AZN" to avoid duplication
+            value = value.replace(/\s*AZN/i, '');
+            if (value && !isNaN(value)) {
+                input.value = value + ' AZN';
+            }
+        }
+
         function updateDocumentInfo() {
             const dateInput = document.getElementById('date-input').value;
             const locationInput = document.getElementById('location-input').value;
@@ -299,7 +339,7 @@
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
             document.getElementById('debt-value').value = '';
-            document.getElementById('credit-status').value = '';
+            document.getElementById('credit-status').value = 'BAĞLI';
             document.getElementById('contract-number').value = '';
         }
 
@@ -307,7 +347,7 @@
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
         }
-        
+
         // Set initial date on the form
         document.getElementById('date-input').valueAsDate = new Date();
     </script>
