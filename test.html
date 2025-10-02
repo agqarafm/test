@@ -11,6 +11,7 @@
         :root {
             --primary-color: #4a90e2;
             --secondary-color: #50e3c2;
+            --info-color: #3498db;
             --background-color: #f4f7fc;
             --sidebar-bg: #2c3e50;
             --sidebar-hover: #34495e;
@@ -270,6 +271,7 @@
         .button-group {
             margin-top: 25px;
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
         }
         
@@ -283,30 +285,33 @@
             transition: all 0.3s ease;
         }
         
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: #3a7ac8; transform: translateY(-2px); }
 
-        .btn-primary:hover {
-            background: #3a7ac8;
-            transform: translateY(-2px);
-        }
+        .btn-info { background: var(--info-color); color: white; }
+        .btn-info:hover { background: #2980b9; transform: translateY(-2px); }
 
-        .btn-secondary {
-            background: #7f8c8d;
-            color: white;
-        }
+        .btn-secondary { background: #7f8c8d; color: white; }
+        .btn-secondary:hover { background: #6c7a7b; transform: translateY(-2px); }
         
-        .btn-secondary:hover {
-            background: #6c7a7b;
-            transform: translateY(-2px);
+        /* Smart Qalığı üçün Səliqəli Görünüş */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px 30px;
+        }
+        .form-grid .form-group {
+            margin-bottom: 0;
+        }
+        .form-divider {
+            grid-column: 1 / -1;
+            margin: 0;
+            border: none;
+            border-top: 1px solid var(--background-color);
         }
 
         /* --- Qeydlər, Linklər, Paket Siyahısı --- */
-        .list-container {
-            margin-top: 30px;
-        }
+        .list-container { margin-top: 30px; }
         .list-item {
             background: var(--background-color);
             padding: 15px;
@@ -317,16 +322,10 @@
             align-items: center;
             animation: slideIn 0.3s ease;
         }
-        .list-item-content {
-            flex-grow: 1;
-        }
+        .list-item-content { flex-grow: 1; }
         .list-item-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 1.1em;
-            transition: color 0.3s;
+            background: none; border: none; cursor: pointer;
+            margin-left: 10px; font-size: 1.1em; transition: color 0.3s;
         }
         .list-item-actions .edit-btn { color: #f39c12; }
         .list-item-actions .delete-btn { color: #e74c3c; }
@@ -340,52 +339,23 @@
 
         /* --- Nəticə Modalı --- */
         #result-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-            opacity: 0;
-            visibility: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; justify-content: center;
+            align-items: center; z-index: 3000; opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease;
         }
-        #result-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        #result-modal.show { opacity: 1; visibility: visible; }
         #result-modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            transform: scale(0.7);
+            background: white; padding: 40px; border-radius: var(--border-radius);
+            text-align: center; transform: scale(0.7);
             transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            min-width: 400px;
         }
-        #result-modal.show #result-modal-content {
-            transform: scale(1);
-        }
-        #result-modal h2 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        #result-text {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 20px;
-        }
-        #close-modal-btn {
-            background: var(--secondary-color);
-            color: white;
-        }
-        #close-modal-btn:hover {
-            background: #48cfa9;
-        }
+        #result-modal.show #result-modal-content { transform: scale(1); }
+        #result-modal h2 { color: var(--primary-color); margin-bottom: 15px; }
+        #result-text { font-weight: bold; color: var(--text-color); margin-bottom: 25px; }
+        #close-modal-btn { background: var(--secondary-color); color: white; }
+        #close-modal-btn:hover { background: #48cfa9; }
     </style>
 </head>
 <body>
@@ -406,30 +376,14 @@
                 <span class="logo-text">Hesab Panel</span>
             </div>
             <ul class="menu">
-                <li class="menu-item active" data-target="kart-meblegi">
-                    <a href="#"><i class="fas fa-credit-card icon"></i><span class="text">Kart məbləği hesabla</span></a>
-                </li>
-                <li class="menu-item" data-target="smart-qaligi">
-                    <a href="#"><i class="fas fa-cash-register icon"></i><span class="text">Smart qalığı hesabla</span></a>
-                </li>
-                <li class="menu-item" data-target="qeydler">
-                    <a href="#"><i class="fas fa-note-sticky icon"></i><span class="text">Qeydlər</span></a>
-                </li>
-                <li class="menu-item" data-target="paket-satislari">
-                    <a href="#"><i class="fas fa-box-open icon"></i><span class="text">Paket satışları</span></a>
-                </li>
-                <li class="menu-item" data-target="edv-hesabla">
-                    <a href="#"><i class="fas fa-percent icon"></i><span class="text">ƏDV-hesabla</span></a>
-                </li>
-                <li class="menu-item" data-target="kredit-hesabla">
-                    <a href="#"><i class="fas fa-landmark icon"></i><span class="text">Kredit hesabla</span></a>
-                </li>
-                <li class="menu-item" data-target="faydali-linkler">
-                    <a href="#"><i class="fas fa-link icon"></i><span class="text">Faydalı linklər</span></a>
-                </li>
-                <li class="menu-item" data-target="admin-panel">
-                    <a href="#"><i class="fas fa-user-shield icon"></i><span class="text">Admin panel</span></a>
-                </li>
+                <li class="menu-item active" data-target="kart-meblegi"><a href="#"><i class="fas fa-credit-card icon"></i><span class="text">Kart məbləği hesabla</span></a></li>
+                <li class="menu-item" data-target="smart-qaligi"><a href="#"><i class="fas fa-cash-register icon"></i><span class="text">Smart qalığı hesabla</span></a></li>
+                <li class="menu-item" data-target="qeydler"><a href="#"><i class="fas fa-note-sticky icon"></i><span class="text">Qeydlər</span></a></li>
+                <li class="menu-item" data-target="paket-satislari"><a href="#"><i class="fas fa-box-open icon"></i><span class="text">Paket satışları</span></a></li>
+                <li class="menu-item" data-target="edv-hesabla"><a href="#"><i class="fas fa-percent icon"></i><span class="text">ƏDV-hesabla</span></a></li>
+                <li class="menu-item" data-target="kredit-hesabla"><a href="#"><i class="fas fa-landmark icon"></i><span class="text">Kredit hesabla</span></a></li>
+                <li class="menu-item" data-target="faydali-linkler"><a href="#"><i class="fas fa-link icon"></i><span class="text">Faydalı linklər</span></a></li>
+                <li class="menu-item" data-target="admin-panel"><a href="#"><i class="fas fa-user-shield icon"></i><span class="text">Admin panel</span></a></li>
             </ul>
         </nav>
 
@@ -438,27 +392,9 @@
             <div id="kart-meblegi" class="page active">
                 <h1>Kart Məbləğini Hesabla</h1>
                 <div class="card">
-                    <div class="form-group">
-                        <label for="arzu-input">Arzu</label>
-                        <div class="input-group">
-                            <span>₼</span>
-                            <input type="number" id="arzu-input" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="aida-input">Aidə</label>
-                        <div class="input-group">
-                            <span>₼</span>
-                            <input type="number" id="aida-input" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="gulshad-input">Gülşad</label>
-                        <div class="input-group">
-                            <span>₼</span>
-                            <input type="number" id="gulshad-input" placeholder="0.00">
-                        </div>
-                    </div>
+                    <div class="form-group"><label for="arzu-input">Arzu</label><div class="input-group"><span>₼</span><input type="number" id="arzu-input" placeholder="0.00"></div></div>
+                    <div class="form-group"><label for="aida-input">Aidə</label><div class="input-group"><span>₼</span><input type="number" id="aida-input" placeholder="0.00"></div></div>
+                    <div class="form-group"><label for="gulshad-input">Gülşad</label><div class="input-group"><span>₼</span><input type="number" id="gulshad-input" placeholder="0.00"></div></div>
                     <div class="button-group">
                         <button id="calc-kart-btn" class="btn btn-primary">Hesabla</button>
                         <button id="clear-kart-btn" class="btn btn-secondary">Təmizlə</button>
@@ -469,30 +405,14 @@
             <div id="smart-qaligi" class="page">
                 <h1>Smart Qalığı Hesabla</h1>
                 <div class="card">
-                    <div class="form-group">
-                        <label for="smart-kart1">Kart məbləğ 1</label>
-                         <div class="input-group"><span>₼</span><input type="number" id="smart-kart1" placeholder="0.00"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="smart-kart2">Kart məbləğ 2</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="smart-kart2" placeholder="0.00"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="smart-nagd1">Nağd məbləğ 1</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="smart-nagd1" placeholder="0.00"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="smart-nagd2">Nağd məbləğ 2</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="smart-nagd2" placeholder="0.00"></div>
-                    </div>
-                     <hr style="margin: 20px 0; border: 1px solid var(--background-color);">
-                    <div class="form-group">
-                        <label for="smart-nagd-qaytarma">Nağd qaytarma</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="smart-nagd-qaytarma" placeholder="0.00"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="smart-kart-qaytarma">Kart qaytarma</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="smart-kart-qaytarma" placeholder="0.00"></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="smart-kart1">Kart məbləğ 1</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart1" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd1">Nağd məbləğ 1</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd1" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-kart2">Kart məbləğ 2</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart2" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd2">Nağd məbləğ 2</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd2" placeholder="0.00"></div></div>
+                        <hr class="form-divider">
+                        <div class="form-group"><label for="smart-kart-qaytarma">Kart qaytarma</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart-qaytarma" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd-qaytarma">Nağd qaytarma</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd-qaytarma" placeholder="0.00"></div></div>
                     </div>
                     <div class="button-group">
                         <button id="calc-smart-btn" class="btn btn-primary">Hesabla</button>
@@ -504,14 +424,8 @@
             <div id="qeydler" class="page">
                 <h1>Qeydlər</h1>
                 <div class="card">
-                    <div class="form-group">
-                        <label for="note-input">Yeni qeyd əlavə et</label>
-                        <textarea id="note-input" rows="4" placeholder="Bura yazın..."></textarea>
-                        <input type="hidden" id="note-id-input">
-                    </div>
-                    <div class="button-group">
-                        <button id="save-note-btn" class="btn btn-primary">Yadda Saxla</button>
-                    </div>
+                    <div class="form-group"><label for="note-input">Yeni qeyd əlavə et</label><textarea id="note-input" rows="4" placeholder="Bura yazın..."></textarea><input type="hidden" id="note-id-input"></div>
+                    <div class="button-group"><button id="save-note-btn" class="btn btn-primary">Yadda Saxla</button></div>
                 </div>
                 <div id="notes-list" class="list-container"></div>
             </div>
@@ -519,22 +433,9 @@
             <div id="paket-satislari" class="page">
                 <h1>Paket Satışları</h1>
                 <div class="card">
-                     <div class="form-group">
-                         <label for="sifaris-no">Sifariş Nömrəsi</label>
-                         <input type="text" id="sifaris-no" placeholder="Sifariş nömrəsini daxil edin">
-                     </div>
-                     <div class="form-group">
-                         <label for="paket-select">Paket Növü</label>
-                         <select id="paket-select">
-                             <option value="0.10">Kontakt Paket 25*35 – 0.10 AZN</option>
-                             <option value="0.20">Kontakt Paket 35*45 – 0.20 AZN</option>
-                             <option value="0.30">Kontakt Paket 45*70 – 0.30 AZN</option>
-                             <option value="0.50">Kontakt Paket 65*80 – 0.50 AZN</option>
-                         </select>
-                     </div>
-                     <div class="button-group">
-                        <button id="add-paket-btn" class="btn btn-primary">Siyahıya Əlavə Et</button>
-                     </div>
+                     <div class="form-group"><label for="sifaris-no">Sifariş Nömrəsi</label><input type="text" id="sifaris-no" placeholder="Sifariş nömrəsini daxil edin"></div>
+                     <div class="form-group"><label for="paket-select">Paket Növü</label><select id="paket-select"><option value="0.10">Kontakt Paket 25*35 – 0.10 AZN</option><option value="0.20">Kontakt Paket 35*45 – 0.20 AZN</option><option value="0.30">Kontakt Paket 45*70 – 0.30 AZN</option><option value="0.50">Kontakt Paket 65*80 – 0.50 AZN</option></select></div>
+                     <div class="button-group"><button id="add-paket-btn" class="btn btn-primary">Siyahıya Əlavə Et</button></div>
                 </div>
                 <div id="paket-list" class="list-container"></div>
             </div>
@@ -542,13 +443,11 @@
             <div id="edv-hesabla" class="page">
                 <h1>ƏDV Geri Al Hesabla</h1>
                 <div class="card">
-                    <div class="form-group">
-                        <label for="edv-mebleg">Yekun Məbləğ (ƏDV Daxil)</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="edv-mebleg" placeholder="100.00"></div>
-                    </div>
+                    <div class="form-group"><label for="edv-mebleg">Yekun Məbləğ (ƏDV Daxil)</label><div class="input-group"><span>₼</span><input type="number" id="edv-mebleg" placeholder="100.00"></div></div>
                     <div class="button-group">
-                        <button id="calc-edv-nagd-btn" class="btn btn-primary">Nağd üçün Hesabla (5%)</button>
-                        <button id="calc-edv-nagdsiz-btn" class="btn btn-secondary">Nağdsız üçün Hesabla (17.5%)</button>
+                        <button id="calc-edv-nagd-btn" class="btn btn-primary">Nağd (5%)</button>
+                        <button id="calc-edv-nagdsiz-btn" class="btn btn-info">Nağdsız (17.5%)</button>
+                        <button id="clear-edv-btn" class="btn btn-secondary">Təmizlə</button>
                     </div>
                     <div id="edv-result" style="margin-top: 25px; font-size: 1.2em; line-height: 1.6;"></div>
                 </div>
@@ -557,21 +456,10 @@
             <div id="kredit-hesabla" class="page">
                 <h1>Kredit Kalkulyatoru</h1>
                 <div class="card">
-                    <div class="form-group">
-                        <label for="kredit-mebleg">Kredit Məbləği</label>
-                        <div class="input-group"><span>₼</span><input type="number" id="kredit-mebleg" placeholder="10000"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="kredit-faiz">İllik Faiz Dərəcəsi (%)</label>
-                        <div class="input-group"><span>%</span><input type="number" id="kredit-faiz" placeholder="18"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="kredit-muddet">Kredit Müddəti (Ay)</label>
-                        <div class="input-group"><i class="fas fa-calendar" style="padding:12px"></i><input type="number" id="kredit-muddet" placeholder="24"></div>
-                    </div>
-                     <div class="button-group">
-                        <button id="calc-kredit-btn" class="btn btn-primary">Hesabla</button>
-                    </div>
+                    <div class="form-group"><label for="kredit-mebleg">Kredit Məbləği</label><div class="input-group"><span>₼</span><input type="number" id="kredit-mebleg" placeholder="10000"></div></div>
+                    <div class="form-group"><label for="kredit-faiz">İllik Faiz Dərəcəsi (%)</label><div class="input-group"><span>%</span><input type="number" id="kredit-faiz" placeholder="18"></div></div>
+                    <div class="form-group"><label for="kredit-muddet">Kredit Müddəti (Ay)</label><div class="input-group"><i class="fas fa-calendar" style="padding:12px"></i><input type="number" id="kredit-muddet" placeholder="24"></div></div>
+                     <div class="button-group"><button id="calc-kredit-btn" class="btn btn-primary">Hesabla</button></div>
                     <div id="kredit-result" style="margin-top: 20px; font-size: 1.2em;"></div>
                 </div>
             </div>
@@ -579,17 +467,9 @@
             <div id="faydali-linkler" class="page">
                 <h1>Faydalı Linklər</h1>
                  <div class="card">
-                    <div class="form-group">
-                        <label for="link-title">Başlıq</label>
-                        <input type="text" id="link-title" placeholder="Məsələn, Google">
-                    </div>
-                    <div class="form-group">
-                        <label for="link-url">URL</label>
-                        <input type="text" id="link-url" placeholder="https://www.google.com">
-                    </div>
-                    <div class="button-group">
-                        <button id="add-link-btn" class="btn btn-primary">Linki Əlavə Et</button>
-                    </div>
+                    <div class="form-group"><label for="link-title">Başlıq</label><input type="text" id="link-title" placeholder="Məsələn, Google"></div>
+                    <div class="form-group"><label for="link-url">URL</label><input type="text" id="link-url" placeholder="https://www.google.com"></div>
+                    <div class="button-group"><button id="add-link-btn" class="btn btn-primary">Linki Əlavə Et</button></div>
                 </div>
                 <div id="links-list" class="list-container"></div>
             </div>
@@ -598,23 +478,17 @@
                 <h1>Admin Panel</h1>
                 <div class="card">
                     <h2>Giriş Parolunu Dəyiş</h2>
-                    <div class="form-group">
-                        <label for="new-password">Yeni Parol</label>
-                        <input type="password" id="new-password" placeholder="Yeni parolu daxil edin">
-                    </div>
-                    <div class="button-group">
-                        <button id="change-password-btn" class="btn btn-primary">Dəyiş</button>
-                    </div>
+                    <div class="form-group"><label for="new-password">Yeni Parol</label><input type="password" id="new-password" placeholder="Yeni parolu daxil edin"></div>
+                    <div class="button-group"><button id="change-password-btn" class="btn btn-primary">Dəyiş</button></div>
                     <div id="password-change-status" style="margin-top:15px;"></div>
                 </div>
             </div>
-            
         </main>
     </div>
 
     <div id="result-modal">
         <div id="result-modal-content">
-            <h2>Yekun Nəticə</h2>
+            <h2 id="modal-title">Yekun Nəticə</h2>
             <div id="result-text"></div>
             <button id="close-modal-btn" class="btn">Bağla</button>
         </div>
@@ -629,8 +503,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // --- Ümumi Funksiyalar ---
-    const showModal = (result) => {
-        document.getElementById('result-text').innerHTML = `${result.toFixed(2)} ₼`;
+    const showModal = (content, isHtml = false, title = "Yekun Nəticə") => {
+        const resultTextEl = document.getElementById('result-text');
+        const modalTitleEl = document.getElementById('modal-title');
+        
+        modalTitleEl.textContent = title;
+
+        if (isHtml) {
+            resultTextEl.innerHTML = content;
+            resultTextEl.style.fontSize = '1.2em';
+            resultTextEl.style.textAlign = 'left';
+        } else {
+            resultTextEl.innerHTML = `${content.toFixed(2)} ₼`;
+            resultTextEl.style.fontSize = '2.5em';
+            resultTextEl.style.textAlign = 'center';
+        }
         document.getElementById('result-modal').classList.add('show');
     };
     
@@ -666,34 +553,26 @@ document.addEventListener('DOMContentLoaded', () => {
     menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            
             menuItems.forEach(i => i.classList.remove('active'));
             item.classList.add('active');
-            
             const targetId = item.getAttribute('data-target');
             pages.forEach(page => {
                 page.classList.remove('active');
-                if(page.id === targetId) {
-                    page.classList.add('active');
-                }
+                if(page.id === targetId) { page.classList.add('active'); }
             });
         });
     });
 
     // --- Modalın bağlanması ---
-    document.getElementById('close-modal-btn').addEventListener('click', () => {
-        document.getElementById('result-modal').classList.remove('show');
-    });
-     document.getElementById('result-modal').addEventListener('click', (e) => {
-        if(e.target.id === 'result-modal') {
-             document.getElementById('result-modal').classList.remove('show');
-        }
+    const closeModal = () => document.getElementById('result-modal').classList.remove('show');
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('result-modal').addEventListener('click', (e) => {
+        if(e.target.id === 'result-modal') { closeModal(); }
     });
 
-    // --- Məlumatların Saxlanması (Generic Functions) ---
+    // --- Məlumatların Saxlanması ---
     const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
     const loadData = (key) => JSON.parse(localStorage.getItem(key));
-
     const autoSaveInput = (inputId, storageKey) => {
         const input = document.getElementById(inputId);
         input.value = loadData(storageKey) || '';
@@ -703,14 +582,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. Kart Məbləği Hesabla ---
     const kartInputs = ['arzu-input', 'aida-input', 'gulshad-input'];
     kartInputs.forEach(id => autoSaveInput(id, `kart_${id}`));
-
     document.getElementById('calc-kart-btn').addEventListener('click', () => {
-        const total = kartInputs.reduce((sum, id) => {
-            return sum + (parseFloat(document.getElementById(id).value) || 0);
-        }, 0);
-        showModal(total);
+        const total = kartInputs.reduce((sum, id) => sum + (parseFloat(document.getElementById(id).value) || 0), 0);
+        showModal(total, false, "Kartların Cəmi");
     });
-
     document.getElementById('clear-kart-btn').addEventListener('click', () => {
         kartInputs.forEach(id => {
             document.getElementById(id).value = '';
@@ -718,17 +593,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // --- 2. Smart Qalığı Hesabla ---
+    // --- 2. Smart Qalığı Hesabla (YENİLƏNMİŞ HESABLAMA) ---
     const smartInputs = ['smart-kart1', 'smart-kart2', 'smart-nagd1', 'smart-nagd2', 'smart-nagd-qaytarma', 'smart-kart-qaytarma'];
     smartInputs.forEach(id => autoSaveInput(id, `smart_${id}`));
     
     document.getElementById('calc-smart-btn').addEventListener('click', () => {
         const getVal = id => parseFloat(document.getElementById(id).value) || 0;
-        const totalIncome = getVal('smart-kart1') + getVal('smart-kart2') + getVal('smart-nagd1') + getVal('smart-nagd2');
-        const totalReturns = getVal('smart-nagd-qaytarma') + getVal('smart-kart-qaytarma');
-        showModal(totalIncome - totalReturns);
-    });
+        const kartYekun = getVal('smart-kart1') + getVal('smart-kart2');
+        const nagdYekun = getVal('smart-nagd1') + getVal('smart-nagd2');
+        const nagdQaytarma = getVal('smart-nagd-qaytarma');
+        const kartQaytarma = getVal('smart-kart-qaytarma');
+        const yekunQaliq = (kartYekun + nagdYekun) - (nagdQaytarma + kartQaytarma);
 
+        const resultHtml = `
+            <div style="line-height: 2; font-weight: 500;">
+                <p>Cəmi Kart Mədaxili: <strong style="float: right; color: #2980b9;">${kartYekun.toFixed(2)} ₼</strong></p>
+                <p>Cəmi Nağd Mədaxili: <strong style="float: right; color: #27ae60;">${nagdYekun.toFixed(2)} ₼</strong></p>
+                <hr style="margin: 8px 0; border-color: var(--background-color);">
+                <p>Kart Qaytarma: <strong style="float: right; color: #e74c3c;">-${kartQaytarma.toFixed(2)} ₼</strong></p>
+                <p>Nağd Qaytarma: <strong style="float: right; color: #e74c3c;">-${nagdQaytarma.toFixed(2)} ₼</strong></p>
+                <hr style="margin: 8px 0; border-color: var(--background-color);">
+                <p style="font-size: 1.4em; margin-top: 10px; font-weight: bold;">Yekun Qalıq: <strong style="float: right; color: #2c3e50;">${yekunQaliq.toFixed(2)} ₼</strong></p>
+            </div>
+        `;
+        showModal(resultHtml, true, "Smart Qalıq Detalları");
+    });
     document.getElementById('clear-smart-btn').addEventListener('click', () => {
         smartInputs.forEach(id => {
             document.getElementById(id).value = '';
@@ -739,239 +628,98 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. Qeydlər ---
     const noteInput = document.getElementById('note-input');
     const noteIdInput = document.getElementById('note-id-input');
-    const saveNoteBtn = document.getElementById('save-note-btn');
     const notesList = document.getElementById('notes-list');
     let notes = loadData('notes') || [];
-
     const renderNotes = () => {
         notesList.innerHTML = '';
         notes.forEach(note => {
-            const noteEl = document.createElement('div');
-            noteEl.classList.add('list-item');
-            noteEl.innerHTML = `
-                <div class="list-item-content">${note.text.replace(/\n/g, '<br>')}</div>
-                <div class="list-item-actions">
-                    <button class="edit-btn" onclick="editNote('${note.id}')"><i class="fas fa-edit"></i></button>
-                    <button class="delete-btn" onclick="deleteNote('${note.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
+            const noteEl = document.createElement('div'); noteEl.classList.add('list-item');
+            noteEl.innerHTML = `<div class="list-item-content">${note.text.replace(/\n/g, '<br>')}</div><div class="list-item-actions"><button class="edit-btn" onclick="editNote('${note.id}')"><i class="fas fa-edit"></i></button><button class="delete-btn" onclick="deleteNote('${note.id}')"><i class="fas fa-trash"></i></button></div>`;
             notesList.appendChild(noteEl);
         });
     };
-
-    saveNoteBtn.addEventListener('click', () => {
-        const noteText = noteInput.value.trim();
-        const noteId = noteIdInput.value;
+    document.getElementById('save-note-btn').addEventListener('click', () => {
+        const noteText = noteInput.value.trim(); const noteId = noteIdInput.value;
         if (!noteText) return;
-
-        if (noteId) { // Edit
-            const noteIndex = notes.findIndex(n => n.id === noteId);
-            notes[noteIndex].text = noteText;
-        } else { // New
-            notes.push({ id: Date.now().toString(), text: noteText });
-        }
-        
-        noteInput.value = '';
-        noteIdInput.value = '';
-        saveData('notes', notes);
-        renderNotes();
+        if (noteId) { notes.find(n => n.id === noteId).text = noteText; } else { notes.push({ id: Date.now().toString(), text: noteText }); }
+        noteInput.value = ''; noteIdInput.value = ''; saveData('notes', notes); renderNotes();
     });
-
-    window.editNote = (id) => {
-        const note = notes.find(n => n.id === id);
-        noteInput.value = note.text;
-        noteIdInput.value = id;
-        noteInput.focus();
-    };
-
-    window.deleteNote = (id) => {
-        notes = notes.filter(n => n.id !== id);
-        saveData('notes', notes);
-        renderNotes();
-    };
-
+    window.editNote = (id) => { const note = notes.find(n => n.id === id); noteInput.value = note.text; noteIdInput.value = id; noteInput.focus(); };
+    window.deleteNote = (id) => { notes = notes.filter(n => n.id !== id); saveData('notes', notes); renderNotes(); };
     renderNotes();
 
     // --- 4. Paket Satışları ---
     const sifarisNoInput = document.getElementById('sifaris-no');
     const paketSelect = document.getElementById('paket-select');
-    const addPaketBtn = document.getElementById('add-paket-btn');
     const paketList = document.getElementById('paket-list');
     let paketSatislar = loadData('paket_satislar') || [];
-
     const renderPaketler = () => {
         paketList.innerHTML = '';
         paketSatislar.forEach(satis => {
-            const el = document.createElement('div');
-            el.classList.add('list-item');
-            el.innerHTML = `
-                <div class="list-item-content">
-                    <strong>Sifariş #${satis.sifarisNo}:</strong> ${satis.paketText}
-                </div>
-                <div class="list-item-actions">
-                    <button class="delete-btn" onclick="deletePaket('${satis.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
+            const el = document.createElement('div'); el.classList.add('list-item');
+            el.innerHTML = `<div class="list-item-content"><strong>Sifariş #${satis.sifarisNo}:</strong> ${satis.paketText}</div><div class="list-item-actions"><button class="delete-btn" onclick="deletePaket('${satis.id}')"><i class="fas fa-trash"></i></button></div>`;
             paketList.appendChild(el);
         });
     };
-
-    addPaketBtn.addEventListener('click', () => {
-        const sifarisNo = sifarisNoInput.value.trim();
-        if (!sifarisNo) {
-            alert('Sifariş nömrəsi daxil edin.');
-            return;
-        }
+    document.getElementById('add-paket-btn').addEventListener('click', () => {
+        const sifarisNo = sifarisNoInput.value.trim(); if (!sifarisNo) { alert('Sifariş nömrəsi daxil edin.'); return; }
         const selectedOption = paketSelect.options[paketSelect.selectedIndex];
-        
-        paketSatislar.push({
-            id: Date.now().toString(),
-            sifarisNo: sifarisNo,
-            paketText: selectedOption.text
-        });
-        
-        saveData('paket_satislar', paketSatislar);
-        renderPaketler();
-        sifarisNoInput.value = '';
-        sifarisNoInput.focus();
+        paketSatislar.push({ id: Date.now().toString(), sifarisNo: sifarisNo, paketText: selectedOption.text });
+        saveData('paket_satislar', paketSatislar); renderPaketler(); sifarisNoInput.value = ''; sifarisNoInput.focus();
     });
-    
-    window.deletePaket = (id) => {
-        paketSatislar = paketSatislar.filter(p => p.id !== id);
-        saveData('paket_satislar', paketSatislar);
-        renderPaketler();
-    };
-    
+    window.deletePaket = (id) => { paketSatislar = paketSatislar.filter(p => p.id !== id); saveData('paket_satislar', paketSatislar); renderPaketler(); };
     renderPaketler();
 
     // --- 5. ƏDV Hesabla (YENİLƏNMİŞ) ---
     const edvMeblegInput = document.getElementById('edv-mebleg');
     const edvResultDiv = document.getElementById('edv-result');
-
     const calculateEdvRefund = (type) => {
         const mebleg = parseFloat(edvMeblegInput.value) || 0;
-        if (mebleg <= 0) {
-            edvResultDiv.innerHTML = `<p style="color: #e74c3c;">Zəhmət olmasa, məbləğ daxil edin.</p>`;
-            return;
-        }
+        if (mebleg <= 0) { edvResultDiv.innerHTML = `<p style="color: #e74c3c;">Zəhmət olmasa, məbləğ daxil edin.</p>`; return; }
         const edv = (mebleg / 1.18) * 0.18;
-        let qaytarilanEdv;
-        let qaytarilanFaiz;
-        let resultColor;
-
-        if (type === 'nagd') {
-            qaytarilanEdv = edv * 0.05; // 5%
-            qaytarilanFaiz = '5%';
-            resultColor = '#27ae60';
-        } else { // nagdsiz
-            qaytarilanEdv = edv * 0.175; // 17.5%
-            qaytarilanFaiz = '17.5%';
-            resultColor = 'var(--primary-color)';
-        }
-        
-        edvResultDiv.innerHTML = `
-            <p><strong>Ümumi Məbləğ:</strong> ${mebleg.toFixed(2)} ₼</p>
-            <p><strong>Daxil olan ƏDV (18%):</strong> ${edv.toFixed(2)} ₼</p>
-            <hr style="margin: 10px 0; border-top: 1px solid var(--border-color); border-bottom: 0;">
-            <p style="color: ${resultColor}; font-weight: bold;">
-                Qaytarılmalı Məbləğ (${type === 'nagd' ? 'Nağd' : 'Nağdsız'} - ${qaytarilanFaiz}): ${qaytarilanEdv.toFixed(2)} ₼
-            </p>
-        `;
+        let qaytarilanEdv = (type === 'nagd') ? edv * 0.05 : edv * 0.175;
+        let resultColor = (type === 'nagd') ? '#27ae60' : 'var(--info-color)';
+        edvResultDiv.innerHTML = `<p><strong>Ümumi Məbləğ:</strong> ${mebleg.toFixed(2)} ₼</p><p><strong>Daxil olan ƏDV (18%):</strong> ${edv.toFixed(2)} ₼</p><hr style="margin: 10px 0; border-top: 1px solid var(--border-color); border-bottom: 0;"><p style="color: ${resultColor}; font-weight: bold;">Qaytarılmalı Məbləğ: ${qaytarilanEdv.toFixed(2)} ₼</p>`;
     };
-
     document.getElementById('calc-edv-nagd-btn').addEventListener('click', () => calculateEdvRefund('nagd'));
     document.getElementById('calc-edv-nagdsiz-btn').addEventListener('click', () => calculateEdvRefund('nagdsiz'));
-
+    document.getElementById('clear-edv-btn').addEventListener('click', () => { edvMeblegInput.value = ''; edvResultDiv.innerHTML = ''; });
 
     // --- 6. Kredit Hesabla ---
     document.getElementById('calc-kredit-btn').addEventListener('click', () => {
-        const P = parseFloat(document.getElementById('kredit-mebleg').value) || 0; // Məbləğ
-        const i = (parseFloat(document.getElementById('kredit-faiz').value) || 0) / 100 / 12; // Aylıq faiz
-        const n = parseInt(document.getElementById('kredit-muddet').value) || 0; // Ay sayı
-
+        const P = parseFloat(document.getElementById('kredit-mebleg').value) || 0, i = ((parseFloat(document.getElementById('kredit-faiz').value) || 0) / 100 / 12), n = parseInt(document.getElementById('kredit-muddet').value) || 0;
         if (P > 0 && i > 0 && n > 0) {
-            const M = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1); // Annuitet düsturu
-            const totalPayment = M * n;
-            const totalInterest = totalPayment - P;
-
-            document.getElementById('kredit-result').innerHTML = `
-                <p><strong>Aylıq ödəniş:</strong> ${M.toFixed(2)} ₼</p>
-                <p><strong>Ümumi ödəniş:</strong> ${totalPayment.toFixed(2)} ₼</p>
-                <p><strong>Artıq ödənilən faiz:</strong> ${totalInterest.toFixed(2)} ₼</p>
-            `;
-        } else {
-             document.getElementById('kredit-result').innerHTML = `<p style="color: #e74c3c;">Bütün xanaları düzgün doldurun.</p>`;
-        }
+            const M = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+            document.getElementById('kredit-result').innerHTML = `<p><strong>Aylıq ödəniş:</strong> ${M.toFixed(2)} ₼</p><p><strong>Ümumi ödəniş:</strong> ${(M * n).toFixed(2)} ₼</p><p><strong>Artıq ödənilən faiz:</strong> ${(M * n - P).toFixed(2)} ₼</p>`;
+        } else { document.getElementById('kredit-result').innerHTML = `<p style="color: #e74c3c;">Bütün xanaları düzgün doldurun.</p>`; }
     });
 
     // --- 7. Faydalı Linklər ---
-    const linkTitleInput = document.getElementById('link-title');
-    const linkUrlInput = document.getElementById('link-url');
-    const addLinkBtn = document.getElementById('add-link-btn');
-    const linksList = document.getElementById('links-list');
+    const linkTitleInput = document.getElementById('link-title'), linkUrlInput = document.getElementById('link-url'), linksList = document.getElementById('links-list');
     let links = loadData('links') || [];
-    
     const renderLinks = () => {
         linksList.innerHTML = '';
         links.forEach(link => {
-            const el = document.createElement('div');
-            el.classList.add('list-item');
-            el.innerHTML = `
-                <div class="list-item-content">
-                    <a href="${link.url}" target="_blank" rel="noopener noreferrer"><strong>${link.title}</strong></a>
-                </div>
-                <div class="list-item-actions">
-                    <button class="delete-btn" onclick="deleteLink('${link.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
+            const el = document.createElement('div'); el.classList.add('list-item');
+            el.innerHTML = `<div class="list-item-content"><a href="${link.url}" target="_blank" rel="noopener noreferrer"><strong>${link.title}</strong></a></div><div class="list-item-actions"><button class="delete-btn" onclick="deleteLink('${link.id}')"><i class="fas fa-trash"></i></button></div>`;
             linksList.appendChild(el);
         });
     };
-
-    addLinkBtn.addEventListener('click', () => {
-        const title = linkTitleInput.value.trim();
-        let url = linkUrlInput.value.trim();
-
-        if (!title || !url) {
-            alert('Başlıq və URL daxil edin.');
-            return;
-        }
-
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
-        }
-
-        links.push({ id: Date.now().toString(), title, url });
-        saveData('links', links);
-        renderLinks();
-        linkTitleInput.value = '';
-        linkUrlInput.value = '';
+    document.getElementById('add-link-btn').addEventListener('click', () => {
+        const title = linkTitleInput.value.trim(); let url = linkUrlInput.value.trim();
+        if (!title || !url) { alert('Başlıq və URL daxil edin.'); return; }
+        if (!url.startsWith('http')) { url = 'https://' + url; }
+        links.push({ id: Date.now().toString(), title, url }); saveData('links', links); renderLinks(); linkTitleInput.value = ''; linkUrlInput.value = '';
     });
-
-    window.deleteLink = (id) => {
-        links = links.filter(l => l.id !== id);
-        saveData('links', links);
-        renderLinks();
-    };
-
+    window.deleteLink = (id) => { links = links.filter(l => l.id !== id); saveData('links', links); renderLinks(); };
     renderLinks();
 
     // --- 8. Admin Panel ---
-    const newPasswordInput = document.getElementById('new-password');
-    const changePasswordBtn = document.getElementById('change-password-btn');
-    const passwordStatus = document.getElementById('password-change-status');
-    
-    changePasswordBtn.addEventListener('click', () => {
+    const newPasswordInput = document.getElementById('new-password'), passwordStatus = document.getElementById('password-change-status');
+    document.getElementById('change-password-btn').addEventListener('click', () => {
         const newPassword = newPasswordInput.value;
-        if (newPassword.length < 6) {
-            passwordStatus.textContent = 'Parol ən az 6 simvol olmalıdır.';
-            passwordStatus.style.color = '#e74c3c';
-        } else {
-            localStorage.setItem(appState.passwordKey, newPassword);
-            passwordStatus.textContent = 'Parol uğurla dəyişdirildi!';
-            passwordStatus.style.color = '#2ecc71';
-            newPasswordInput.value = '';
-        }
+        if (newPassword.length < 6) { passwordStatus.textContent = 'Parol ən az 6 simvol olmalıdır.'; passwordStatus.style.color = '#e74c3c'; } 
+        else { localStorage.setItem(appState.passwordKey, newPassword); passwordStatus.textContent = 'Parol uğurla dəyişdirildi!'; passwordStatus.style.color = '#2ecc71'; newPasswordInput.value = ''; }
         setTimeout(() => { passwordStatus.textContent = ''; }, 3000);
     });
 });
