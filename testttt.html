@@ -8,9 +8,9 @@
         body {
             font-family: 'Times New Roman', Times, serif;
             background-color: #f0f0f0;
+            padding: 20px 0;
             display: flex;
             justify-content: center;
-            padding: 20px 0;
         }
         .page {
             background: white;
@@ -19,6 +19,7 @@
             padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             box-sizing: border-box;
+            display: none; /* Initially hidden */
         }
         .document-container {
              font-size: 14px;
@@ -74,11 +75,12 @@
             margin-top: 5px;
         }
         .form-section {
-            margin-top: 50px;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9;
+            width: 210mm; /* A4 width */
+            box-sizing: border-box;
         }
         .form-section h3 {
             text-align: center;
@@ -108,11 +110,26 @@
             cursor: pointer;
         }
 
+        .view-button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .view-button-container button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
         /* Çap üçün stillər */
         @media print {
             body {
                 background-color: white;
                 padding: 0;
+                display: block;
             }
             .page {
                 box-shadow: none;
@@ -120,9 +137,10 @@
                 padding: 0;
                 width: 100%;
                 min-height: auto;
+                display: block !important; /* Make sure it's visible for printing */
             }
-            .form-section {
-                display: none;
+            .form-section, .view-button-container {
+                display: none !important;
             }
             #product-table th:last-child,
             #product-table td:last-child {
@@ -136,6 +154,10 @@
     </style>
 </head>
 <body>
+    <div class="view-button-container">
+        <button id="view-result-btn" onclick="toggleView()">Yekun Nəticəyə Bax</button>
+    </div>
+
     <div>
         <div class="page">
             <div class="document-container">
@@ -277,6 +299,24 @@
 
 
     <script>
+        function toggleView() {
+            const page = document.querySelector('.page');
+            const form = document.querySelector('.form-section');
+            const btn = document.getElementById('view-result-btn');
+
+            if (page.style.display === 'none' || page.style.display === '') {
+                // Show the result, hide the form
+                page.style.display = 'block';
+                form.style.display = 'none';
+                btn.textContent = 'Formaya Geri Dön';
+            } else {
+                // Show the form, hide the result
+                page.style.display = 'none';
+                form.style.display = 'block';
+                btn.textContent = 'Yekun Nəticəyə Bax';
+            }
+        }
+
         function formatCurrency(input) {
             let value = input.value.trim();
             // Remove any existing "AZN" to avoid duplication
