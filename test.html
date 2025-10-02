@@ -73,33 +73,45 @@
             overflow: hidden; z-index: 1000;
         }
         #sidebar:hover { width: 280px; }
-        .sidebar-header { padding: 20px; display: flex; align-items: center; color: var(--light-text-color); }
-        .sidebar-header .logo-icon { font-size: 2em; min-width: 40px; text-align: center; }
+        .sidebar-header {
+            display: flex; align-items: center; color: var(--light-text-color);
+            padding: 0 20px; height: 80px;
+        }
+        .sidebar-header .logo-icon { font-size: 2em; }
         .sidebar-header .logo-text { font-size: 1.5em; font-weight: bold; margin-left: 15px; white-space: nowrap; }
         .menu { list-style: none; padding-top: 10px; }
         .menu-item a {
-            display: flex; align-items: center; color: var(--light-text-color);
-            text-decoration: none; transition: all 0.3s ease; white-space: nowrap;
-            height: 50px; justify-content: center; /* İkonları mərkəzləşdirir */
+            display: flex;
+            align-items: center;
+            color: var(--light-text-color);
+            text-decoration: none;
+            height: 50px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
         }
         .menu-item a .icon {
-            font-size: 1.5em; min-width: 80px; /* Genişliyi sidebar ilə eyni edir */
-            text-align: center; transition: min-width 0.3s ease;
+            width: 80px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+            transition: width 0.3s ease;
         }
         .menu-item a .text {
-            margin-left: -20px; font-size: 1.1em; opacity: 0;
-            visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-        #sidebar:hover .menu-item a {
-            justify-content: flex-start; /* Genişlənəndə sola sıxır */
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            padding-left: 15px;
         }
         #sidebar:hover .menu-item a .icon {
-            min-width: 40px; /* İkonun yerini normala qaytarır */
+            width: 60px;
         }
         #sidebar:hover .menu-item a .text {
-            opacity: 1; visibility: visible;
+            opacity: 1;
         }
         .menu-item a:hover, .menu-item.active a { background: var(--sidebar-hover); }
+
 
         /* --- Ana Məzmun --- */
         #main-content {
@@ -117,7 +129,7 @@
             box-shadow: var(--shadow); margin-bottom: 30px;
         }
 
-        /* --- Başlanğıc Ekranı Stili (DÜZƏLİŞ EDİLDİ) --- */
+        /* --- Başlanğıc Ekranı Stili --- */
         .dashboard-widgets { display: grid; grid-template-columns: 1fr; gap: 30px; }
         #time-date-widget {
             display: flex;
@@ -360,8 +372,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Bütün Javascript kodları olduğu kimi qalır, heç bir dəyişiklik edilməyib.
+    // CSS-də edilən kiçik düzəlişlər vizual problemi həll edir.
     const appState = { passwordKey: 'hesablama_app_password', defaultPassword: '223366' };
-    
     const setupWelcomeScreen = () => {
         document.getElementById('welcome-greeting').textContent = 'Salam, Arzu Məmmədov.';
         const clockWidget = document.getElementById('clock-widget');
@@ -387,7 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         renderCalendar(now); updateAllLinkLists();
     };
-
     const showModal = (content, isHtml = false, title = "Yekun Nəticə") => {
         const resultTextEl = document.getElementById('result-text');
         document.getElementById('modal-title').textContent = title;
@@ -395,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else { resultTextEl.innerHTML = `${content.toFixed(2)} ₼`; resultTextEl.style.fontSize = '2.5em'; resultTextEl.style.textAlign = 'center'; }
         document.getElementById('result-modal').classList.add('show');
     };
-    
     const loginScreen = document.getElementById('login-screen'), appContainer = document.getElementById('app');
     document.getElementById('login-button').addEventListener('click', () => {
         const currentPassword = localStorage.getItem(appState.passwordKey) || appState.defaultPassword;
@@ -408,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     document.getElementById('password-input').addEventListener('input', e => { document.getElementById('login-error').textContent = ''; e.target.style.borderColor = 'var(--border-color)'; });
-
     const menuItems = document.querySelectorAll('.menu-item'), pages = document.querySelectorAll('.page');
     menuItems.forEach(item => {
         item.addEventListener('click', e => {
@@ -417,23 +427,19 @@ document.addEventListener('DOMContentLoaded', () => {
             pages.forEach(page => page.classList.remove('active')); document.getElementById(targetId).classList.add('active');
         });
     });
-
     const closeModal = () => document.getElementById('result-modal').classList.remove('show');
     document.getElementById('close-modal-btn').addEventListener('click', closeModal);
     document.getElementById('result-modal').addEventListener('click', e => { if(e.target.id === 'result-modal') closeModal(); });
-
     const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
     const loadData = (key) => JSON.parse(localStorage.getItem(key));
     const autoSaveInput = (inputId, storageKey) => {
         const input = document.getElementById(inputId);
         input.value = loadData(storageKey) || ''; input.addEventListener('input', () => saveData(storageKey, input.value));
     };
-    
     const kartInputs = ['arzu-input', 'aida-input', 'gulshad-input'];
     kartInputs.forEach(id => autoSaveInput(id, `kart_${id}`));
     document.getElementById('calc-kart-btn').addEventListener('click', () => { const total = kartInputs.reduce((sum, id) => sum + (parseFloat(document.getElementById(id).value) || 0), 0); showModal(total, false, "Kartların Cəmi"); });
     document.getElementById('clear-kart-btn').addEventListener('click', () => { kartInputs.forEach(id => { document.getElementById(id).value = ''; localStorage.removeItem(`kart_${id}`); }); });
-    
     const smartInputs = ['smart-kart1', 'smart-kart2', 'smart-nagd1', 'smart-nagd2', 'smart-nagd-qaytarma', 'smart-kart-qaytarma'];
     smartInputs.forEach(id => autoSaveInput(id, `smart_${id}`));
     document.getElementById('calc-smart-btn').addEventListener('click', () => {
@@ -445,7 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showModal(resultHtml, true, "Smart Qalıq Detalları");
     });
     document.getElementById('clear-smart-btn').addEventListener('click', () => { smartInputs.forEach(id => { document.getElementById(id).value = ''; localStorage.removeItem(`smart_${id}`); }); });
-
     let notes = loadData('notes') || [];
     const noteInput = document.getElementById('note-input'), noteIdInput = document.getElementById('note-id-input'), notesList = document.getElementById('notes-list');
     const renderNotesFunc = () => { notesList.innerHTML = ''; notes.forEach(note => { const noteEl = document.createElement('div'); noteEl.classList.add('list-item'); noteEl.innerHTML = `<div class="list-item-content">${note.text.replace(/\n/g, '<br>')}</div><div class="list-item-actions"><button class="edit-btn" onclick="editNote('${note.id}')"><i class="fas fa-edit"></i></button><button class="delete-btn" onclick="deleteNote('${note.id}')"><i class="fas fa-trash"></i></button></div>`; notesList.appendChild(noteEl); }); };
@@ -453,22 +458,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.editNote = id => { const note = notes.find(n => n.id === id); noteInput.value = note.text; noteIdInput.value = id; noteInput.focus(); };
     window.deleteNote = id => { notes = notes.filter(n => n.id !== id); saveData('notes', notes); renderNotesFunc(); };
     renderNotesFunc();
-
     let paketSatislar = loadData('paket_satislar') || [];
     const sifarisNoInput = document.getElementById('sifaris-no'), paketSelect = document.getElementById('paket-select'), paketList = document.getElementById('paket-list');
     const renderPaketler = () => { paketList.innerHTML = ''; paketSatislar.forEach(satis => { const el = document.createElement('div'); el.classList.add('list-item'); el.innerHTML = `<div class="list-item-content"><strong>Sifariş #${satis.sifarisNo}:</strong> ${satis.paketText}</div><div class="list-item-actions"><button class="delete-btn" onclick="deletePaket('${satis.id}')"><i class="fas fa-trash"></i></button></div>`; paketList.appendChild(el); }); };
     document.getElementById('add-paket-btn').addEventListener('click', () => { const sifarisNo = sifarisNoInput.value.trim(); if (!sifarisNo) { alert('Sifariş nömrəsi daxil edin.'); return; } const selectedOption = paketSelect.options[paketSelect.selectedIndex]; paketSatislar.push({ id: Date.now().toString(), sifarisNo: sifarisNo, paketText: selectedOption.text }); saveData('paket_satislar', paketSatislar); renderPaketler(); sifarisNoInput.value = ''; sifarisNoInput.focus(); });
     window.deletePaket = id => { paketSatislar = paketSatislar.filter(p => p.id !== id); saveData('paket_satislar', paketSatislar); renderPaketler(); };
     renderPaketler();
-
     const edvMeblegInput = document.getElementById('edv-mebleg'), edvResultDiv = document.getElementById('edv-result');
     const calculateEdvRefund = type => { const mebleg = parseFloat(edvMeblegInput.value) || 0; if (mebleg <= 0) { edvResultDiv.innerHTML = `<p style="color: #e74c3c;">Zəhmət olmasa, məbləğ daxil edin.</p>`; return; } const edv = (mebleg / 1.18) * 0.18; let qaytarilanEdv = (type === 'nagd') ? edv * 0.05 : edv * 0.175; let resultColor = (type === 'nagd') ? '#27ae60' : 'var(--info-color)'; edvResultDiv.innerHTML = `<p><strong>Ümumi Məbləğ:</strong> ${mebleg.toFixed(2)} ₼</p><p><strong>Daxil olan ƏDV (18%):</strong> ${edv.toFixed(2)} ₼</p><hr style="margin: 10px 0; border-top: 1px solid var(--border-color); border-bottom: 0;"><p style="color: ${resultColor}; font-weight: bold;">Qaytarılmalı Məbləğ: ${qaytarilanEdv.toFixed(2)} ₼</p>`; };
     document.getElementById('calc-edv-nagd-btn').addEventListener('click', () => calculateEdvRefund('nagd'));
     document.getElementById('calc-edv-nagdsiz-btn').addEventListener('click', () => calculateEdvRefund('nagdsiz'));
     document.getElementById('clear-edv-btn').addEventListener('click', () => { edvMeblegInput.value = ''; edvResultDiv.innerHTML = ''; });
-
     document.getElementById('calc-kredit-btn').addEventListener('click', () => { const P = parseFloat(document.getElementById('kredit-mebleg').value) || 0, i = ((parseFloat(document.getElementById('kredit-faiz').value) || 0) / 100 / 12), n = parseInt(document.getElementById('kredit-muddet').value) || 0; if (P > 0 && i > 0 && n > 0) { const M = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1); document.getElementById('kredit-result').innerHTML = `<p><strong>Aylıq ödəniş:</strong> ${M.toFixed(2)} ₼</p><p><strong>Ümumi ödəniş:</strong> ${(M * n).toFixed(2)} ₼</p><p><strong>Artıq ödənilən faiz:</strong> ${(M * n - P).toFixed(2)} ₼</p>`; } else { document.getElementById('kredit-result').innerHTML = `<p style="color: #e74c3c;">Bütün xanaları düzgün doldurun.</p>`; } });
-    
     let links = loadData('links') || [];
     const linkTitleInput = document.getElementById('link-title'), linkUrlInput = document.getElementById('link-url');
     const updateAllLinkLists = () => {
@@ -492,7 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAllLinkLists(); linkTitleInput.value = ''; linkUrlInput.value = '';
     });
     window.deleteLink = id => { links = links.filter(l => l.id !== id); saveData('links', links); updateAllLinkLists(); };
-    
     const newPasswordInput = document.getElementById('new-password'), passwordStatus = document.getElementById('password-change-status');
     document.getElementById('change-password-btn').addEventListener('click', () => { const newPassword = newPasswordInput.value; if (newPassword.length < 6) { passwordStatus.textContent = 'Parol ən az 6 simvol olmalıdır.'; passwordStatus.style.color = '#e74c3c'; } else { localStorage.setItem(appState.passwordKey, newPassword); passwordStatus.textContent = 'Parol uğurla dəyişdirildi!'; passwordStatus.style.color = '#2ecc71'; newPasswordInput.value = ''; } setTimeout(() => { passwordStatus.textContent = ''; }, 3000); });
 });
