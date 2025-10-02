@@ -3,58 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Təmizlik Arayışı</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Arayış Forması</title>
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            width: 210mm;
+            font-size: 14px;
+            width: 800px;
             margin: 0 auto;
-            padding: 20mm;
-            box-sizing: border-box;
-            background-color: #f4f4f4;
-        }
-        .container {
-            background-color: #fff;
-            padding: 25mm;
-            border: 1px solid #ccc;
+            padding: 20px;
         }
         .header {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            text-align: left;
             border-bottom: 2px solid black;
             padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 200px;
         }
         .contact-info {
             font-size: 12px;
-            margin-top: 10px;
-            width: 100%;
+            text-align: left;
+            margin-top: 5px;
         }
-        .top-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        h3 {
+        .document-title {
             text-align: center;
             font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 30px;
             font-size: 16px;
-            letter-spacing: 2px;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
-        p {
-            font-size: 14px;
-            line-height: 1.6;
+        .info-section {
+            margin-bottom: 20px;
+        }
+        .info-section p {
             text-indent: 20px;
+            line-height: 1.5;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            font-size: 12px;
+            margin-bottom: 20px;
         }
         th, td {
             border: 1px solid black;
@@ -62,217 +52,245 @@
             text-align: center;
         }
         th {
-            background-color: #f2f2f2;
+            font-weight: bold;
         }
         .footer {
             margin-top: 40px;
         }
-        .signature {
-            margin-top: 50px;
+        .footer-line {
             display: flex;
             justify-content: space-between;
+            margin-top: 5px;
         }
-        input[type="text"], input[type="date"] {
-            border: 1px dashed #ccc;
-            padding: 4px;
-            font-family: inherit;
-            font-size: inherit;
-        }
-        input[type="text"]:focus, input[type="date"]:focus {
-            outline: 1px solid #a9a9a9;
-            border: 1px solid #a9a9a9;
-        }
-        .controls {
-            text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-            background: #e9e9e9;
+        .form-section {
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px solid #ccc;
             border-radius: 5px;
         }
-        button {
+        .form-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-input {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-input label {
+            width: 150px;
+            font-weight: bold;
+        }
+        .form-input input, .form-input select {
+            width: calc(100% - 160px);
+            padding: 5px;
+        }
+        .form-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .form-buttons button {
             padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
             margin: 0 10px;
-        }
-        .dynamic-input {
-            width: 95%;
-        }
-        .add-row-container {
-            text-align: right;
-            margin-top: 10px;
-        }
-        .no-print button {
-             padding: 4px 8px;
-             font-size: 12px;
-             color: white;
-             background-color: #d9534f;
-             border: none;
-             border-radius: 3px;
-             cursor: pointer;
-        }
-
-        @media print {
-            body {
-                background-color: #fff;
-                padding: 0;
-            }
-            .controls, .no-print {
-                display: none;
-            }
-            .container {
-                border: none;
-                padding: 15mm;
-            }
-            input[type="text"], input[type="date"] {
-                border: none;
-                padding: 4px 0;
-            }
-            td input {
-                width: auto;
-            }
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="controls">
-        <label for="logo_uploader">Logo Yüklə: </label>
-        <input type="file" id="logo_uploader" accept="image/*" style="margin-right: 20px;">
-        <button onclick="generatePDF()">PDF Hazırla</button>
-        <button onclick="window.print()">Çap Et</button>
+    <div class="header">
+        <img src="logo.jpg" alt="ABC Telecom Logo">
+        <div class="contact-info">
+            Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+            Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+        </div>
     </div>
 
-    <div id="invoice" class="container">
-        <div class="header">
-            <img id="company_logo" src="https://via.placeholder.com/250x60.png?text=ŞİRKƏT+LOGOSU" alt="Şirkət Loqosu" style="width: 250px; height: auto; margin-bottom: 10px;">
-            
-            <div class="contact-info">
-                Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-                Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
-            </div>
-        </div>
+    <div style="display: flex; justify-content: space-between;">
+        <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
+        <span id="doc-number">0044</span>
+    </div>
 
-        <div class="top-info">
-            <span>Tarix: <input type="text" id="doc_date" value="01.09.2025">, <input type="text" id="doc_location" value="Oğuz Rayonu"></span>
-            <span style="font-weight: bold;"><input type="text" id="doc_ref_no" value="0044" style="width: 50px; text-align: right;"></span>
-        </div>
+    <h1 class="document-title">A R A Y I Ş</h1>
 
-        <h3>A R A Y I Ş</h3>
-
+    <div class="info-section">
         <p>
-            Verilir <input type="text" id="client_name" value="RZALI FƏRHAD NEYMƏT oğluna" style="width: 300px;"> (<input type="text" id="client_id" value="4YSDYV7" style="width: 80px;">) ondan ötrü ki, “ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+            Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
         </p>
+    </div>
 
-        <table id="product_table">
-            <thead>
-                <tr>
-                    <th>Məhsulun adı</th>
-                    <th>Satış tarixi</th>
-                    <th>Kredit dəyəri cəm</th>
-                    <th>Borc</th>
-                    <th>Kredit/statusu</th>
-                    <th>Müqavilə nömrəsi</th>
-                    <th class="no-print"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
-                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
-                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
-                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
-                    <td><input type="text" class="dynamic-input" value="09865656"></td>
-                    <td class="no-print"><button onclick="removeRow(this)">Sil</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="add-row-container no-print">
-            <button onclick="addRow()">Sətir Əlavə Et</button>
+    <table id="product-table">
+        <thead>
+            <tr>
+                <th>Məhsulun adı</th>
+                <th>Satış tarixi</th>
+                <th>Kredit dəyəri cəm</th>
+                <th>Borc</th>
+                <th>Kredit/statusu</th>
+                <th>Müqavilə nömrəsi</th>
+                <th>Əməliyyat</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                <td>19/05/2025</td>
+                <td>87.65 AZN</td>
+                <td>0 AZN</td>
+                <td>BAĞLI</td>
+                <td>09865656</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
+            </tr>
+             <tr>
+                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                <td>19/05/2025</td>
+                <td>87.65 AZN</td>
+                <td>0 AZN</td>
+                <td>BAĞLI</td>
+                <td>09865656</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
+            </tr>
+             <tr>
+                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                <td>19/05/2025</td>
+                <td>87.65 AZN</td>
+                <td>0 AZN</td>
+                <td>BAĞLI</td>
+                <td>09865656</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+
+    <div class="footer">
+        <p>Hörmətlə</p>
+        <div class="footer-line">
+            <span><b>Mağaza rəhbəri:</b></span>
+            <span><b>Elnur Mürsəlov</b></span>
         </div>
+    </div>
 
-
-        <div class="footer">
-            <p style="text-indent: 0;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
-            <p style="margin-top: 30px; text-indent: 0;">Hörmətlə</p>
-            <div class="signature">
-                <span>Mağaza rəhbəri:</span>
-                <span><input type="text" id="manager_name" value="Elnur Mürsəlov" style="width: 200px; text-align: right;"></span>
-            </div>
+    <div class="form-section">
+        <h3>Məlumatların Daxil Edilməsi Paneli</h3>
+        <div class="form-input">
+            <label for="date-input">Tarix:</label>
+            <input type="date" id="date-input">
+        </div>
+        <div class="form-input">
+            <label for="location-input">Rayon:</label>
+            <input type="text" id="location-input" value="Oğuz Rayonu">
+        </div>
+        <div class="form-input">
+            <label for="number-input">Arayış No:</label>
+            <input type="text" id="number-input" value="0044">
+        </div>
+        <div class="form-input">
+            <label for="fullname-input">Ad, Soyad, Ata adı:</label>
+            <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT oğlu">
+        </div>
+        <div class="form-input">
+            <label for="fin-input">FİN kod:</label>
+            <input type="text" id="fin-input" value="4YSDYV7">
+        </div>
+        <hr>
+        <h4>Yeni Məhsul Əlavə Et</h4>
+        <div class="form-input">
+            <label for="product-name">Məhsulun adı:</label>
+            <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin">
+        </div>
+        <div class="form-input">
+            <label for="sale-date">Satış tarixi:</label>
+            <input type="text" id="sale-date" placeholder="gg/aa/iiii">
+        </div>
+        <div class="form-input">
+            <label for="credit-value">Kredit dəyəri cəm:</label>
+            <input type="text" id="credit-value" placeholder="Məbləğ AZN">
+        </div>
+        <div class="form-input">
+            <label for="debt-value">Borc:</label>
+            <input type="text" id="debt-value" placeholder="Məbləğ AZN">
+        </div>
+        <div class="form-input">
+            <label for="credit-status">Kredit/statusu:</label>
+            <input type="text" id="credit-status" placeholder="BAĞLI / AÇIQ">
+        </div>
+        <div class="form-input">
+            <label for="contract-number">Müqavilə nömrəsi:</label>
+            <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi">
+        </div>
+        <div class="form-buttons">
+            <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
+            <button onclick="addProduct()">Məhsul Əlavə Et</button>
         </div>
     </div>
 
     <script>
-        // Logo yükləmə funksiyası
-        document.getElementById('logo_uploader').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('company_logo').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
+        function updateDocumentInfo() {
+            const dateInput = document.getElementById('date-input').value;
+            const locationInput = document.getElementById('location-input').value;
+            const numberInput = document.getElementById('number-input').value;
+            const fullnameInput = document.getElementById('fullname-input').value;
+            const finInput = document.getElementById('fin-input').value;
+
+            let formattedDate = '';
+            if (dateInput) {
+                const date = new Date(dateInput);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                formattedDate = `${day}.${month}.${year}`;
             }
-        });
-        
-        // Cədvələ yeni sətir əlavə etmək
-        function addRow() {
-            const tableBody = document.getElementById('product_table').getElementsByTagName('tbody')[0];
-            const newRow = tableBody.insertRow();
-            
-            newRow.innerHTML = `
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td><input type="text" class="dynamic-input" value=""></td>
-                <td class="no-print"><button onclick="removeRow(this)">Sil</button></td>
-            `;
+
+            document.getElementById('doc-date-location').innerText = `Tarix : ${formattedDate}, ${locationInput},`;
+            document.getElementById('doc-number').innerText = numberInput;
+            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`; // Ensure "oğlu" is handled correctly
+            document.getElementById('doc-fin').innerText = finInput;
         }
 
-        // Cədvəldən sətir silmək
-        function removeRow(button) {
+        function addProduct() {
+            const productName = document.getElementById('product-name').value;
+            const saleDate = document.getElementById('sale-date').value;
+            const creditValue = document.getElementById('credit-value').value;
+            const debtValue = document.getElementById('debt-value').value;
+            const creditStatus = document.getElementById('credit-status').value;
+            const contractNumber = document.getElementById('contract-number').value;
+
+            if (!productName || !saleDate || !creditValue || !debtValue || !creditStatus || !contractNumber) {
+                alert("Zəhmət olmasa, bütün məhsul xanalarını doldurun.");
+                return;
+            }
+
+            const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow();
+
+            newRow.innerHTML = `
+                <td>${productName}</td>
+                <td>${saleDate}</td>
+                <td>${creditValue}</td>
+                <td>${debtValue}</td>
+                <td>${creditStatus}</td>
+                <td>${contractNumber}</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
+            `;
+
+            // Clear input fields after adding
+            document.getElementById('product-name').value = '';
+            document.getElementById('sale-date').value = '';
+            document.getElementById('credit-value').value = '';
+            document.getElementById('debt-value').value = '';
+            document.getElementById('credit-status').value = '';
+            document.getElementById('contract-number').value = '';
+        }
+
+        function deleteRow(button) {
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
         }
-
-        function generatePDF() {
-            // PDF yaratmazdan əvvəl çapda görünməyən elementləri gizlət
-            const noPrintElements = document.querySelectorAll('.no-print, .controls');
-            noPrintElements.forEach(el => el.style.display = 'none');
-            
-            // Input çərçivələrini müvəqqəti olaraq gizlət
-            const inputs = document.querySelectorAll('input[type="text"], input[type="date"]');
-            const placeholders = [];
-            inputs.forEach(input => {
-                const textNode = document.createTextNode(input.value);
-                placeholders.push({input, textNode});
-                input.parentNode.insertBefore(textNode, input);
-                input.style.display = 'none';
-            });
-
-            const element = document.getElementById('invoice');
-            const opt = {
-                margin:       [10, 0, 10, 0],
-                filename:     'Temizlik_Arayisi.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // Faylı yarat
-            html2pdf().from(element).set(opt).save().then(() => {
-                // PDF yaradıldıqdan sonra elementləri geri qaytar
-                noPrintElements.forEach(el => el.style.display = ''); // or original display style
-                placeholders.forEach(p => {
-                    p.input.style.display = '';
-                    p.input.parentNode.removeChild(p.textNode);
-                });
-            });
-        }
+        
+        // Set initial date on the form
+        document.getElementById('date-input').valueAsDate = new Date();
     </script>
-
 </body>
 </html>
