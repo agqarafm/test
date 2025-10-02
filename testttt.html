@@ -12,6 +12,9 @@
             margin: 0 auto;
             padding: 20px;
         }
+        .document-container { /* Çap ediləcək sahə üçün əlavə edildi */
+            padding: 20px;
+        }
         .header {
             text-align: left;
             border-bottom: 2px solid black;
@@ -91,87 +94,101 @@
         }
         .form-buttons button {
             padding: 10px 20px;
-            margin: 0 10px;
+            margin: 5px;
             cursor: pointer;
+        }
+
+        /* Çap üçün stillər */
+        @media print {
+            body {
+                width: 100%;
+            }
+            .form-section {
+                display: none;
+            }
+            #product-table th:last-child, 
+            #product-table td:last-child {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="document-container">
+        <div class="header">
+            <img src="logo.jpg" alt="ABC Telecom Logo">
+            <div class="contact-info">
+                Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+                Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+            </div>
+        </div>
 
-    <div class="header">
-        <img src="logo.jpg" alt="ABC Telecom Logo">
-        <div class="contact-info">
-            Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-            Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+        <div style="display: flex; justify-content: space-between;">
+            <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
+            <span id="doc-number">0044</span>
+        </div>
+
+        <h1 class="document-title">A R A Y I Ş</h1>
+
+        <div class="info-section">
+            <p>
+                Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+            </p>
+        </div>
+
+        <table id="product-table">
+            <thead>
+                <tr>
+                    <th>Məhsulun adı</th>
+                    <th>Satış tarixi</th>
+                    <th>Kredit dəyəri cəm</th>
+                    <th>Borc</th>
+                    <th>Kredit/statusu</th>
+                    <th>Müqavilə nömrəsi</th>
+                    <th class="no-print">Əməliyyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                    <td>19/05/2025</td>
+                    <td>87.65 AZN</td>
+                    <td>0 AZN</td>
+                    <td>BAĞLI</td>
+                    <td>09865656</td>
+                    <td><button onclick="deleteRow(this)">Sil</button></td>
+                </tr>
+                 <tr>
+                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                    <td>19/05/2025</td>
+                    <td>87.65 AZN</td>
+                    <td>0 AZN</td>
+                    <td>BAĞLI</td>
+                    <td>09865656</td>
+                    <td><button onclick="deleteRow(this)">Sil</button></td>
+                </tr>
+                 <tr>
+                    <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
+                    <td>19/05/2025</td>
+                    <td>87.65 AZN</td>
+                    <td>0 AZN</td>
+                    <td>BAĞLI</td>
+                    <td>09865656</td>
+                    <td><button onclick="deleteRow(this)">Sil</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+
+        <div class="footer">
+            <p>Hörmətlə</p>
+            <div class="footer-line">
+                <span><b>Mağaza rəhbəri:</b></span>
+                <span><b>Elnur Mürsəlov</b></span>
+            </div>
         </div>
     </div>
-
-    <div style="display: flex; justify-content: space-between;">
-        <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
-        <span id="doc-number">0044</span>
-    </div>
-
-    <h1 class="document-title">A R A Y I Ş</h1>
-
-    <div class="info-section">
-        <p>
-            Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
-        </p>
-    </div>
-
-    <table id="product-table">
-        <thead>
-            <tr>
-                <th>Məhsulun adı</th>
-                <th>Satış tarixi</th>
-                <th>Kredit dəyəri cəm</th>
-                <th>Borc</th>
-                <th>Kredit/statusu</th>
-                <th>Müqavilə nömrəsi</th>
-                <th>Əməliyyat</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
-             <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
-             <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
-
-    <div class="footer">
-        <p>Hörmətlə</p>
-        <div class="footer-line">
-            <span><b>Mağaza rəhbəri:</b></span>
-            <span><b>Elnur Mürsəlov</b></span>
-        </div>
-    </div>
-
     <div class="form-section">
         <h3>Məlumatların Daxil Edilməsi Paneli</h3>
         <div class="form-input">
@@ -223,6 +240,8 @@
         <div class="form-buttons">
             <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
             <button onclick="addProduct()">Məhsul Əlavə Et</button>
+            <button onclick="window.print()">PDF Hazırla</button>
+            <button onclick="window.print()">Çap Et</button>
         </div>
     </div>
 
