@@ -1,506 +1,729 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kart məbləğ • Smart qalıq • Qeydlər</title>
-  <style>
-    :root{
-      --bg:#0b1020;            /* dərin fon */
-      --panel:#131a2e;         /* panel fonu */
-      --panel-2:#0f1528;       /* açılan panel kölgəsi */
-      --text:#e8eeff;          /* əsas mətn */
-      --muted:#9fb0ffb3;       /* ikinci dərəcəli mətn */
-      --primary:#6b8bff;       /* vurğu */
-      --primary-2:#86a3ff;     /* hover */
-      --ring:#a2b6ff55;        /* fokus halqası */
-      --success:#17c964;
-      --danger:#ff4d4f;
-      --warning:#f5a524;
-      --shadow: 0 10px 25px rgba(0,0,0,.35), 0 6px 12px rgba(8,15,40,.5);
-      --radius: 18px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesablama Paneli</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css");
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 10% -10%, #1a2550 0%, transparent 55%),
-                  radial-gradient(1200px 600px at 90% -10%, #271a50 0%, transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --info-color: #3498db;
+            --background-color: #f4f7fc;
+            --sidebar-bg: #2c3e50;
+            --sidebar-hover: #34495e;
+            --text-color: #333;
+            --light-text-color: #ecf0f1;
+            --border-color: #dfe6e9;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+        }
 
-    .container{ max-width:1100px; margin:40px auto; padding:0 16px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
 
-    /* Header / Menyu çubuğu */
-    .nav{
-      position:sticky; top:10px; z-index:50;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      background:linear-gradient(180deg, #121a32 0%, #0f1528 100%);
-      border:1px solid #233056;
-      box-shadow: var(--shadow);
-      padding:12px; border-radius: calc(var(--radius) + 6px);
-      backdrop-filter:saturate(1.2) blur(6px);
-    }
-    .brand{ display:flex; gap:10px; align-items:center; font-weight:700; letter-spacing:.2px; }
-    .brand svg{ filter: drop-shadow(0 6px 10px rgba(107,139,255,.25)); }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
 
-    .tabs{ display:flex; gap:8px; }
+        /* --- Giriş Ekranı --- */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+            transition: opacity 0.5s ease;
+        }
 
-    .tab{
-      position:relative; isolation:isolate;
-      display:inline-flex; align-items:center; gap:10px; 
-      padding:12px 16px; border-radius: 999px; cursor:pointer;
-      background: #0d1326;
-      border:1px solid #223057; color:var(--text);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-      user-select:none;
-      box-shadow: inset 0 0 0 0 rgba(107,139,255,.0);
-    }
-    .tab:hover{ transform: translateY(-1px); border-color:#2a3b70; box-shadow: inset 0 0 24px #6b8bff14; }
-    .tab.active{ border-color:#3b57a8; box-shadow: inset 0 0 32px #6b8bff26; }
+        #login-box {
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+        }
 
-    .tab .pill{
-      position:absolute; inset:auto 8px -8px auto; 
-      background:linear-gradient(90deg,var(--primary),var(--primary-2));
-      width: 22px; height: 22px; border-radius:999px; opacity:0; transform: translateY(6px) scale(.6);
-      transition: .35s ease;
-      box-shadow: 0 6px 18px rgba(107,139,255,.55);
-      z-index:-1;
-    }
-    .tab:hover .pill, .tab.active .pill{ opacity:.9; transform: translateY(0) scale(1); }
+        #login-box h2 {
+            color: var(--light-text-color);
+            margin-bottom: 20px;
+        }
 
-    .tab .label{ font-weight:600; letter-spacing:.2px; }
+        #password-input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.9);
+            width: 250px;
+            text-align: center;
+            font-size: 1.2em;
+        }
 
-    /* Açılan panel (menyu) */
-    .dropdown{
-      position:relative; margin-top:14px;
-    }
+        #login-button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .panel{
-      overflow:hidden; 
-      max-height:0; opacity:0; transform: translateY(-8px) scale(.98);
-      transition: max-height .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease, transform .4s ease;
-      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
-      border:1px solid #223057; border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .panel.open{ max-height: 1000px; opacity:1; transform: translateY(0) scale(1); }
+        #login-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(80, 227, 194, 0.4);
+        }
 
-    .panel-inner{ padding: 22px; display:grid; gap:18px; }
+        #login-error {
+            color: #e74c3c;
+            margin-top: 15px;
+            height: 20px;
+        }
 
-    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
-    .col-4{ grid-column: span 4; }
-    .col-6{ grid-column: span 6; }
-    .col-8{ grid-column: span 8; }
-    .col-12{ grid-column: span 12; }
-    @media (max-width: 860px){ .col-4, .col-6, .col-8{ grid-column: span 12; } }
 
-    .card{
-      background: #0e1530; border:1px solid #223057; border-radius: calc(var(--radius) - 6px);
-      padding:16px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-    }
+        /* --- Ana Tətbiq --- */
+        #app {
+            display: flex;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+        }
+        
+        #app.visible {
+            opacity: 1;
+            visibility: visible;
+        }
 
-    .headline{ font-size:18px; font-weight:700; margin:2px 0 10px; }
-    .muted{ color:var(--muted); font-size:13px; }
+        /* --- Sol Menyu --- */
+        #sidebar {
+            width: 80px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 1000;
+        }
 
-    label{ display:flex; gap:8px; align-items:center; font-weight:600; margin-bottom:6px; }
+        #sidebar:hover {
+            width: 280px;
+        }
 
-    .input{
-      width:100%; padding:12px 14px; border-radius:12px; outline:none; 
-      background:#0c1327; color:var(--text); font-size:15px; border:1px solid #223057;
-      transition: box-shadow .2s ease, border-color .2s ease, transform .1s ease;
-    }
-    .input:focus{ border-color:#3a57a8; box-shadow: 0 0 0 6px var(--ring); }
+        .sidebar-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            color: var(--light-text-color);
+        }
+        
+        .sidebar-header .logo-icon {
+            font-size: 2em;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .sidebar-header .logo-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+        
+        .menu {
+            list-style: none;
+            padding-top: 20px;
+        }
 
-    .row{ display:flex; gap:10px; align-items:center; }
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--light-text-color);
+            text-decoration: none;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .menu-item a .icon {
+            font-size: 1.5em;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .menu-item a .text {
+            margin-left: 15px;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
 
-    .btn{
-      display:inline-flex; align-items:center; gap:10px; 
-      padding:12px 16px; border-radius:12px; cursor:pointer; border:1px solid #2a3b70; 
-      background:linear-gradient(180deg,#17224a,#111a36); color:var(--text); font-weight:700;
-      transition: transform .12s ease, filter .2s ease, box-shadow .2s ease, border-color .2s ease; 
-    }
-    .btn:hover{ filter:brightness(1.1); border-color:#3b57a8; box-shadow: 0 10px 24px #6b8bff22; }
-    .btn:active{ transform: translateY(1px) scale(.99); }
+        #sidebar:hover .menu-item a .text {
+            opacity: 1;
+        }
 
-    .btn.ghost{ background:#0c1327; border-color:#25325b; font-weight:600; }
+        .menu-item a:hover, .menu-item.active a {
+            background: var(--sidebar-hover);
+        }
 
-    .tag{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #233056; background:#0e1530; color:var(--muted); }
+        /* --- Ana Məzmun --- */
+        #main-content {
+            margin-left: 80px;
+            padding: 40px;
+            width: calc(100% - 80px);
+            transition: margin-left 0.3s ease;
+        }
+        
+        #sidebar:hover ~ #main-content {
+            margin-left: 280px;
+        }
 
-    /* Modal */
-    .modal-backdrop{ position:fixed; inset:0; background:rgba(4,8,20,.6); display:none; align-items:center; justify-content:center; z-index:100; }
-    .modal-backdrop.show{ display:flex; animation: fadeIn .18s ease; }
-    .modal{
-      width:min(560px, calc(100vw - 28px));
-      background: linear-gradient(180deg, #121a32 0%, #0f1528 100%);
-      border:1px solid #2a3b70; border-radius: calc(var(--radius) + 2px);
-      box-shadow: var(--shadow);
-      transform: translateY(8px) scale(.98); opacity:0; animation: pop .2s ease forwards;
-    }
-    .modal-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #24325d; }
-    .modal-title{ font-weight:800; letter-spacing:.2px; }
-    .modal-body{ padding:16px; }
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .page.active {
+            display: block;
+        }
 
-    @keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
-    @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1 } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    /* Toast */
-    .toast{ position:fixed; right:16px; bottom:16px; background:#0e1530; border:1px solid #2a3b70; color:var(--text); padding:12px 14px; border-radius:12px; box-shadow: var(--shadow); opacity:0; transform: translateY(8px); transition:.25s; z-index:120; }
-    .toast.show{ opacity:1; transform: translateY(0); }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
 
-    /* Qeydlər listi */
-    .notes-list{ display:grid; gap:10px; }
-    .note-item{ display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:start; background:#0c1327; border:1px solid #233056; border-radius:12px; padding:12px; }
-    .note-actions{ display:flex; gap:8px; }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
 
-    /* Kiçik dekorativ parıltı */
-    .glow{ position:absolute; inset:auto auto -14px 12px; width:140px; height:36px; background: radial-gradient(60px 22px at 30% 30%, #86a3ff77, transparent 70%); filter: blur(10px); pointer-events:none; opacity:.35; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
 
-  </style>
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-group span {
+            padding: 12px;
+            background: #eee;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .input-group input {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .button-group {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: #3a7ac8; transform: translateY(-2px); }
+
+        .btn-info { background: var(--info-color); color: white; }
+        .btn-info:hover { background: #2980b9; transform: translateY(-2px); }
+
+        .btn-secondary { background: #7f8c8d; color: white; }
+        .btn-secondary:hover { background: #6c7a7b; transform: translateY(-2px); }
+        
+        /* Smart Qalığı üçün Səliqəli Görünüş */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px 30px;
+        }
+        .form-grid .form-group {
+            margin-bottom: 0;
+        }
+        .form-divider {
+            grid-column: 1 / -1;
+            margin: 0;
+            border: none;
+            border-top: 1px solid var(--background-color);
+        }
+
+        /* --- Qeydlər, Linklər, Paket Siyahısı --- */
+        .list-container { margin-top: 30px; }
+        .list-item {
+            background: var(--background-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+        .list-item-content { flex-grow: 1; }
+        .list-item-actions button {
+            background: none; border: none; cursor: pointer;
+            margin-left: 10px; font-size: 1.1em; transition: color 0.3s;
+        }
+        .list-item-actions .edit-btn { color: #f39c12; }
+        .list-item-actions .delete-btn { color: #e74c3c; }
+        .list-item-actions .edit-btn:hover { color: #d68910; }
+        .list-item-actions .delete-btn:hover { color: #c0392b; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- Nəticə Modalı --- */
+        #result-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; justify-content: center;
+            align-items: center; z-index: 3000; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+        #result-modal.show { opacity: 1; visibility: visible; }
+        #result-modal-content {
+            background: white; padding: 40px; border-radius: var(--border-radius);
+            text-align: center; transform: scale(0.7);
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            min-width: 400px;
+        }
+        #result-modal.show #result-modal-content { transform: scale(1); }
+        #result-modal h2 { color: var(--primary-color); margin-bottom: 15px; }
+        #result-text { font-weight: bold; color: var(--text-color); margin-bottom: 25px; }
+        #close-modal-btn { background: var(--secondary-color); color: white; }
+        #close-modal-btn:hover { background: #48cfa9; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <div class="brand" title="Tam işlək yerli yaddaşlı tətbiq">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.3L12 14.77 7.22 16.68l.91-5.3L4.27 7.62l5.34-.78L12 2z" fill="url(#g)"/>
-          <defs>
-            <linearGradient id="g" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#6b8bff"/><stop offset="1" stop-color="#86a3ff"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div>Hesablayıcı Tətbiq</div>
-      </div>
-      <div class="tabs" role="tablist" aria-label="Menyu">
-        <button class="tab active" data-target="#tab-kart" role="tab" aria-selected="true">
-          <span class="label">Kart məbləğ</span>
-          <span class="pill"></span>
-          <span class="glow"></span>
-        </button>
-        <button class="tab" data-target="#tab-smart" role="tab" aria-selected="false">
-          <span class="label">Smart qalıq</span>
-          <span class="pill"></span>
-          <span class="glow"></span>
-        </button>
-        <button class="tab" data-target="#tab-notes" role="tab" aria-selected="false">
-          <span class="label">Qeydlər</span>
-          <span class="pill"></span>
-          <span class="glow"></span>
-        </button>
-      </div>
-    </nav>
 
-    <!-- Kart məbləğ paneli -->
-    <div class="dropdown">
-      <section id="tab-kart" class="panel open" aria-hidden="false">
-        <div class="panel-inner">
-          <div class="headline">Kart məbləğ</div>
-          <div class="muted">Aidə, Gülşad və Arzu üçün məbləğləri daxil edin. Daxil etdiyiniz dəyərlər avtomatik yadda saxlanılır.</div>
-
-          <div class="grid">
-            <div class="col-4">
-              <div class="card">
-                <label for="aide">Aidə</label>
-                <input id="aide" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="card">
-                <label for="gulshad">Gülşad</label>
-                <input id="gulshad" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="card">
-                <label for="arzu">Arzu</label>
-                <input id="arzu" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-12 row" style="justify-content:space-between;">
-              <div class="tag" id="kart-status">Avtoyaddaş aktivdir</div>
-              <div class="row">
-                <button class="btn" id="btn-kart-calc">Hesabla</button>
-                <button class="btn ghost" id="btn-kart-reset" title="Məbləğləri sıfırla">Sıfırla</button>
-              </div>
-            </div>
-          </div>
+    <div id="login-screen">
+        <div id="login-box">
+            <h2>Giriş Paneli</h2>
+            <input type="password" id="password-input" placeholder="••••••">
+            <div id="login-error"></div>
+            <button id="login-button" class="btn">Daxil ol</button>
         </div>
-      </section>
+    </div>
+    
+    <div id="app">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-calculator logo-icon"></i>
+                <span class="logo-text">Hesab Panel</span>
+            </div>
+            <ul class="menu">
+                <li class="menu-item active" data-target="kart-meblegi"><a href="#"><i class="fas fa-credit-card icon"></i><span class="text">Kart məbləği hesabla</span></a></li>
+                <li class="menu-item" data-target="smart-qaligi"><a href="#"><i class="fas fa-cash-register icon"></i><span class="text">Smart qalığı hesabla</span></a></li>
+                <li class="menu-item" data-target="qeydler"><a href="#"><i class="fas fa-note-sticky icon"></i><span class="text">Qeydlər</span></a></li>
+                <li class="menu-item" data-target="paket-satislari"><a href="#"><i class="fas fa-box-open icon"></i><span class="text">Paket satışları</span></a></li>
+                <li class="menu-item" data-target="edv-hesabla"><a href="#"><i class="fas fa-percent icon"></i><span class="text">ƏDV-hesabla</span></a></li>
+                <li class="menu-item" data-target="kredit-hesabla"><a href="#"><i class="fas fa-landmark icon"></i><span class="text">Kredit hesabla</span></a></li>
+                <li class="menu-item" data-target="faydali-linkler"><a href="#"><i class="fas fa-link icon"></i><span class="text">Faydalı linklər</span></a></li>
+                <li class="menu-item" data-target="admin-panel"><a href="#"><i class="fas fa-user-shield icon"></i><span class="text">Admin panel</span></a></li>
+            </ul>
+        </nav>
+
+        <main id="main-content">
+            
+            <div id="kart-meblegi" class="page active">
+                <h1>Kart Məbləğini Hesabla</h1>
+                <div class="card">
+                    <div class="form-group"><label for="arzu-input">Arzu</label><div class="input-group"><span>₼</span><input type="number" id="arzu-input" placeholder="0.00"></div></div>
+                    <div class="form-group"><label for="aida-input">Aidə</label><div class="input-group"><span>₼</span><input type="number" id="aida-input" placeholder="0.00"></div></div>
+                    <div class="form-group"><label for="gulshad-input">Gülşad</label><div class="input-group"><span>₼</span><input type="number" id="gulshad-input" placeholder="0.00"></div></div>
+                    <div class="button-group">
+                        <button id="calc-kart-btn" class="btn btn-primary">Hesabla</button>
+                        <button id="clear-kart-btn" class="btn btn-secondary">Təmizlə</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="smart-qaligi" class="page">
+                <h1>Smart Qalığı Hesabla</h1>
+                <div class="card">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="smart-kart1">Kart məbləğ 1</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart1" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd1">Nağd məbləğ 1</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd1" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-kart2">Kart məbləğ 2</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart2" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd2">Nağd məbləğ 2</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd2" placeholder="0.00"></div></div>
+                        <hr class="form-divider">
+                        <div class="form-group"><label for="smart-kart-qaytarma">Kart qaytarma</label><div class="input-group"><span>₼</span><input type="number" id="smart-kart-qaytarma" placeholder="0.00"></div></div>
+                        <div class="form-group"><label for="smart-nagd-qaytarma">Nağd qaytarma</label><div class="input-group"><span>₼</span><input type="number" id="smart-nagd-qaytarma" placeholder="0.00"></div></div>
+                    </div>
+                    <div class="button-group">
+                        <button id="calc-smart-btn" class="btn btn-primary">Hesabla</button>
+                        <button id="clear-smart-btn" class="btn btn-secondary">Təmizlə</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="qeydler" class="page">
+                <h1>Qeydlər</h1>
+                <div class="card">
+                    <div class="form-group"><label for="note-input">Yeni qeyd əlavə et</label><textarea id="note-input" rows="4" placeholder="Bura yazın..."></textarea><input type="hidden" id="note-id-input"></div>
+                    <div class="button-group"><button id="save-note-btn" class="btn btn-primary">Yadda Saxla</button></div>
+                </div>
+                <div id="notes-list" class="list-container"></div>
+            </div>
+            
+            <div id="paket-satislari" class="page">
+                <h1>Paket Satışları</h1>
+                <div class="card">
+                     <div class="form-group"><label for="sifaris-no">Sifariş Nömrəsi</label><input type="text" id="sifaris-no" placeholder="Sifariş nömrəsini daxil edin"></div>
+                     <div class="form-group"><label for="paket-select">Paket Növü</label><select id="paket-select"><option value="0.10">Kontakt Paket 25*35 – 0.10 AZN</option><option value="0.20">Kontakt Paket 35*45 – 0.20 AZN</option><option value="0.30">Kontakt Paket 45*70 – 0.30 AZN</option><option value="0.50">Kontakt Paket 65*80 – 0.50 AZN</option></select></div>
+                     <div class="button-group"><button id="add-paket-btn" class="btn btn-primary">Siyahıya Əlavə Et</button></div>
+                </div>
+                <div id="paket-list" class="list-container"></div>
+            </div>
+
+            <div id="edv-hesabla" class="page">
+                <h1>ƏDV Geri Al Hesabla</h1>
+                <div class="card">
+                    <div class="form-group"><label for="edv-mebleg">Yekun Məbləğ (ƏDV Daxil)</label><div class="input-group"><span>₼</span><input type="number" id="edv-mebleg" placeholder="100.00"></div></div>
+                    <div class="button-group">
+                        <button id="calc-edv-nagd-btn" class="btn btn-primary">Nağd (5%)</button>
+                        <button id="calc-edv-nagdsiz-btn" class="btn btn-info">Nağdsız (17.5%)</button>
+                        <button id="clear-edv-btn" class="btn btn-secondary">Təmizlə</button>
+                    </div>
+                    <div id="edv-result" style="margin-top: 25px; font-size: 1.2em; line-height: 1.6;"></div>
+                </div>
+            </div>
+
+            <div id="kredit-hesabla" class="page">
+                <h1>Kredit Kalkulyatoru</h1>
+                <div class="card">
+                    <div class="form-group"><label for="kredit-mebleg">Kredit Məbləği</label><div class="input-group"><span>₼</span><input type="number" id="kredit-mebleg" placeholder="10000"></div></div>
+                    <div class="form-group"><label for="kredit-faiz">İllik Faiz Dərəcəsi (%)</label><div class="input-group"><span>%</span><input type="number" id="kredit-faiz" placeholder="18"></div></div>
+                    <div class="form-group"><label for="kredit-muddet">Kredit Müddəti (Ay)</label><div class="input-group"><i class="fas fa-calendar" style="padding:12px"></i><input type="number" id="kredit-muddet" placeholder="24"></div></div>
+                     <div class="button-group"><button id="calc-kredit-btn" class="btn btn-primary">Hesabla</button></div>
+                    <div id="kredit-result" style="margin-top: 20px; font-size: 1.2em;"></div>
+                </div>
+            </div>
+
+            <div id="faydali-linkler" class="page">
+                <h1>Faydalı Linklər</h1>
+                 <div class="card">
+                    <div class="form-group"><label for="link-title">Başlıq</label><input type="text" id="link-title" placeholder="Məsələn, Google"></div>
+                    <div class="form-group"><label for="link-url">URL</label><input type="text" id="link-url" placeholder="https://www.google.com"></div>
+                    <div class="button-group"><button id="add-link-btn" class="btn btn-primary">Linki Əlavə Et</button></div>
+                </div>
+                <div id="links-list" class="list-container"></div>
+            </div>
+
+            <div id="admin-panel" class="page">
+                <h1>Admin Panel</h1>
+                <div class="card">
+                    <h2>Giriş Parolunu Dəyiş</h2>
+                    <div class="form-group"><label for="new-password">Yeni Parol</label><input type="password" id="new-password" placeholder="Yeni parolu daxil edin"></div>
+                    <div class="button-group"><button id="change-password-btn" class="btn btn-primary">Dəyiş</button></div>
+                    <div id="password-change-status" style="margin-top:15px;"></div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Smart qalıq paneli -->
-    <div class="dropdown">
-      <section id="tab-smart" class="panel" aria-hidden="true">
-        <div class="panel-inner">
-          <div class="headline">Smart qalıq</div>
-          <div class="muted">2 nağd və 2 kart məbləğini daxil edin. Dəyərlər avtomatik yadda saxlanılır.</div>
-
-          <div class="grid">
-            <div class="col-6">
-              <div class="card">
-                <label for="cash1">Nağd məbləğ 1</label>
-                <input id="cash1" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="card">
-                <label for="cash2">Nağd məbləğ 2</label>
-                <input id="cash2" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="card">
-                <label for="card1">Kart məbləği 1</label>
-                <input id="card1" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="card">
-                <label for="card2">Kart məbləği 2</label>
-                <input id="card2" class="input" inputmode="decimal" placeholder="0.00" />
-              </div>
-            </div>
-            <div class="col-12 row" style="justify-content:space-between;">
-              <div class="tag" id="smart-status">Avtoyaddaş aktivdir</div>
-              <div class="row">
-                <button class="btn" id="btn-smart-calc">Hesabla</button>
-                <button class="btn ghost" id="btn-smart-reset" title="Dəyərləri sıfırla">Sıfırla</button>
-              </div>
-            </div>
-          </div>
+    <div id="result-modal">
+        <div id="result-modal-content">
+            <h2 id="modal-title">Yekun Nəticə</h2>
+            <div id="result-text"></div>
+            <button id="close-modal-btn" class="btn">Bağla</button>
         </div>
-      </section>
     </div>
 
-    <!-- Qeydlər paneli -->
-    <div class="dropdown">
-      <section id="tab-notes" class="panel" aria-hidden="true">
-        <div class="panel-inner">
-          <div class="headline">Qeydlər</div>
-          <div class="muted">Gündəlik qeydlərinizi yazın. Qeydlər avtomatik yadda saxlanılır; redaktə və silmə mümkündür.</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-          <div class="card">
-            <label for="note-text">Yeni qeyd</label>
-            <textarea id="note-text" class="input" rows="3" placeholder="Məsələn: 02.09.2025 üçün plan..."></textarea>
-            <div class="row" style="justify-content:space-between; margin-top:10px;">
-              <div class="tag" id="notes-status">Avtoyaddaş aktivdir</div>
-              <button class="btn" id="add-note">Qeydi əlavə et</button>
-            </div>
-          </div>
-
-          <div class="notes-list" id="notes-list" aria-live="polite"></div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal" role="document">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-title">Nəticə</div>
-        <button class="btn ghost" id="modal-close">Bağla</button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div class="toast" id="toast">Yadda saxlanıldı</div>
-
-  <script>
-    // Util: number parse & format
-    const toNum = (v)=>{
-      if(v == null) return 0;
-      const s = String(v).replace(/\s+/g,'').replace(/,/g,'.');
-      const n = parseFloat(s);
-      return Number.isFinite(n) ? n : 0;
+    const appState = {
+        passwordKey: 'hesablama_app_password',
+        defaultPassword: '223366'
     };
-    const fmt = (n)=> new Intl.NumberFormat('az-AZ', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n||0);
+    
+    // --- Ümumi Funksiyalar ---
+    const showModal = (content, isHtml = false, title = "Yekun Nəticə") => {
+        const resultTextEl = document.getElementById('result-text');
+        const modalTitleEl = document.getElementById('modal-title');
+        
+        modalTitleEl.textContent = title;
 
-    // Util: storage helpers
-    const save = (k, v)=> localStorage.setItem(k, JSON.stringify(v));
-    const load = (k, d)=> { try{ const v = JSON.parse(localStorage.getItem(k)); return v ?? d }catch{ return d } };
-
-    // Toast
-    let toastTimer;
-    const toast = (msg)=>{
-      const el = document.getElementById('toast');
-      el.textContent = msg; el.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=> el.classList.remove('show'), 1400);
-    }
-
-    // Modal
-    const modal = {
-      open(title, html){
-        document.getElementById('modal-title').textContent = title;
-        document.getElementById('modal-body').innerHTML = html;
-        const bd = document.getElementById('modal-backdrop');
-        bd.classList.add('show');
-        bd.setAttribute('aria-hidden','false');
-      },
-      close(){
-        const bd = document.getElementById('modal-backdrop');
-        bd.classList.remove('show');
-        bd.setAttribute('aria-hidden','true');
-      }
+        if (isHtml) {
+            resultTextEl.innerHTML = content;
+            resultTextEl.style.fontSize = '1.2em';
+            resultTextEl.style.textAlign = 'left';
+        } else {
+            resultTextEl.innerHTML = `${content.toFixed(2)} ₼`;
+            resultTextEl.style.fontSize = '2.5em';
+            resultTextEl.style.textAlign = 'center';
+        }
+        document.getElementById('result-modal').classList.add('show');
     };
+    
+    // --- Giriş Sistemi ---
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.getElementById('app');
+    const passwordInput = document.getElementById('password-input');
+    const loginButton = document.getElementById('login-button');
+    const loginError = document.getElementById('login-error');
 
-    // Tabs -> açılan panellər (dropdown)
-    document.querySelectorAll('.tab').forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
+    loginButton.addEventListener('click', () => {
+        const currentPassword = localStorage.getItem(appState.passwordKey) || appState.defaultPassword;
+        if (passwordInput.value === currentPassword) {
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                appContainer.classList.add('visible');
+            }, 500);
+        } else {
+            loginError.textContent = 'Parol yanlışdır!';
+            passwordInput.style.borderColor = '#e74c3c';
+        }
+    });
+    passwordInput.addEventListener('input', () => {
+        loginError.textContent = '';
+        passwordInput.style.borderColor = 'var(--border-color)';
+    });
 
-        const target = tab.getAttribute('data-target');
-        document.querySelectorAll('.panel').forEach(p=>{
-          const isTarget = '#'+p.id === target;
-          p.classList.toggle('open', isTarget);
-          p.setAttribute('aria-hidden', String(!isTarget));
+    // --- Naviqasiya Sistemi ---
+    const menuItems = document.querySelectorAll('.menu-item');
+    const pages = document.querySelectorAll('.page');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            menuItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            const targetId = item.getAttribute('data-target');
+            pages.forEach(page => {
+                page.classList.remove('active');
+                if(page.id === targetId) { page.classList.add('active'); }
+            });
         });
-      });
     });
 
-    // Modal close
-    document.getElementById('modal-close').addEventListener('click', modal.close);
-    document.getElementById('modal-backdrop').addEventListener('click', (e)=>{ if(e.target.id==='modal-backdrop') modal.close(); });
-
-    // KART MƏBLƏĞ state & events
-    const idsKart = ['aide','gulshad','arzu'];
-    const keyKart = 'kartAmounts.v1';
-
-    function loadKart(){
-      const st = load(keyKart, {aide:'', gulshad:'', arzu:''});
-      idsKart.forEach(id=>{ document.getElementById(id).value = st[id] ?? '' });
-    }
-    function persistKart(){
-      const st = Object.fromEntries(idsKart.map(id=>[id, document.getElementById(id).value || '' ]));
-      save(keyKart, st); toast('Kart məbləğ yadda saxlanıldı');
-      document.getElementById('kart-status').textContent = 'Son yaddaş: ' + new Date().toLocaleTimeString('az-AZ');
-    }
-
-    idsKart.forEach(id=>{
-      const el = document.getElementById(id);
-      el.addEventListener('input', ()=>{ // canlı yaddaş
-        persistKart();
-      });
+    // --- Modalın bağlanması ---
+    const closeModal = () => document.getElementById('result-modal').classList.remove('show');
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('result-modal').addEventListener('click', (e) => {
+        if(e.target.id === 'result-modal') { closeModal(); }
     });
 
-    document.getElementById('btn-kart-calc').addEventListener('click', ()=>{
-      const vals = idsKart.map(id=> toNum(document.getElementById(id).value));
-      const sum = vals.reduce((a,b)=>a+b,0);
-      const detail = `
-        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
-          <span>Aidə</span><strong>${fmt(vals[0])}</strong>
-        </div>
-        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
-          <span>Gülşad</span><strong>${fmt(vals[1])}</strong>
-        </div>
-        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
-          <span>Arzu</span><strong>${fmt(vals[2])}</strong>
-        </div>
-        <hr style="border:0; border-top:1px solid #24325d; margin:12px 0;"/>
-        <div class="row" style="justify-content:space-between; font-size:18px;">
-          <span>Yekun</span><strong>${fmt(sum)}</strong>
-        </div>`;
-      modal.open('Kart məbləğ — Yekun', detail);
+    // --- Məlumatların Saxlanması ---
+    const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+    const loadData = (key) => JSON.parse(localStorage.getItem(key));
+    const autoSaveInput = (inputId, storageKey) => {
+        const input = document.getElementById(inputId);
+        input.value = loadData(storageKey) || '';
+        input.addEventListener('input', () => saveData(storageKey, input.value));
+    };
+    
+    // --- 1. Kart Məbləği Hesabla ---
+    const kartInputs = ['arzu-input', 'aida-input', 'gulshad-input'];
+    kartInputs.forEach(id => autoSaveInput(id, `kart_${id}`));
+    document.getElementById('calc-kart-btn').addEventListener('click', () => {
+        const total = kartInputs.reduce((sum, id) => sum + (parseFloat(document.getElementById(id).value) || 0), 0);
+        showModal(total, false, "Kartların Cəmi");
     });
-
-    document.getElementById('btn-kart-reset').addEventListener('click', ()=>{
-      idsKart.forEach(id=> document.getElementById(id).value = '');
-      persistKart();
-    });
-
-    // SMART QALIQ state & events
-    const idsSmart = ['cash1','cash2','card1','card2'];
-    const keySmart = 'smartValues.v1';
-
-    function loadSmart(){
-      const st = load(keySmart, {cash1:'', cash2:'', card1:'', card2:''});
-      idsSmart.forEach(id=>{ document.getElementById(id).value = st[id] ?? '' });
-    }
-    function persistSmart(){
-      const st = Object.fromEntries(idsSmart.map(id=>[id, document.getElementById(id).value || '' ]));
-      save(keySmart, st); toast('Smart qalıq yadda saxlanıldı');
-      document.getElementById('smart-status').textContent = 'Son yaddaş: ' + new Date().toLocaleTimeString('az-AZ');
-    }
-
-    idsSmart.forEach(id=>{
-      document.getElementById(id).addEventListener('input', persistSmart);
-    });
-
-    document.getElementById('btn-smart-calc').addEventListener('click', ()=>{
-      const v = Object.fromEntries(idsSmart.map(id=>[id, toNum(document.getElementById(id).value)]));
-      const sumCash = v.cash1 + v.cash2; const sumCard = v.card1 + v.card2; const total = sumCash + sumCard;
-      const html = `
-        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
-          <span>Nağd məbləğlər</span><strong>${fmt(sumCash)}</strong>
-        </div>
-        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
-          <span>Kart məbləğləri</span><strong>${fmt(sumCard)}</strong>
-        </div>
-        <hr style="border:0; border-top:1px solid #24325d; margin:12px 0;"/>
-        <div class="row" style="justify-content:space-between; font-size:18px;">
-          <span>Yekun</span><strong>${fmt(total)}</strong>
-        </div>`;
-      modal.open('Smart qalıq — Nəticə', html);
-    });
-
-    document.getElementById('btn-smart-reset').addEventListener('click', ()=>{
-      idsSmart.forEach(id=> document.getElementById(id).value = '');
-      persistSmart();
-    });
-
-    // QEYDLƏR
-    const keyNotes = 'notes.v1';
-
-    function renderNotes(){
-      const listEl = document.getElementById('notes-list');
-      const items = load(keyNotes, []);
-      if(!items.length){ listEl.innerHTML = '<div class="muted">Hələ qeyd yoxdur.</div>'; return; }
-      listEl.innerHTML = '';
-      for(const note of items){
-        const wrap = document.createElement('div'); wrap.className='note-item'; wrap.dataset.id = note.id;
-        const textarea = document.createElement('textarea'); textarea.className='input'; textarea.rows=2; textarea.value = note.text; textarea.disabled = true;
-        const actions = document.createElement('div'); actions.className='note-actions';
-        const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Düzəliş';
-        const btnSave = document.createElement('button'); btnSave.className='btn'; btnSave.textContent='Yadda saxla'; btnSave.style.display='none';
-        const btnDelete = document.createElement('button'); btnDelete.className='btn ghost'; btnDelete.textContent='Sil';
-        actions.append(btnEdit, btnSave, btnDelete);
-        wrap.append(textarea, actions); listEl.appendChild(wrap);
-
-        btnEdit.addEventListener('click', ()=>{ textarea.disabled = false; textarea.focus(); btnEdit.style.display='none'; btnSave.style.display='inline-flex'; });
-        btnSave.addEventListener('click', ()=>{
-          textarea.disabled = true; btnSave.style.display='none'; btnEdit.style.display='inline-flex';
-          const all = load(keyNotes, []);
-          const idx = all.findIndex(x=> x.id === note.id);
-          if(idx>-1){ all[idx].text = textarea.value; save(keyNotes, all); toast('Qeyd yadda saxlanıldı'); }
+    document.getElementById('clear-kart-btn').addEventListener('click', () => {
+        kartInputs.forEach(id => {
+            document.getElementById(id).value = '';
+            localStorage.removeItem(`kart_${id}`);
         });
-        btnDelete.addEventListener('click', ()=>{
-          const all = load(keyNotes, []);
-          save(keyNotes, all.filter(x=> x.id !== note.id));
-          renderNotes(); toast('Qeyd silindi');
-        });
-      }
-    }
+    });
+    
+    // --- 2. Smart Qalığı Hesabla (YENİLƏNMİŞ HESABLAMA) ---
+    const smartInputs = ['smart-kart1', 'smart-kart2', 'smart-nagd1', 'smart-nagd2', 'smart-nagd-qaytarma', 'smart-kart-qaytarma'];
+    smartInputs.forEach(id => autoSaveInput(id, `smart_${id}`));
+    
+    document.getElementById('calc-smart-btn').addEventListener('click', () => {
+        const getVal = id => parseFloat(document.getElementById(id).value) || 0;
+        const kartYekun = getVal('smart-kart1') + getVal('smart-kart2');
+        const nagdYekun = getVal('smart-nagd1') + getVal('smart-nagd2');
+        const nagdQaytarma = getVal('smart-nagd-qaytarma');
+        const kartQaytarma = getVal('smart-kart-qaytarma');
+        const yekunQaliq = (kartYekun + nagdYekun) - (nagdQaytarma + kartQaytarma);
 
-    document.getElementById('add-note').addEventListener('click', ()=>{
-      const t = document.getElementById('note-text');
-      const text = t.value.trim(); if(!text){ toast('Mətn boşdur'); return; }
-      const all = load(keyNotes, []);
-      all.unshift({ id: 'n'+Date.now(), text, createdAt: Date.now() });
-      save(keyNotes, all); t.value=''; renderNotes(); toast('Qeyd əlavə olundu');
+        const resultHtml = `
+            <div style="line-height: 2; font-weight: 500;">
+                <p>Cəmi Kart Mədaxili: <strong style="float: right; color: #2980b9;">${kartYekun.toFixed(2)} ₼</strong></p>
+                <p>Cəmi Nağd Mədaxili: <strong style="float: right; color: #27ae60;">${nagdYekun.toFixed(2)} ₼</strong></p>
+                <hr style="margin: 8px 0; border-color: var(--background-color);">
+                <p>Kart Qaytarma: <strong style="float: right; color: #e74c3c;">-${kartQaytarma.toFixed(2)} ₼</strong></p>
+                <p>Nağd Qaytarma: <strong style="float: right; color: #e74c3c;">-${nagdQaytarma.toFixed(2)} ₼</strong></p>
+                <hr style="margin: 8px 0; border-color: var(--background-color);">
+                <p style="font-size: 1.4em; margin-top: 10px; font-weight: bold;">Yekun Qalıq: <strong style="float: right; color: #2c3e50;">${yekunQaliq.toFixed(2)} ₼</strong></p>
+            </div>
+        `;
+        showModal(resultHtml, true, "Smart Qalıq Detalları");
+    });
+    document.getElementById('clear-smart-btn').addEventListener('click', () => {
+        smartInputs.forEach(id => {
+            document.getElementById(id).value = '';
+            localStorage.removeItem(`smart_${id}`);
+        });
     });
 
-    // İlk yüklənmə
-    (function init(){
-      loadKart(); loadSmart(); renderNotes();
-    })();
-  </script>
+    // --- 3. Qeydlər ---
+    const noteInput = document.getElementById('note-input');
+    const noteIdInput = document.getElementById('note-id-input');
+    const notesList = document.getElementById('notes-list');
+    let notes = loadData('notes') || [];
+    const renderNotes = () => {
+        notesList.innerHTML = '';
+        notes.forEach(note => {
+            const noteEl = document.createElement('div'); noteEl.classList.add('list-item');
+            noteEl.innerHTML = `<div class="list-item-content">${note.text.replace(/\n/g, '<br>')}</div><div class="list-item-actions"><button class="edit-btn" onclick="editNote('${note.id}')"><i class="fas fa-edit"></i></button><button class="delete-btn" onclick="deleteNote('${note.id}')"><i class="fas fa-trash"></i></button></div>`;
+            notesList.appendChild(noteEl);
+        });
+    };
+    document.getElementById('save-note-btn').addEventListener('click', () => {
+        const noteText = noteInput.value.trim(); const noteId = noteIdInput.value;
+        if (!noteText) return;
+        if (noteId) { notes.find(n => n.id === noteId).text = noteText; } else { notes.push({ id: Date.now().toString(), text: noteText }); }
+        noteInput.value = ''; noteIdInput.value = ''; saveData('notes', notes); renderNotes();
+    });
+    window.editNote = (id) => { const note = notes.find(n => n.id === id); noteInput.value = note.text; noteIdInput.value = id; noteInput.focus(); };
+    window.deleteNote = (id) => { notes = notes.filter(n => n.id !== id); saveData('notes', notes); renderNotes(); };
+    renderNotes();
+
+    // --- 4. Paket Satışları ---
+    const sifarisNoInput = document.getElementById('sifaris-no');
+    const paketSelect = document.getElementById('paket-select');
+    const paketList = document.getElementById('paket-list');
+    let paketSatislar = loadData('paket_satislar') || [];
+    const renderPaketler = () => {
+        paketList.innerHTML = '';
+        paketSatislar.forEach(satis => {
+            const el = document.createElement('div'); el.classList.add('list-item');
+            el.innerHTML = `<div class="list-item-content"><strong>Sifariş #${satis.sifarisNo}:</strong> ${satis.paketText}</div><div class="list-item-actions"><button class="delete-btn" onclick="deletePaket('${satis.id}')"><i class="fas fa-trash"></i></button></div>`;
+            paketList.appendChild(el);
+        });
+    };
+    document.getElementById('add-paket-btn').addEventListener('click', () => {
+        const sifarisNo = sifarisNoInput.value.trim(); if (!sifarisNo) { alert('Sifariş nömrəsi daxil edin.'); return; }
+        const selectedOption = paketSelect.options[paketSelect.selectedIndex];
+        paketSatislar.push({ id: Date.now().toString(), sifarisNo: sifarisNo, paketText: selectedOption.text });
+        saveData('paket_satislar', paketSatislar); renderPaketler(); sifarisNoInput.value = ''; sifarisNoInput.focus();
+    });
+    window.deletePaket = (id) => { paketSatislar = paketSatislar.filter(p => p.id !== id); saveData('paket_satislar', paketSatislar); renderPaketler(); };
+    renderPaketler();
+
+    // --- 5. ƏDV Hesabla (YENİLƏNMİŞ) ---
+    const edvMeblegInput = document.getElementById('edv-mebleg');
+    const edvResultDiv = document.getElementById('edv-result');
+    const calculateEdvRefund = (type) => {
+        const mebleg = parseFloat(edvMeblegInput.value) || 0;
+        if (mebleg <= 0) { edvResultDiv.innerHTML = `<p style="color: #e74c3c;">Zəhmət olmasa, məbləğ daxil edin.</p>`; return; }
+        const edv = (mebleg / 1.18) * 0.18;
+        let qaytarilanEdv = (type === 'nagd') ? edv * 0.05 : edv * 0.175;
+        let resultColor = (type === 'nagd') ? '#27ae60' : 'var(--info-color)';
+        edvResultDiv.innerHTML = `<p><strong>Ümumi Məbləğ:</strong> ${mebleg.toFixed(2)} ₼</p><p><strong>Daxil olan ƏDV (18%):</strong> ${edv.toFixed(2)} ₼</p><hr style="margin: 10px 0; border-top: 1px solid var(--border-color); border-bottom: 0;"><p style="color: ${resultColor}; font-weight: bold;">Qaytarılmalı Məbləğ: ${qaytarilanEdv.toFixed(2)} ₼</p>`;
+    };
+    document.getElementById('calc-edv-nagd-btn').addEventListener('click', () => calculateEdvRefund('nagd'));
+    document.getElementById('calc-edv-nagdsiz-btn').addEventListener('click', () => calculateEdvRefund('nagdsiz'));
+    document.getElementById('clear-edv-btn').addEventListener('click', () => { edvMeblegInput.value = ''; edvResultDiv.innerHTML = ''; });
+
+    // --- 6. Kredit Hesabla ---
+    document.getElementById('calc-kredit-btn').addEventListener('click', () => {
+        const P = parseFloat(document.getElementById('kredit-mebleg').value) || 0, i = ((parseFloat(document.getElementById('kredit-faiz').value) || 0) / 100 / 12), n = parseInt(document.getElementById('kredit-muddet').value) || 0;
+        if (P > 0 && i > 0 && n > 0) {
+            const M = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+            document.getElementById('kredit-result').innerHTML = `<p><strong>Aylıq ödəniş:</strong> ${M.toFixed(2)} ₼</p><p><strong>Ümumi ödəniş:</strong> ${(M * n).toFixed(2)} ₼</p><p><strong>Artıq ödənilən faiz:</strong> ${(M * n - P).toFixed(2)} ₼</p>`;
+        } else { document.getElementById('kredit-result').innerHTML = `<p style="color: #e74c3c;">Bütün xanaları düzgün doldurun.</p>`; }
+    });
+
+    // --- 7. Faydalı Linklər ---
+    const linkTitleInput = document.getElementById('link-title'), linkUrlInput = document.getElementById('link-url'), linksList = document.getElementById('links-list');
+    let links = loadData('links') || [];
+    const renderLinks = () => {
+        linksList.innerHTML = '';
+        links.forEach(link => {
+            const el = document.createElement('div'); el.classList.add('list-item');
+            el.innerHTML = `<div class="list-item-content"><a href="${link.url}" target="_blank" rel="noopener noreferrer"><strong>${link.title}</strong></a></div><div class="list-item-actions"><button class="delete-btn" onclick="deleteLink('${link.id}')"><i class="fas fa-trash"></i></button></div>`;
+            linksList.appendChild(el);
+        });
+    };
+    document.getElementById('add-link-btn').addEventListener('click', () => {
+        const title = linkTitleInput.value.trim(); let url = linkUrlInput.value.trim();
+        if (!title || !url) { alert('Başlıq və URL daxil edin.'); return; }
+        if (!url.startsWith('http')) { url = 'https://' + url; }
+        links.push({ id: Date.now().toString(), title, url }); saveData('links', links); renderLinks(); linkTitleInput.value = ''; linkUrlInput.value = '';
+    });
+    window.deleteLink = (id) => { links = links.filter(l => l.id !== id); saveData('links', links); renderLinks(); };
+    renderLinks();
+
+    // --- 8. Admin Panel ---
+    const newPasswordInput = document.getElementById('new-password'), passwordStatus = document.getElementById('password-change-status');
+    document.getElementById('change-password-btn').addEventListener('click', () => {
+        const newPassword = newPasswordInput.value;
+        if (newPassword.length < 6) { passwordStatus.textContent = 'Parol ən az 6 simvol olmalıdır.'; passwordStatus.style.color = '#e74c3c'; } 
+        else { localStorage.setItem(appState.passwordKey, newPassword); passwordStatus.textContent = 'Parol uğurla dəyişdirildi!'; passwordStatus.style.color = '#2ecc71'; newPasswordInput.value = ''; }
+        setTimeout(() => { passwordStatus.textContent = ''; }, 3000);
+    });
+});
+</script>
+
 </body>
 </html>
