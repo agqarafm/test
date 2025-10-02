@@ -3,441 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Təmizlik Arayışı Generatoru</title>
+    <title>Arayış Forması</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
-
         body {
             font-family: 'Times New Roman', Times, serif;
-            background-color: #f0f2f5;
+            background-color: #f0f0f0;
+            padding: 20px 0;
             display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            gap: 20px;
+            justify-content: center;
         }
-
-        .form-container {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 450px;
-            height: fit-content;
-        }
-
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        #product-form {
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            background-color: #f9f9f9;
-        }
-
-        #product-form h3 {
-            margin-top: 0;
-            text-align: center;
-            color: #444;
-        }
-
-        .button-group {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .button-group button, .main-actions button {
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            color: white;
-        }
-
-        #btnAddProduct { background-color: #28a745; }
-        #btnClearForm { background-color: #dc3545; }
-        #btnPreview { background-color: #007bff; grid-column: 1 / -1; }
-        #btnPrint { background-color: #6c757d; }
-
-        .document-preview {
-            display: none; /* Initially hidden */
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            margin: 10px auto;
+        .page {
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             box-sizing: border-box;
+            display: none; /* SƏNƏDİ İLKİN OLARAQ GİZLƏDİR */
         }
-        
-        .doc-header img {
-            width: 100%;
+        .document-container {
+             font-size: 14px;
         }
-
-        .doc-header {
-             border-bottom: 2px solid black;
-             padding-bottom: 10px;
-             margin-bottom: 20px;
+        .header {
+            text-align: left;
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-
-        .doc-date-ref {
-            display: flex;
-            justify-content: space-between;
+        .header img {
+            width: 200px;
+        }
+        .contact-info {
+            font-size: 12px;
+            text-align: left;
+            margin-top: 5px;
+        }
+        .document-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 30px;
             margin-bottom: 30px;
         }
-        
-        .doc-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 25px;
+        .info-section {
+            margin-bottom: 20px;
         }
-        
-        .doc-body {
-            line-height: 1.6;
-            text-align: justify;
+        .info-section p {
+            text-indent: 20px;
+            line-height: 1.5;
         }
-        
-        .doc-body p {
-             margin-bottom: 20px;
-        }
-        
-        .doc-table {
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             margin-bottom: 20px;
-            font-size: 12px;
         }
-        
-        .doc-table th, .doc-table td {
-            border: 1px solid #000;
+        th, td {
+            border: 1px solid black;
             padding: 8px;
             text-align: center;
         }
-        
-        .doc-table th {
-            background-color: #f2f2f2;
+        th {
             font-weight: bold;
         }
-        
-        .doc-footer {
+        .footer {
             margin-top: 40px;
         }
-        
-        .signature-line {
-            margin-top: 50px;
+        .footer-line {
             display: flex;
             justify-content: space-between;
+            margin-top: 5px;
         }
-        
-        #added-products-list {
-            margin-top: 15px;
-            font-size: 14px;
+        .form-section {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            width: 210mm; /* A4 width */
+            box-sizing: border-box;
+            /* Bu blok ilkin olaraq görünür */
         }
-        .product-item {
-            background: #e9ecef;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-bottom: 5px;
+        .form-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-input {
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
-        .remove-product {
-            color: red;
-            cursor: pointer;
+        .form-input label {
+            width: 150px;
             font-weight: bold;
         }
+        .form-input input, .form-input select {
+            width: calc(100% - 160px);
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .form-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .form-buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
 
+        .view-button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .view-button-container button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
 
         @media print {
             body {
-                background: none;
+                background-color: white;
                 padding: 0;
-                margin: 0;
-            }
-            .form-container {
-                display: none;
-            }
-            .document-preview {
                 display: block;
+            }
+            .page {
                 box-shadow: none;
                 margin: 0;
-                width: 100%;
-                height: 100%;
                 padding: 0;
+                width: 100%;
+                min-height: auto;
+                display: block !important;
             }
+            .form-section, .view-button-container {
+                display: none !important;
+            }
+            #product-table th:last-child,
+            #product-table td:last-child {
+                display: none;
+            }
+        }
+        @page {
+            size: A4;
+            margin: 20mm;
         }
     </style>
 </head>
 <body>
-
-    <div class="form-container">
-        <h2>Məlumatları Daxil Edin</h2>
-        
-        <div class="form-group">
-            <label for="ref-number">Arayış №</label>
-            <input type="text" id="ref-number" value="0044">
-        </div>
-
-        <div class="form-group">
-            <label for="date">Tarix</label>
-            <input type="date" id="date">
-        </div>
-        
-        <div class="form-group">
-            <label for="location">Bölgə/Rayon</label>
-            <input type="text" id="location" value="Oğuz Rayonu">
-        </div>
-
-        <div class="form-group">
-            <label for="client-name">Müştərinin Adı, Soyadı, Ata adı</label>
-            <input type="text" id="client-name" placeholder="Məs: RZALI FƏRHAD NEYMƏT">
-        </div>
-
-        <div class="form-group">
-            <label for="client-fin">Müştərinin FİN kodu</label>
-            <input type="text" id="client-fin" placeholder="Məs: 4YSDYV7" maxlength="7">
-        </div>
-
-        <div id="product-form">
-             <h3>Məhsul Əlavə Et</h3>
-             <div class="form-group">
-                <label for="product-name">Məhsulun adı</label>
-                <input type="text" id="product-name" placeholder="Məs: FEN ÜTÜ PHİLİPS BHS375/00">
-            </div>
-            <div class="form-group">
-                <label for="sale-date">Satış tarixi</label>
-                <input type="date" id="sale-date">
-            </div>
-            <div class="form-group">
-                <label for="credit-value">Kredit dəyəri (AZN)</label>
-                <input type="number" id="credit-value" placeholder="Məs: 87.65">
-            </div>
-             <div class="form-group">
-                <label for="credit-status">Kredit/statusu</label>
-                <select id="credit-status">
-                    <option value="BAĞLI">Bağlı</option>
-                    <option value="AÇIQ">Açıq</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="contract-number">Müqavilə nömrəsi</label>
-                <input type="text" id="contract-number" placeholder="Məs: 09865656">
-            </div>
-            <button id="btnAddProduct" class="button-group button">Məhsul Əlavə Et</button>
-        </div>
-
-        <div id="added-products-list"></div>
-
-        <div class="form-group" style="margin-top: 20px;">
-            <label for="manager-name">Mağaza rəhbəri</label>
-            <input type="text" id="manager-name" value="Elnur Mürsəlov">
-        </div>
-        
-        <div class="main-actions button-group">
-            <button id="btnPreview">Ərizəyə Baxış Keçir</button>
-            <button id="btnClearForm">Təmizlə</button>
-            <button id="btnPrint">Çap Et</button>
-        </div>
+    <div class="view-button-container">
+        <button id="view-result-btn" onclick="toggleView()">Yekun Nəticəyə Bax</button>
     </div>
 
-    <div class="document-preview" id="preview">
-        <div class="doc-header">
-            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAnA+wDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKpgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-!" alt="ABC Telecom Logo">
-            <p style="text-align: left; font-size: 14px; margin: 5px 0 0 0;">
-                Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-                Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
-            </p>
+    <div>
+        <div class="page">
+            <div class="document-container">
+                <div class="header">
+                    <img src="logo.jpg" alt="ABC Telecom Logo">
+                    <div class="contact-info">
+                        Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+                        Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span id="doc-date-location">Tarix : 02.10.2025, Oğuz Rayonu,</span>
+                    <span id="doc-number">0044</span>
+                </div>
+
+                <h1 class="document-title">A R A Y I Ş</h1>
+
+                <div class="info-section">
+                    <p>
+                        Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+                    </p>
+                </div>
+
+                <table id="product-table">
+                    <thead>
+                        <tr>
+                            <th>Məhsulun adı</th>
+                            <th>Satış tarixi</th>
+                            <th>Kredit dəyəri cəm</th>
+                            <th>Borc</th>
+                            <th>Kredit/statusu</th>
+                            <th>Müqavilə nömrəsi</th>
+                            <th class="no-print">Əməliyyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+
+                <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+
+                <div class="footer">
+                    <p>Hörmətlə</p>
+                    <div class="footer-line">
+                        <span><b>Mağaza rəhbəri:</b></span>
+                        <span id="manager-name-output"><b>Elnur Mürsəlov</b></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="doc-date-ref">
-            <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
-            <span id="doc-ref"></span>
-        </div>
-        
-        <h1 class="doc-title">A R A Y I Ş</h1>
-        
-        <div class="doc-body">
-            <p id="doc-main-text">Verilir  RZALI FƏRHAD NEYMƏT  oğluna ( 4YSDYV7 ) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:</p>
-        </div>
-        
-        <table class="doc-table" id="doc-product-table">
-            <thead>
-                <tr>
-                    <th>Məhsulun adı</th>
-                    <th>Satış tarixi</th>
-                    <th>Kredit dəyəri cəm</th>
-                    <th>Borc</th>
-                    <th>Kredit/statusu</th>
-                    <th>Müqavilə nömrəsi</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
-        
-        <div class="doc-footer">
-            <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
-            <p>Hörmətlə</p>
-            <div class="signature-line">
-                <span>Mağaza rəhbəri:</span>
-                <span id="doc-manager-name">Elnur Mürsəlov</span>
+
+        <div class="form-section">
+            <h3>Məlumatların Daxil Edilməsi Paneli</h3>
+            <div class="form-input">
+                <label for="date-input">Tarix:</label>
+                <input type="date" id="date-input">
+            </div>
+            <div class="form-input">
+                <label for="location-input">Rayon:</label>
+                <input type="text" id="location-input" value="Oğuz Rayonu">
+            </div>
+            <div class="form-input">
+                <label for="number-input">Arayış No:</label>
+                <input type="text" id="number-input" value="0044">
+            </div>
+            <div class="form-input">
+                <label for="fullname-input">Ad, Soyad, Ata adı:</label>
+                <input type="text" id="fullname-input" value="RZALI FƏRHAD NEYMƏT oğlu">
+            </div>
+            <div class="form-input">
+                <label for="fin-input">FİN kod:</label>
+                <input type="text" id="fin-input" value="4YSDYV7">
+            </div>
+            <div class="form-input">
+                <label for="manager-name-input">Mağaza rəhbəri:</label>
+                <input type="text" id="manager-name-input" value="Elnur Mürsəlov">
+            </div>
+            <hr>
+            <h4>Yeni Məhsul Əlavə Et</h4>
+            <div class="form-input">
+                <label for="product-name">Məhsulun adı:</label>
+                <input type="text" id="product-name" placeholder="Məhsulun adını daxil edin">
+            </div>
+            <div class="form-input">
+                <label for="sale-date">Satış tarixi:</label>
+                <input type="text" id="sale-date" placeholder="gg.aa.iiii">
+            </div>
+            <div class="form-input">
+                <label for="credit-value">Kredit dəyəri cəm:</label>
+                <input type="text" id="credit-value" placeholder="Məbləği daxil edin" onblur="formatCurrency(this)">
+            </div>
+            <div class="form-input">
+                <label for="credit-status">Kredit/statusu:</label>
+                <select id="credit-status">
+                    <option value="BAĞLI">BAĞLI</option>
+                    <option value="AÇIQ">AÇIQ</option>
+                </select>
+            </div>
+            <div class="form-input">
+                <label for="contract-number">Müqavilə nömrəsi:</label>
+                <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi">
+            </div>
+            <div class="form-buttons">
+                <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
+                <button onclick="addProduct()">Məhsul Əlavə Et</button>
+                <button onclick="window.print()">PDF Hazırla</button>
+                <button onclick="window.print()">Çap Et</button>
             </div>
         </div>
     </div>
 
     <script>
-        let productList = [];
+        function toggleView() {
+            const page = document.querySelector('.page');
+            const form = document.querySelector('.form-section');
+            const btn = document.getElementById('view-result-btn');
 
-        // Set today's date for date inputs
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().substring(0, 10);
-            document.getElementById('date').value = today;
-            document.getElementById('sale-date').value = today;
-        });
+            if (page.style.display === 'none' || page.style.display === '') {
+                // Yekun nəticəyə baxmazdan əvvəl məlumatları yeniləyirik
+                updateDocumentInfo();
+                page.style.display = 'block';
+                form.style.display = 'none';
+                btn.textContent = 'Formaya Geri Dön';
+            } else {
+                page.style.display = 'none';
+                form.style.display = 'block';
+                btn.textContent = 'Yekun Nəticəyə Bax';
+            }
+        }
 
-        // Add Product Button
-        document.getElementById('btnAddProduct').addEventListener('click', () => {
+        function formatCurrency(input) {
+            let value = input.value.trim().replace(/\s*AZN/i, '');
+            if (value && !isNaN(value)) {
+                input.value = value + ' AZN';
+            }
+        }
+
+        function updateDocumentInfo() {
+            const dateInput = document.getElementById('date-input').value;
+            const locationInput = document.getElementById('location-input').value;
+            const numberInput = document.getElementById('number-input').value;
+            const fullnameInput = document.getElementById('fullname-input').value;
+            const finInput = document.getElementById('fin-input').value;
+            const managerName = document.getElementById('manager-name-input').value;
+            
+            let formattedDate = '';
+            if (dateInput) {
+                const date = new Date(dateInput);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                formattedDate = `${day}.${month}.${year}`;
+            }
+            document.getElementById('doc-date-location').innerText = `Tarix : ${formattedDate}, ${locationInput},`;
+            document.getElementById('doc-number').innerText = numberInput;
+            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`;
+            document.getElementById('doc-fin').innerText = finInput;
+            document.getElementById('manager-name-output').innerHTML = `<b>${managerName}</b>`;
+        }
+
+        function addProduct() {
             const productName = document.getElementById('product-name').value;
             const saleDate = document.getElementById('sale-date').value;
             const creditValue = document.getElementById('credit-value').value;
             const creditStatus = document.getElementById('credit-status').value;
             const contractNumber = document.getElementById('contract-number').value;
 
-            if (!productName || !saleDate || !creditValue || !contractNumber) {
-                alert('Zəhmət olmasa, bütün məhsul məlumatlarını daxil edin.');
+            if (!productName || !saleDate || !creditValue || !creditStatus || !contractNumber) {
+                alert("Zəhmət olmasa, bütün məhsul xanalarını doldurun.");
                 return;
             }
-
-            const product = {
-                name: productName,
-                date: new Date(saleDate).toLocaleDateString('az-AZ', { day:'2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, '/'),
-                value: parseFloat(creditValue).toFixed(2) + " AZN",
-                status: creditStatus,
-                contract: contractNumber
-            };
-            
-            productList.push(product);
-            renderAddedProducts();
-            clearProductForm();
-        });
-
-        function renderAddedProducts() {
-            const listElement = document.getElementById('added-products-list');
-            listElement.innerHTML = '';
-            productList.forEach((product, index) => {
-                const item = document.createElement('div');
-                item.className = 'product-item';
-                item.innerHTML = `<span>${product.name} - ${product.contract}</span><span class="remove-product" data-index="${index}">&times;</span>`;
-                listElement.appendChild(item);
-            });
-             // Add event listeners to new remove buttons
-            document.querySelectorAll('.remove-product').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const indexToRemove = e.target.getAttribute('data-index');
-                    productList.splice(indexToRemove, 1);
-                    renderAddedProducts();
-                });
-            });
-        }
-        
-        function clearProductForm() {
+            const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${productName}</td>
+                <td>${saleDate}</td>
+                <td>${creditValue}</td>
+                <td>0 AZN</td>
+                <td>${creditStatus}</td>
+                <td>${contractNumber}</td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
+            `;
             document.getElementById('product-name').value = '';
-            // Keep sale-date as today
+            document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
             document.getElementById('credit-status').value = 'BAĞLI';
             document.getElementById('contract-number').value = '';
         }
 
-        // Clear All Form Button
-        document.getElementById('btnClearForm').addEventListener('click', () => {
-            document.getElementById('ref-number').value = '0044';
-            const today = new Date().toISOString().substring(0, 10);
-            document.getElementById('date').value = today;
-            document.getElementById('location').value = 'Oğuz Rayonu';
-            document.getElementById('client-name').value = '';
-            document.getElementById('client-fin').value = '';
-            document.getElementById('manager-name').value = 'Elnur Mürsəlov';
-            productList = [];
-            renderAddedProducts();
-            clearProductForm();
-        });
-
-        // Preview Button
-        document.getElementById('btnPreview').addEventListener('click', () => {
-            // Populate document header
-            const dateValue = new Date(document.getElementById('date').value).toLocaleDateString('az-AZ', { day:'2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, '/');
-            const locationValue = document.getElementById('location').value;
-            document.getElementById('doc-date-location').innerText = `Tarix : ${dateValue}, ${locationValue},`;
-            document.getElementById('doc-ref').innerText = document.getElementById('ref-number').value;
-
-            // Populate main text
-            const clientName = document.getElementById('client-name').value.toUpperCase();
-            const clientFin = document.getElementById('client-fin').value.toUpperCase();
-            document.getElementById('doc-main-text').innerText = `Verilir ${clientName} oğluna ( ${clientFin} ) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:`;
-            
-            // Populate product table
-            const tableBody = document.querySelector('#doc-product-table tbody');
-            tableBody.innerHTML = ''; // Clear previous entries
-            if (productList.length === 0) {
-                 tableBody.innerHTML = '<tr><td colspan="6">Məhsul əlavə edilməyib.</td></tr>';
-            } else {
-                productList.forEach(product => {
-                    const row = `<tr>
-                        <td>${product.name}</td>
-                        <td>${product.date}</td>
-                        <td>${product.value}</td>
-                        <td>0 AZN</td>
-                        <td>${product.status}</td>
-                        <td>${product.contract}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            }
-
-            // Populate footer
-            document.getElementById('doc-manager-name').innerText = document.getElementById('manager-name').value;
-            
-            // Show preview
-            document.querySelector('.document-preview').style.display = 'block';
-        });
-
-        // Print Button
-        document.getElementById('btnPrint').addEventListener('click', () => {
-            // First, ensure the preview is generated and visible
-             document.getElementById('btnPreview').click();
-            // Then, trigger the print dialog
-            window.print();
-        });
-
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+        
+        // Formadakı tarix xanasını bugünkü tarixlə doldurur
+        document.getElementById('date-input').valueAsDate = new Date();
     </script>
 </body>
 </html>
