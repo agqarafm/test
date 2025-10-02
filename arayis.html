@@ -17,11 +17,11 @@
             border-bottom: 2px solid black;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            text-align: center; /* Center the logo */
+            text-align: center;
         }
         .header img {
-            width: 100%; /* Make logo bigger to fit A4 width */
-            max-width: 750px; /* Set a max width */
+            width: 100%;
+            max-width: 750px;
         }
         .contact-info {
             font-size: 12px;
@@ -65,13 +65,13 @@
             margin-top: 20px;
         }
         .footer-line > span {
-            flex: 1; /* Each direct child span takes up equal space */
+            flex: 1;
         }
         .footer-line > span:nth-child(1) {
-            text-align: left; /* "Mağaza rəhbəri:" solda */
+            text-align: left;
         }
         .footer-line > span:nth-child(2) {
-            text-align: center; /* Ad orta hissədə */
+            text-align: center;
         }
         .form-section {
             margin-top: 50px;
@@ -106,10 +106,7 @@
             cursor: pointer;
         }
         @media print {
-            .form-section {
-                display: none;
-            }
-            td button {
+            .form-section, .no-print {
                 display: none;
             }
             body {
@@ -123,7 +120,7 @@
 <body>
 
     <div class="header">
-        <img src="https://dosya.co/jc15iauggoki/logo.jpg.html" target=_blank>logo.jpg" alt="ABC Telecom Logo">
+        <img src="logo.jpg" alt="ABC Telecom Logo">
         <div class="contact-info">
             Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
             Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
@@ -155,7 +152,7 @@
                 <th>Borc</th>
                 <th>Kredit/statusu</th>
                 <th>Müqavilə nömrəsi</th>
-                <th>Əməliyyat</th>
+                <th class="no-print">Əməliyyat</th>
             </tr>
         </thead>
         <tbody>
@@ -166,19 +163,20 @@
                 <td>0 AZN</td>
                 <td>BAĞLI</td>
                 <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
+                <td class="no-print"><button onclick="deleteRow(this)">Sil</button></td>
             </tr>
         </tbody>
     </table>
 
-    <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+    <p style="margin-top: 25px;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
 
     <div class="footer">
         <p>Hörmətlə</p>
         <div class="footer-line">
             <span><b>Mağaza rəhbəri:</b></span>
             <span id="doc-manager-name"><b>Elnur Mürsəlov</b></span>
-            <span></span> </div>
+            <span></span>
+        </div>
     </div>
 
     <div class="form-section">
@@ -289,11 +287,11 @@
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${saleDate}</td>
-                <td>${creditValue}</td>
+                <td>${creditValue} AZN</td>
                 <td>${debtValue}</td>
                 <td>${creditStatus}</td>
                 <td>${contractNumber}</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
+                <td class="no-print"><button onclick="deleteRow(this)">Sil</button></td>
             `;
 
             document.getElementById('product-name').value = '';
