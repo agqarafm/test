@@ -58,17 +58,12 @@
         }
         .footer {
             margin-top: 40px;
-            overflow: hidden; /* Added to contain the float */
         }
-        .footer p {
-            text-align: left;
-        }
-        .signature-block {
-            float: right; /* Moves the signature block to the right */
+        .footer-line {
+            display: flex;
+            justify-content: space-between;
             margin-top: 5px;
-        }
-        .signature-block span:first-child {
-            margin-right: 20px; /* Adds space between title and name */
+            padding-right: 80px; /* Düzəliş: Adı sağ kənardan aralı etmək üçün əlavə edildi */
         }
         .form-section {
             margin-top: 50px;
@@ -172,7 +167,7 @@
 
     <div class="footer">
         <p>Hörmətlə</p>
-        <div class="signature-block">
+        <div class="footer-line">
             <span><b>Mağaza rəhbəri:</b></span>
             <span id="doc-manager-name"><b>Elnur Mürsəlov</b></span>
         </div>
