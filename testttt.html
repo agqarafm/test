@@ -19,7 +19,7 @@
             padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             box-sizing: border-box;
-            display: none; /* Initially hidden */
+            display: none; /* SƏNƏDİ İLKİN OLARAQ GİZLƏDİR */
         }
         .document-container {
              font-size: 14px;
@@ -81,6 +81,7 @@
             background-color: #f9f9f9;
             width: 210mm; /* A4 width */
             box-sizing: border-box;
+            /* Bu blok ilkin olaraq görünür */
         }
         .form-section h3 {
             text-align: center;
@@ -123,8 +124,6 @@
             font-weight: bold;
         }
 
-
-        /* Çap üçün stillər */
         @media print {
             body {
                 background-color: white;
@@ -137,7 +136,7 @@
                 padding: 0;
                 width: 100%;
                 min-height: auto;
-                display: block !important; /* Make sure it's visible for printing */
+                display: block !important;
             }
             .form-section, .view-button-container {
                 display: none !important;
@@ -164,8 +163,8 @@
                 <div class="header">
                     <img src="logo.jpg" alt="ABC Telecom Logo">
                     <div class="contact-info">
-                        Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
-                        Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+                        [cite_start]Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az [cite: 1] <br>
+                        [cite_start]Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan [cite: 1]
                     </div>
                 </div>
 
@@ -174,11 +173,11 @@
                     <span id="doc-number">0044</span>
                 </div>
 
-                <h1 class="document-title">A R A Y I Ş</h1>
+                [cite_start]<h1 class="document-title">A R A Y I Ş [cite: 3]</h1>
 
                 <div class="info-section">
                     <p>
-                        Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+                        [cite_start]Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib: [cite: 4]
                     </p>
                 </div>
 
@@ -204,34 +203,16 @@
                             <td>09865656</td>
                             <td><button onclick="deleteRow(this)">Sil</button></td>
                         </tr>
-                         <tr>
-                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                            <td>19/05/2025</td>
-                            <td>87.65 AZN</td>
-                            <td>0 AZN</td>
-                            <td>BAĞLI</td>
-                            <td>09865656</td>
-                            <td><button onclick="deleteRow(this)">Sil</button></td>
-                        </tr>
-                         <tr>
-                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                            <td>19/05/2025</td>
-                            <td>87.65 AZN</td>
-                            <td>0 AZN</td>
-                            <td>BAĞLI</td>
-                            <td>09865656</td>
-                            <td><button onclick="deleteRow(this)">Sil</button></td>
-                        </tr>
                     </tbody>
                 </table>
 
-                <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+                [cite_start]<p>Arayış tələb olunan yerə təqdim edilmək üçün verilir. [cite: 6]</p>
 
                 <div class="footer">
-                    <p>Hörmətlə</p>
+                    [cite_start]<p>Hörmətlə [cite: 7]</p>
                     <div class="footer-line">
                         <span><b>Mağaza rəhbəri:</b></span>
-                        <span><b>Elnur Mürsəlov</b></span>
+                        [cite_start]<span><b>Elnur Mürsəlov</b> [cite: 8]</span>
                     </div>
                 </div>
             </div>
@@ -297,7 +278,6 @@
         </div>
     </div>
 
-
     <script>
         function toggleView() {
             const page = document.querySelector('.page');
@@ -305,12 +285,10 @@
             const btn = document.getElementById('view-result-btn');
 
             if (page.style.display === 'none' || page.style.display === '') {
-                // Show the result, hide the form
                 page.style.display = 'block';
                 form.style.display = 'none';
                 btn.textContent = 'Formaya Geri Dön';
             } else {
-                // Show the form, hide the result
                 page.style.display = 'none';
                 form.style.display = 'block';
                 btn.textContent = 'Yekun Nəticəyə Bax';
@@ -318,9 +296,7 @@
         }
 
         function formatCurrency(input) {
-            let value = input.value.trim();
-            // Remove any existing "AZN" to avoid duplication
-            value = value.replace(/\s*AZN/i, '');
+            let value = input.value.trim().replace(/\s*AZN/i, '');
             if (value && !isNaN(value)) {
                 input.value = value + ' AZN';
             }
@@ -332,7 +308,6 @@
             const numberInput = document.getElementById('number-input').value;
             const fullnameInput = document.getElementById('fullname-input').value;
             const finInput = document.getElementById('fin-input').value;
-
             let formattedDate = '';
             if (dateInput) {
                 const date = new Date(dateInput);
@@ -341,10 +316,9 @@
                 const year = date.getFullYear();
                 formattedDate = `${day}.${month}.${year}`;
             }
-
             document.getElementById('doc-date-location').innerText = `Tarix : ${formattedDate}, ${locationInput},`;
             document.getElementById('doc-number').innerText = numberInput;
-            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`; // Ensure "oğlu" is handled correctly
+            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`;
             document.getElementById('doc-fin').innerText = finInput;
         }
 
@@ -355,15 +329,12 @@
             const debtValue = document.getElementById('debt-value').value;
             const creditStatus = document.getElementById('credit-status').value;
             const contractNumber = document.getElementById('contract-number').value;
-
             if (!productName || !saleDate || !creditValue || !debtValue || !creditStatus || !contractNumber) {
                 alert("Zəhmət olmasa, bütün məhsul xanalarını doldurun.");
                 return;
             }
-
             const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
             const newRow = tableBody.insertRow();
-
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${saleDate}</td>
@@ -373,8 +344,6 @@
                 <td>${contractNumber}</td>
                 <td><button onclick="deleteRow(this)">Sil</button></td>
             `;
-
-            // Clear input fields after adding
             document.getElementById('product-name').value = '';
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
@@ -387,8 +356,6 @@
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
         }
-
-        // Set initial date on the form
         document.getElementById('date-input').valueAsDate = new Date();
     </script>
 </body>
