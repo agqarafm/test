@@ -1,3 +1,14 @@
+Anlaşıldı, yekun sənəddəki məlumatların daha dəqiq və idarəolunan olması üçün istədiyiniz düzəlişləri etdim.
+
+Aşağıdakı 3 dəyişiklik icra edildi:
+
+1.  [cite\_start]**Sənəddəki Səhvlər Düzəldildi:** Sənədin ilkin mətni və quruluşu təqdim etdiyiniz orijinal nümunəyə tam uyğunlaşdırıldı[cite: 1, 2, 3, 4, 5, 6, 7, 8].
+2.  **Mağaza Müdiri Üçün Xana Əlavə Edildi:** Məlumat panelinə "Mağaza rəhbəri" adını daxil etmək və ya dəyişmək üçün yeni bir xana əlavə olundu. [cite\_start]Artıq bu adı sənədi hazırlayarkən özünüz təyin edə bilərsiniz[cite: 8].
+3.  **Borc Xanası Ləğv Edildi:** Məlumat panelindən "Borc" daxil etmə xanası tamamilə silindi. [cite\_start]Əlavə edilən hər yeni məhsul üçün borc sütununda avtomatik olaraq həmişə **"0 AZN"** göstəriləcək[cite: 5].
+
+Zəhmət olmasa, aşağıdakı yekun və tamamilə düzəliş edilmiş kodu istifadə edin.
+
+```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -163,21 +174,21 @@
                 <div class="header">
                     <img src="logo.jpg" alt="ABC Telecom Logo">
                     <div class="contact-info">
-                        [cite_start]Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az [cite: 1] <br>
-                        [cite_start]Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan [cite: 1]
+                        Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+                        Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
                     </div>
                 </div>
 
                 <div style="display: flex; justify-content: space-between;">
-                    <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
+                    <span id="doc-date-location">Tarix : 02.10.2025, Oğuz Rayonu,</span>
                     <span id="doc-number">0044</span>
                 </div>
 
-                [cite_start]<h1 class="document-title">A R A Y I Ş [cite: 3]</h1>
+                <h1 class="document-title">A R A Y I Ş</h1>
 
                 <div class="info-section">
                     <p>
-                        [cite_start]Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib: [cite: 4]
+                        Verilir <b id="doc-fullname">RZALI FƏRHAD NEYMƏT oğluna</b> (<b id="doc-fin">4YSDYV7</b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
                     </p>
                 </div>
 
@@ -194,25 +205,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                            <td>19/05/2025</td>
-                            <td>87.65 AZN</td>
-                            <td>0 AZN</td>
-                            <td>BAĞLI</td>
-                            <td>09865656</td>
-                            <td><button onclick="deleteRow(this)">Sil</button></td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
 
-                [cite_start]<p>Arayış tələb olunan yerə təqdim edilmək üçün verilir. [cite: 6]</p>
+                <p>Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
 
                 <div class="footer">
-                    [cite_start]<p>Hörmətlə [cite: 7]</p>
+                    <p>Hörmətlə</p>
                     <div class="footer-line">
                         <span><b>Mağaza rəhbəri:</b></span>
-                        [cite_start]<span><b>Elnur Mürsəlov</b> [cite: 8]</span>
+                        <span id="manager-name-output"><b>Elnur Mürsəlov</b></span>
                     </div>
                 </div>
             </div>
@@ -240,6 +242,10 @@
                 <label for="fin-input">FİN kod:</label>
                 <input type="text" id="fin-input" value="4YSDYV7">
             </div>
+            <div class="form-input">
+                <label for="manager-name-input">Mağaza rəhbəri:</label>
+                <input type="text" id="manager-name-input" value="Elnur Mürsəlov">
+            </div>
             <hr>
             <h4>Yeni Məhsul Əlavə Et</h4>
             <div class="form-input">
@@ -248,15 +254,11 @@
             </div>
             <div class="form-input">
                 <label for="sale-date">Satış tarixi:</label>
-                <input type="text" id="sale-date" placeholder="gg/aa/iiii">
+                <input type="text" id="sale-date" placeholder="gg.aa.iiii">
             </div>
             <div class="form-input">
                 <label for="credit-value">Kredit dəyəri cəm:</label>
                 <input type="text" id="credit-value" placeholder="Məbləği daxil edin" onblur="formatCurrency(this)">
-            </div>
-            <div class="form-input">
-                <label for="debt-value">Borc:</label>
-                <input type="text" id="debt-value" placeholder="Məbləği daxil edin" onblur="formatCurrency(this)">
             </div>
             <div class="form-input">
                 <label for="credit-status">Kredit/statusu:</label>
@@ -285,6 +287,8 @@
             const btn = document.getElementById('view-result-btn');
 
             if (page.style.display === 'none' || page.style.display === '') {
+                // Yekun nəticəyə baxmazdan əvvəl məlumatları yeniləyirik
+                updateDocumentInfo();
                 page.style.display = 'block';
                 form.style.display = 'none';
                 btn.textContent = 'Formaya Geri Dön';
@@ -308,6 +312,8 @@
             const numberInput = document.getElementById('number-input').value;
             const fullnameInput = document.getElementById('fullname-input').value;
             const finInput = document.getElementById('fin-input').value;
+            const managerName = document.getElementById('manager-name-input').value;
+            
             let formattedDate = '';
             if (dateInput) {
                 const date = new Date(dateInput);
@@ -320,16 +326,17 @@
             document.getElementById('doc-number').innerText = numberInput;
             document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`;
             document.getElementById('doc-fin').innerText = finInput;
+            document.getElementById('manager-name-output').innerHTML = `<b>${managerName}</b>`;
         }
 
         function addProduct() {
             const productName = document.getElementById('product-name').value;
             const saleDate = document.getElementById('sale-date').value;
             const creditValue = document.getElementById('credit-value').value;
-            const debtValue = document.getElementById('debt-value').value;
             const creditStatus = document.getElementById('credit-status').value;
             const contractNumber = document.getElementById('contract-number').value;
-            if (!productName || !saleDate || !creditValue || !debtValue || !creditStatus || !contractNumber) {
+
+            if (!productName || !saleDate || !creditValue || !creditStatus || !contractNumber) {
                 alert("Zəhmət olmasa, bütün məhsul xanalarını doldurun.");
                 return;
             }
@@ -339,7 +346,7 @@
                 <td>${productName}</td>
                 <td>${saleDate}</td>
                 <td>${creditValue}</td>
-                <td>${debtValue}</td>
+                <td>0 AZN</td>
                 <td>${creditStatus}</td>
                 <td>${contractNumber}</td>
                 <td><button onclick="deleteRow(this)">Sil</button></td>
@@ -347,7 +354,6 @@
             document.getElementById('product-name').value = '';
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
-            document.getElementById('debt-value').value = '';
             document.getElementById('credit-status').value = 'BAĞLI';
             document.getElementById('contract-number').value = '';
         }
@@ -356,7 +362,10 @@
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
         }
+        
+        // Formadakı tarix xanasını bugünkü tarixlə doldurur
         document.getElementById('date-input').valueAsDate = new Date();
     </script>
 </body>
 </html>
+```
