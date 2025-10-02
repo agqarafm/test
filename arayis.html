@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="az">
 <head>
     <meta charset="UTF-8">
@@ -17,9 +17,11 @@
             border-bottom: 2px solid black;
             padding-bottom: 10px;
             margin-bottom: 20px;
+            text-align: center; /* Center the logo */
         }
         .header img {
-            width: 200px;
+            width: 100%; /* Make logo bigger to fit A4 width */
+            max-width: 750px; /* Set a max width */
         }
         .contact-info {
             font-size: 12px;
@@ -94,10 +96,17 @@
             margin: 0 10px;
             cursor: pointer;
         }
-        /* Stil üçün əlavə: çap zamanı düymələri və formu gizlət */
         @media print {
-            .form-section, .form-buttons button.no-print {
+            .form-section {
                 display: none;
+            }
+            td button {
+                display: none;
+            }
+            body {
+                width: 100%;
+                padding: 0;
+                margin: 0;
             }
         }
     </style>
@@ -112,9 +121,12 @@
         </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between;">
-        <span id="doc-date-location">Tarix : 01.09.2025,Oğuz Rayonu,</span>
-        <span id="doc-number">0044</span>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="text-align: left;">
+            <span id="doc-location">Oğuz Rayonu</span><br>
+            <span id="doc-number">0044</span>
+        </div>
+        <span id="doc-date">Tarix: 02.10.2025</span>
     </div>
 
     <h1 class="document-title">A R A Y I Ş</h1>
@@ -147,24 +159,6 @@
                 <td>09865656</td>
                 <td><button onclick="deleteRow(this)">Sil</button></td>
             </tr>
-             <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
-             <tr>
-                <td>FEN ÜTÜ PHİLİPS BHS375/00</td>
-                <td>19/05/2025</td>
-                <td>87.65 AZN</td>
-                <td>0 AZN</td>
-                <td>BAĞLI</td>
-                <td>09865656</td>
-                <td><button onclick="deleteRow(this)">Sil</button></td>
-            </tr>
         </tbody>
     </table>
 
@@ -174,7 +168,7 @@
         <p>Hörmətlə</p>
         <div class="footer-line">
             <span><b>Mağaza rəhbəri:</b></span>
-            <span><b>Elnur Mürsəlov</b></span>
+            <span id="doc-manager-name"><b>Elnur Mürsəlov</b></span>
         </div>
     </div>
 
@@ -200,6 +194,10 @@
             <label for="fin-input">FİN kod:</label>
             <input type="text" id="fin-input" value="4YSDYV7">
         </div>
+        <div class="form-input">
+            <label for="manager-input">Mağaza rəhbəri:</label>
+            <input type="text" id="manager-input" value="Elnur Mürsəlov">
+        </div>
         <hr>
         <h4>Yeni Məhsul Əlavə Et</h4>
         <div class="form-input">
@@ -216,21 +214,24 @@
         </div>
         <div class="form-input">
             <label for="debt-value">Borc:</label>
-            <input type="text" id="debt-value" placeholder="Məbləğ AZN">
+            <input type="text" id="debt-value" value="0 AZN" readonly>
         </div>
         <div class="form-input">
             <label for="credit-status">Kredit/statusu:</label>
-            <input type="text" id="credit-status" placeholder="BAĞLI / AÇIQ">
+            <select id="credit-status">
+                <option value="BAĞLI">BAĞLI</option>
+                <option value="AÇIQ">AÇIQ</option>
+            </select>
         </div>
         <div class="form-input">
             <label for="contract-number">Müqavilə nömrəsi:</label>
             <input type="text" id="contract-number" placeholder="Müqavilə nömrəsi">
         </div>
         <div class="form-buttons">
-            <button class="no-print" onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
-            <button class="no-print" onclick="addProduct()">Məhsul Əlavə Et</button>
+            <button onclick="updateDocumentInfo()">Sənəd Məlumatını Yenilə</button>
+            <button onclick="addProduct()">Məhsul Əlavə Et</button>
             <button onclick="window.print()">Çap Et</button>
-            <button class="no-print" onclick="clearForm()">Təmizlə</button>
+            <button onclick="clearForm()">Təmizlə</button>
         </div>
     </div>
 
@@ -241,6 +242,7 @@
             const numberInput = document.getElementById('number-input').value;
             const fullnameInput = document.getElementById('fullname-input').value;
             const finInput = document.getElementById('fin-input').value;
+            const managerInput = document.getElementById('manager-input').value;
 
             let formattedDate = '';
             if (dateInput) {
@@ -251,10 +253,12 @@
                 formattedDate = `${day}.${month}.${year}`;
             }
 
-            document.getElementById('doc-date-location').innerText = `Tarix : ${formattedDate}, ${locationInput},`;
+            document.getElementById('doc-date').innerText = `Tarix: ${formattedDate}`;
+            document.getElementById('doc-location').innerText = locationInput;
             document.getElementById('doc-number').innerText = numberInput;
-            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`; // Ensure "oğlu" is handled correctly
+            document.getElementById('doc-fullname').innerText = `${fullnameInput.replace("oğlu", " ")}oğluna`;
             document.getElementById('doc-fin').innerText = finInput;
+            document.getElementById('doc-manager-name').innerHTML = `<b>${managerInput}</b>`;
         }
 
         function addProduct() {
@@ -280,15 +284,12 @@
                 <td>${debtValue}</td>
                 <td>${creditStatus}</td>
                 <td>${contractNumber}</td>
-                <td><button class="no-print" onclick="deleteRow(this)">Sil</button></td>
+                <td><button onclick="deleteRow(this)">Sil</button></td>
             `;
 
-            // Clear input fields after adding
             document.getElementById('product-name').value = '';
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
-            document.getElementById('debt-value').value = '';
-            document.getElementById('credit-status').value = '';
             document.getElementById('contract-number').value = '';
         }
 
@@ -297,35 +298,30 @@
             row.parentNode.removeChild(row);
         }
 
-        // Yeni funksiya: Formu təmizləmək üçün
         function clearForm() {
-            // Sənəd məlumatlarını təmizlə
             document.getElementById('date-input').valueAsDate = new Date();
             document.getElementById('location-input').value = 'Oğuz Rayonu';
             document.getElementById('number-input').value = '0044';
             document.getElementById('fullname-input').value = 'RZALI FƏRHAD NEYMƏT oğlu';
             document.getElementById('fin-input').value = '4YSDYV7';
-            updateDocumentInfo(); // Sənədi ilkin vəziyyətinə qaytar
-
-            // Məhsul əlavə etmə formunu təmizlə
+            document.getElementById('manager-input').value = 'Elnur Mürsəlov';
+            
             document.getElementById('product-name').value = '';
             document.getElementById('sale-date').value = '';
             document.getElementById('credit-value').value = '';
-            document.getElementById('debt-value').value = '';
-            document.getElementById('credit-status').value = '';
             document.getElementById('contract-number').value = '';
 
-            // Məhsul cədvəlini təmizlə
             const tableBody = document.getElementById('product-table').getElementsByTagName('tbody')[0];
-            // Mövcud məhsulları sil (istəyə bağlı)
-             while (tableBody.rows.length > 0) {
+            while (tableBody.rows.length > 0) {
                tableBody.deleteRow(0);
-             }
+            }
+            updateDocumentInfo();
         }
         
-        // Set initial date on the form
-        document.getElementById('date-input').valueAsDate = new Date();
-        updateDocumentInfo(); // Səhifə yüklənəndə tarixi yenilə
+        window.onload = function() {
+            document.getElementById('date-input').valueAsDate = new Date();
+            updateDocumentInfo();
+        };
     </script>
 </body>
 </html>
