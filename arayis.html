@@ -62,8 +62,16 @@
         .footer-line {
             display: flex;
             justify-content: space-between;
-            margin-top: 5px;
-            padding-right: 80px; /* Düzəliş: Adı sağ kənardan aralı etmək üçün əlavə edildi */
+            margin-top: 20px;
+        }
+        .footer-line > span {
+            flex: 1; /* Each direct child span takes up equal space */
+        }
+        .footer-line > span:nth-child(1) {
+            text-align: left; /* "Mağaza rəhbəri:" solda */
+        }
+        .footer-line > span:nth-child(2) {
+            text-align: center; /* Ad orta hissədə */
         }
         .form-section {
             margin-top: 50px;
@@ -170,7 +178,7 @@
         <div class="footer-line">
             <span><b>Mağaza rəhbəri:</b></span>
             <span id="doc-manager-name"><b>Elnur Mürsəlov</b></span>
-        </div>
+            <span></span> </div>
     </div>
 
     <div class="form-section">
