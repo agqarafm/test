@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Təmizlik Arayışı</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25mm;
+            border: 1px solid #ccc;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #d9534f;
+            /* Logo şəkli varsa, bu stilləri istifadə edin */
+            /* content: url('logo.png'); */
+            /* width: 150px; */
+            /* Bu sadəcə mətn versiyasıdır */
+            font-family: Arial, sans-serif;
+            letter-spacing: 1px;
+        }
+        .logo-text {
+             display: flex;
+             align-items: center;
+        }
+        .logo-a {
+            color: #d9534f;
+            font-size: 48px;
+            font-weight: bold;
+            font-family: 'Arial Black', Gadget, sans-serif;
+        }
+        .logo-bc {
+            display: flex;
+            flex-direction: column;
+            margin-left: -5px;
+        }
+        .logo-bc span {
+            font-family: 'Arial Black', Gadget, sans-serif;
+            font-size: 18px;
+            line-height: 0.8;
+        }
+        .logo-telecom {
+            font-family: 'Arial Black', Gadget, sans-serif;
+            font-size: 24px;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        .contact-info {
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            text-indent: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 40px;
+        }
+        .signature {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="text"], input[type="date"] {
+            border: 1px dashed #ccc;
+            padding: 4px;
+            font-family: inherit;
+            font-size: inherit;
+        }
+        input[type="text"]:focus, input[type="date"]:focus {
+            outline: 1px solid #a9a9a9;
+            border: 1px solid #a9a9a9;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .dynamic-input {
+            width: 95%;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .controls {
+                display: none;
+            }
+            .container {
+                border: none;
+            }
+            input[type="text"], input[type="date"] {
+                border: none;
+                padding: 4px 0;
+            }
+            td input {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="generatePDF()">PDF Hazırla</button>
+        <button onclick="window.print()">Çap Et</button>
+    </div>
+
+    <div id="invoice" class="container">
+        <div class="header">
+            <div class="logo-text">
+                 <span class="logo-a">A</span>
+                 <div class="logo-bc">
+                    <span>BC</span>
+                 </div>
+                 <span class="logo-telecom">TELECOM</span>
+            </div>
+            <div class="contact-info">
+                Tel.: (+99412) 310 09 90 / 310 30 13; e-mail: office@abc-telecom.az <br>
+                Binəqədi rayonu, Svetlana Məmmədova küçəsi 107, AZ 1113, Bakı, Azərbaycan
+            </div>
+        </div>
+
+        <div class="top-info">
+            <span>Tarix: <input type="text" id="doc_date" value="01.09.2025">, <input type="text" id="doc_location" value="Oğuz Rayonu"></span>
+            <span style="font-weight: bold;"><input type="text" id="doc_ref_no" value="0044" style="width: 50px; text-align: right;"></span>
+        </div>
+
+        <h3>A R A Y I Ş</h3>
+
+        <p>
+            Verilir <input type="text" id="client_name" value="RZALI FƏRHAD NEYMƏT" style="width: 250px;"> oğluna (<input type="text" id="client_id" value="4YSDYV7" style="width: 80px;">) ondan ötrü ki, “ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:
+        </p>
+
+        <table id="product_table">
+            <thead>
+                <tr>
+                    <th>Məhsulun adı</th>
+                    <th>Satış tarixi</th>
+                    <th>Kredit dəyəri cəm</th>
+                    <th>Borc</th>
+                    <th>Kredit/statusu</th>
+                    <th>Müqavilə nömrəsi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
+                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
+                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
+                    <td><input type="text" class="dynamic-input" value="09865656"></td>
+                </tr>
+                 <tr>
+                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
+                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
+                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
+                    <td><input type="text" class="dynamic-input" value="09865656"></td>
+                </tr>
+                 <tr>
+                    <td><input type="text" class="dynamic-input" value="FEN ÜTÜ PHİLİPS BHS375/00"></td>
+                    <td><input type="text" class="dynamic-input" value="19/05/2025"></td>
+                    <td><input type="text" class="dynamic-input" value="87.65 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="0 AZN"></td>
+                    <td><input type="text" class="dynamic-input" value="BAĞLI"></td>
+                    <td><input type="text" class="dynamic-input" value="09865656"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p style="text-indent: 0;">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+            <p style="margin-top: 30px; text-indent: 0;">Hörmətlə</p>
+            <div class="signature">
+                <span>Mağaza rəhbəri:</span>
+                <span><input type="text" id="manager_name" value="Elnur Mürsəlov" style="width: 200px; text-align: right;"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generatePDF() {
+            // PDF yaratmazdan əvvəl input çərçivələrini müvəqqəti olaraq gizlədirik
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.style.border = 'none';
+                // Değerleri doğrudan metin olarak göster
+                const parent = input.parentNode;
+                const textNode = document.createTextNode(input.value);
+                parent.insertBefore(textNode, input);
+                input.style.display = 'none';
+            });
+
+            const element = document.getElementById('invoice');
+            const opt = {
+                margin:       0,
+                filename:     'Temizlik_Arayisi.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Faylı yarat
+            html2pdf().from(element).set(opt).save().then(() => {
+                // PDF yaradıldıqdan sonra inputları yenidən görünən edirik
+                inputs.forEach(input => {
+                    input.style.border = '1px dashed #ccc';
+                    input.style.display = 'inline-block';
+                    // Metin düğümünü kaldır
+                    if(input.previousSibling && input.previousSibling.nodeType === 3) {
+                       input.parentNode.removeChild(input.previousSibling);
+                    }
+                });
+            });
+        }
+    </script>
+
+</body>
+</html>
