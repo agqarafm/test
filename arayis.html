@@ -139,7 +139,7 @@
             <span id="doc-location">Oğuz Rayonu</span><br>
             <span id="doc-number">0044</span>
         </div>
-        <span id="doc-date"></span>
+        <span id="doc-date">Tarix: 02.10.2025</span>
     </div>
 
     <h1 class="document-title">A R A Y I Ş</h1>
@@ -339,8 +339,18 @@
         }
         
         window.onload = function() {
+            // Səhifə yüklənəndə yalnız tarixi yeniləyir, qalan məlumatlar statik qalır
             document.getElementById('date-input').valueAsDate = new Date();
-            updateDocumentInfo();
+            const dateInput = document.getElementById('date-input').value;
+            let formattedDate = '';
+            if (dateInput) {
+                const date = new Date(dateInput);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                formattedDate = `${day}.${month}.${year}`;
+            }
+            document.getElementById('doc-date').innerText = `Tarix: ${formattedDate}`;
         };
     </script>
 </body>
