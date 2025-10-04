@@ -3,94 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adınız Soyadınız - CV</title>
+    <title>CV Hazırlama Proqramı</title>
     <style>
-        /* CSS ilə sadə stil əlavə edirik */
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 40px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            display: flex;
+            margin: 0;
             padding: 20px;
+            background-color: #f0f2f5;
+            gap: 20px;
+        }
+        #form-container {
+            width: 45%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            height: 90vh;
+            overflow-y: auto;
+        }
+        #cv-preview-container {
+            width: 55%;
+        }
+        #cv-preview {
             border: 1px solid #ccc;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 90vh;
         }
-        h1 {
+        h2, h3 {
             color: #333;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #555;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
             margin-top: 20px;
-            border-bottom: 1px solid #eee;
         }
-        .contact-info p {
-            margin: 5px 0;
-        }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        .section-content {
+        .form-group {
             margin-bottom: 15px;
         }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            width: 95%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .dynamic-list .list-item {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-save {
+            background-color: #008CBA;
+            color: white;
+        }
+        .btn-edit {
+            background-color: #f44336;
+            color: white;
+        }
+        /* CV Preview Styles */
+        .cv-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #cv-photo-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4CAF50;
+        }
+        #cv-name {
+            font-size: 2.5em;
+            margin: 10px 0;
+            color: #333;
+        }
+        .cv-section {
+            margin-bottom: 20px;
+        }
+        .cv-section h3 {
+            font-size: 1.2em;
+            color: #4CAF50;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .cv-contact-info p, .cv-about p {
+            margin: 5px 0;
+        }
+        .cv-item h4 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        .cv-item .cv-sub-header {
+            margin: 5px 0;
+            color: #555;
+            font-style: italic;
+        }
+        .cv-item p {
+            margin: 5px 0 15px 0;
+        }
+        .cv-skills-list {
+            list-style: none;
+            padding: 0;
+        }
+        .cv-skills-list li {
+            background-color: #e7e7e7;
+            border-radius: 15px;
+            padding: 5px 12px;
+            margin: 5px;
+            display: inline-block;
+        }
+
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/html-to-docx-file-saver@1.0.1/dist/html-to-docx.js"></script>
 </head>
 <body>
 
-    <h1>Adınız Soyadınız</h1>
-    <div class="contact-info">
-        <p><strong>Telefon:</strong> (000) 000-00-00</p>
-        <p><strong>Email:</strong> emailiniz@misal.com</p>
-        <p><strong>Ünvan:</strong> Yaşadığınız Şəhər, Ölkə</p>
-        <p><strong>LinkedIn/Portfolio:</strong> <a href="http://linkiniz.com" target="_blank">http://linkiniz.com</a></p>
+    <div id="form-container">
+        <h2>CV Məlumatları</h2>
+
+        <fieldset id="input-form">
+            <h3>Şəxsi Məlumatlar</h3>
+            <div class="form-group">
+                <label for="name">Ad Soyad</label>
+                <input type="text" id="name" placeholder="Harun Dürüst">
+            </div>
+            <div class="form-group">
+                <label for="photo">Şəkil (URL daxil edin və ya boş buraxın)</label>
+                <input type="text" id="photo" placeholder="https://example.com/photo.jpg">
+            </div>
+            <div class="form-group">
+                <label for="email">E-poçt</label>
+                <input type="email" id="email" placeholder="merhaba@harikasite.web.tr">
+            </div>
+            <div class="form-group">
+                <label for="phone">Telefon</label>
+                <input type="tel" id="phone" placeholder="+0 212 123 24 25">
+            </div>
+            <div class="form-group">
+                <label for="address">Ünvan</label>
+                <textarea id="address" rows="3" placeholder="Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="about">Haqqımda</label>
+                <textarea id="about" rows="4" placeholder="Özünüz haqqında qısa məlumat..."></textarea>
+            </div>
+
+            <h3>İş Təcrübəsi</h3>
+            <div id="work-experience" class="dynamic-list"></div>
+            <button class="btn-add" onclick="addWorkExperience()">+ Təcrübə Əlavə et</button>
+
+            <h3>Təhsil</h3>
+            <div id="education" class="dynamic-list"></div>
+            <button class="btn-add" onclick="addEducation()">+ Təhsil Əlavə et</button>
+
+            <h3>Bacarıqlar</h3>
+            <div class="form-group">
+                <label for="skills">Bacarıqlar (vergül ilə ayırın)</label>
+                <input type="text" id="skills" placeholder="Proje yönetimi, Takım Oyuncusu, Analitik Düşünme">
+            </div>
+
+            <h3>Dil Bilikləri</h3>
+            <div id="languages" class="dynamic-list"></div>
+            <button class="btn-add" onclick="addLanguage()">+ Dil Əlavə et</button>
+
+            <h3>Sertifikatlar</h3>
+            <div id="certificates" class="dynamic-list"></div>
+            <button class="btn-add" onclick="addCertificate()">+ Sertifikat Əlavə et</button>
+
+        </fieldset>
+        
+        <div class="button-group">
+            <button class="btn-edit" id="edit-btn">Düzəliş et</button>
+            <div class="btn-save" id="save-dropdown">
+                <button class="btn-save">Yadda saxla</button>
+                <div class="dropdown-content">
+                  <a href="#" id="save-pdf">PDF olaraq endir</a>
+                  <a href="#" id="save-word">Word olaraq endir</a>
+                </div>
+            </div>
+        </div>
+        <style>
+            #save-dropdown { position: relative; display: inline-block; }
+            .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; }
+            .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; }
+            .dropdown-content a:hover { background-color: #f1f1f1; }
+            #save-dropdown:hover .dropdown-content { display: block; }
+        </style>
     </div>
 
-    <hr>
+    <div id="cv-preview-container">
+        <div id="cv-preview">
+            <div class="cv-header">
+                <img id="cv-photo-preview" src="https://via.placeholder.com/150" alt="Profil Şəkli">
+                <h1 id="cv-name">AD SOYAD</h1>
+            </div>
+            
+            <div class="cv-section cv-contact-info">
+                <h3>ƏLAQƏ</h3>
+                <p><strong>Email:</strong> <span id="cv-email"></span></p>
+                <p><strong>Telefon:</strong> <span id="cv-phone"></span></p>
+                <p><strong>Ünvan:</strong> <span id="cv-address"></span></p>
+            </div>
 
-    <h2>QISA XÜLASƏ</h2>
-    <div class="section-content">
-        <p>Burada peşəkar təcrübənizi, əsas bacarıqlarınızı və karyera hədəflərinizi cəmləşdirən 3-4 cümləlik qısa bir xülasə yazın. Məsələn: "5 illik təcrübəyə malik, nəticəyönümlü Veb Developer. Güclü problem həll etmə və komandada işləmə bacarıqlarına sahibəm."</p>
+            <div class="cv-section cv-about">
+                <h3>HAQQIMDA</h3>
+                <p id="cv-about"></p>
+            </div>
+
+            <div class="cv-section">
+                <h3>İŞ TƏCRÜBƏSİ</h3>
+                <div id="cv-work-experience"></div>
+            </div>
+
+            <div class="cv-section">
+                <h3>TƏHSİL</h3>
+                <div id="cv-education"></div>
+            </div>
+
+            <div class="cv-section">
+                <h3>BACARIQLAR</h3>
+                <ul id="cv-skills" class="cv-skills-list"></ul>
+            </div>
+
+            <div class="cv-section">
+                <h3>DİL BİLİKLƏRİ</h3>
+                <div id="cv-languages"></div>
+            </div>
+
+            <div class="cv-section">
+                <h3>SERTİFİKATLAR</h3>
+                <div id="cv-certificates"></div>
+            </div>
+        </div>
     </div>
 
-    <h2>İŞ TƏCRÜBƏSİ</h2>
-    <div class="section-content">
-        <h3>Vəzifə Adı | Şirkətin Adı</h3>
-        <p><em>Ay, İl - Ay, İl</em></p>
-        <ul>
-            <li>Əsas vəzifə və nailiyyətlərinizi qeyd edin. Məsələn: "X layihəsini 3 ay ərzində uğurla tamamladım."</li>
-            <li>İşin nəticələri ilə bağlı rəqəmlər və faktlar göstərin (əgər varsa).</li>
-            <li>Hər bir iş yerində 2-3 əsas bəndi göstərin.</li>
-        </ul>
+<script>
+    const form = document.getElementById('input-form');
+    
+    // Form sahələrini CV önizləməsi ilə sinxronlaşdırma
+    document.getElementById('name').addEventListener('input', e => document.getElementById('cv-name').innerText = e.target.value);
+    document.getElementById('email').addEventListener('input', e => document.getElementById('cv-email').innerText = e.target.value);
+    document.getElementById('phone').addEventListener('input', e => document.getElementById('cv-phone').innerText = e.target.value);
+    document.getElementById('address').addEventListener('input', e => document.getElementById('cv-address').innerText = e.target.value);
+    document.getElementById('about').addEventListener('input', e => document.getElementById('cv-about').innerText = e.target.value);
+    document.getElementById('photo').addEventListener('input', e => {
+        const photoPreview = document.getElementById('cv-photo-preview');
+        if (e.target.value) {
+            photoPreview.src = e.target.value;
+        } else {
+            photoPreview.src = 'https://via.placeholder.com/150'; // Default image
+        }
+    });
 
-        <h3>Öncəki Vəzifə Adı | Öncəki Şirkətin Adı</h3>
-        <p><em>Ay, İl - Ay, İl</em></p>
-        <ul>
-            <li>Öhdəliklər və əsas uğurlar.</li>
-        </ul>
-    </div>
+    document.getElementById('skills').addEventListener('input', e => {
+        const skillsList = document.getElementById('cv-skills');
+        skillsList.innerHTML = '';
+        const skills = e.target.value.split(',').map(skill => skill.trim()).filter(skill => skill);
+        skills.forEach(skill => {
+            const li = document.createElement('li');
+            li.innerText = skill;
+            skillsList.appendChild(li);
+        });
+    });
 
-    <h2>TƏHSİL</h2>
-    <div class="section-content">
-        <h3>Təhsil Ocağının Adı | İxtisas</h3>
-        <p><em>Başlama İli - Bitirmə İli (və ya İndiyə qədər)</em></p>
-        <p>Dərəcə/Adı (Məsələn: Bakalavr)</p>
-    </div>
+    function updateDynamicSection(formSectionId, cvSectionId, template) {
+        const formSection = document.getElementById(formSectionId);
+        const cvSection = document.getElementById(cvSectionId);
+        cvSection.innerHTML = '';
+        
+        const items = formSection.getElementsByClassName('list-item');
+        Array.from(items).forEach(item => {
+            const inputs = item.getElementsByTagName('input');
+            const textarea = item.getElementsByTagName('textarea')[0];
+            const data = {};
+            Array.from(inputs).forEach(input => {
+                data[input.name] = input.value;
+            });
+            if (textarea) data[textarea.name] = textarea.value;
+            
+            cvSection.innerHTML += template(data);
+        });
+    }
 
-    <h2>BACARIQLAR</h2>
-    <div class="section-content">
-        <p><strong>Texniki Bacarıqlar:</strong> HTML5, CSS3, JavaScript, Python, SQL, Git, *və sair*</p>
-        <p><strong>Dil Bilikləri:</strong> Azərbaycan (Ana dili), İngilis (Səlis/Orta), Rus (Orta)</p>
-        <p><strong>Digər Bacarıqlar:</strong> Komandada İşləmə, Liderlik, Problem Həll Etmə</p>
-    </div>
+    let workId = 0;
+    function addWorkExperience() {
+        workId++;
+        const container = document.getElementById('work-experience');
+        const newItem = document.createElement('div');
+        newItem.className = 'list-item';
+        newItem.innerHTML = `
+            <label>Vəzifə</label>
+            <input type="text" name="title" placeholder="Ünvanınızı Buraya Girin" oninput="updateWorkExperience()">
+            <label>Şirkət, Şəhər, İllər</label>
+            <input type="text" name="details" placeholder="Şirket ismi - Şehir ismi - Çalıştığınız yıllar" oninput="updateWorkExperience()">
+            <label>Açıqlama</label>
+            <textarea name="description" rows="3" placeholder="İşin təsviri..." oninput="updateWorkExperience()"></textarea>
+        `;
+        container.appendChild(newItem);
+    }
+    
+    function updateWorkExperience() {
+        updateDynamicSection('work-experience', 'cv-work-experience', data => `
+            <div class="cv-item">
+                <h4>${data.title || ''}</h4>
+                <p class="cv-sub-header">${data.details || ''}</p>
+                <p>${data.description || ''}</p>
+            </div>
+        `);
+    }
 
-    <h2>LAYİHƏLƏR / SERTİFİKATLAR</h2>
-    <div class="section-content">
-        <p>Layihə/Sertifikat Adı - Qısa Təsvir.</p>
-    </div>
+    let eduId = 0;
+    function addEducation() {
+        eduId++;
+        const container = document.getElementById('education');
+        const newItem = document.createElement('div');
+        newItem.className = 'list-item';
+        newItem.innerHTML = `
+            <label>Universitet Adı</label>
+            <input type="text" name="university" placeholder="Üniversite Adını Buraya Girin" oninput="updateEducation()">
+            <label>İxtisas Adı</label>
+            <input type="text" name="department" placeholder="Bölüm adı" oninput="updateEducation()">
+            <label>İllər</label>
+            <input type="text" name="years" placeholder="2018-2022" oninput="updateEducation()">
+        `;
+        container.appendChild(newItem);
+    }
+
+    function updateEducation() {
+        updateDynamicSection('education', 'cv-education', data => `
+            <div class="cv-item">
+                <h4>${data.university || ''}</h4>
+                <p class="cv-sub-header">${data.department || ''} (${data.years || ''})</p>
+            </div>
+        `);
+    }
+    
+    let langId = 0;
+    function addLanguage() {
+        langId++;
+        const container = document.getElementById('languages');
+        const newItem = document.createElement('div');
+        newItem.className = 'list-item';
+        newItem.innerHTML = `
+            <label>Dil</label>
+            <input type="text" name="lang" placeholder="İngilizce" oninput="updateLanguages()">
+            <label>Səviyyə</label>
+            <input type="text" name="level" placeholder="C2" oninput="updateLanguages()">
+        `;
+        container.appendChild(newItem);
+    }
+
+    function updateLanguages() {
+        updateDynamicSection('languages', 'cv-languages', data => `
+            <p><strong>${data.lang || ''}:</strong> ${data.level || ''}</p>
+        `);
+    }
+
+    let certId = 0;
+    function addCertificate() {
+        certId++;
+        const container = document.getElementById('certificates');
+        const newItem = document.createElement('div');
+        newItem.className = 'list-item';
+        newItem.innerHTML = `
+            <label>İl</label>
+            <input type="text" name="year" placeholder="2012-2013" oninput="updateCertificates()">
+            <label>Sertifikat Adı</label>
+            <input type="text" name="name" placeholder="Sertifika Adını Buraya Girin" oninput="updateCertificates()">
+        `;
+        container.appendChild(newItem);
+    }
+
+    function updateCertificates() {
+        updateDynamicSection('certificates', 'cv-certificates', data => `
+            <p><strong>${data.year || ''}:</strong> ${data.name || ''}</p>
+        `);
+    }
+
+    // Başlanğıc üçün boş sahələri əlavə et
+    addWorkExperience();
+    addEducation();
+    addLanguage();
+    addCertificate();
+    
+    // Edit/Lock funksionallığı
+    const editBtn = document.getElementById('edit-btn');
+    const fieldset = document.getElementById('input-form');
+    fieldset.disabled = false; // Başlanğıcda aktiv olsun
+
+    editBtn.addEventListener('click', () => {
+        fieldset.disabled = !fieldset.disabled;
+        editBtn.textContent = fieldset.disabled ? 'Düzəliş et' : 'Kilidlə';
+    });
+
+    // Yadda saxlama funksionallığı
+    document.getElementById('save-pdf').addEventListener('click', () => {
+        const element = document.getElementById('cv-preview');
+        const name = document.getElementById('name').value || 'CV';
+        const opt = {
+          margin:       0.5,
+          filename:     `${name.replace(/\s+/g, '_')}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(opt).save();
+    });
+
+    document.getElementById('save-word').addEventListener('click', () => {
+        const name = document.getElementById('name').value || 'CV';
+        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+            "xmlns='http://www.w3.org/TR/REC-html40'>"+
+            "<head><meta charset='utf-8'><title>CV</title></head><body>";
+        const footer = "</body></html>";
+        const sourceHTML = header + document.getElementById('cv-preview').innerHTML + footer;
+        
+        const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+        const fileDownload = document.createElement("a");
+        document.body.appendChild(fileDownload);
+        fileDownload.href = source;
+        fileDownload.download = `${name.replace(/\s+/g, '_')}.doc`;
+        fileDownload.click();
+        document.body.removeChild(fileDownload);
+    });
+
+</script>
 
 </body>
 </html>
