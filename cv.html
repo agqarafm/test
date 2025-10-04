@@ -4,8 +4,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Hazırlama Aləti</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* Redaktor Stili */
+        .editor-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        .editor-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        legend {
+            font-weight: 500;
+            color: #007bff;
+            padding: 0 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+        }
+
+        #editBtn { background-color: #ffc107; }
+        #savePdfBtn { background-color: #dc3545; }
+        #saveWordBtn { background-color: #28a745; }
+
+
+        /* CV Nümunəsi Stili */
+        .cv-container {
+            width: 800px; /* A4 ölçüsünə yaxın */
+            min-height: 1120px;
+            display: flex;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .left-column {
+            background-color: #e9ecef; /* PDF-dəki rəngə uyğun */
+            width: 35%;
+            padding: 30px;
+            color: #343a40;
+        }
+
+        .right-column {
+            width: 65%;
+            padding: 40px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            display: block;
+            margin: 0 auto 30px;
+            object-fit: cover;
+        }
+
+        .left-column .section {
+            margin-bottom: 30px;
+        }
+
+        .left-column .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid #343a40;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .left-column p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 5px 0;
+            word-wrap: break-word;
+        }
+
+        .left-column ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .left-column ul li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .right-column h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 40px;
+            word-wrap: break-word;
+        }
+
+        .right-column .section-title-right {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .experience, .education {
+            margin-bottom: 25px;
+        }
+
+        .experience h4, .education h4 {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .company, .degree, .edu-years {
+            font-size: 15px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .experience p, .education p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            word-wrap: break-word;
+        }
+    </style>
+    </head>
 <body>
 
     <div class="editor-container">
@@ -195,7 +386,144 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Bütün form sahələrini və önizləmə elementlərini seçirik
+            const inputs = {
+                fullName: document.getElementById('fullName'),
+                aboutMe: document.getElementById('aboutMe'),
+                profilePic: document.getElementById('profilePic'),
+                phone: document.getElementById('phone'),
+                email: document.getElementById('email'),
+                address: document.getElementById('address'),
+                jobTitle1: document.getElementById('jobTitle1'),
+                company1: document.getElementById('company1'),
+                jobDesc1: document.getElementById('jobDesc1'),
+                jobTitle2: document.getElementById('jobTitle2'),
+                company2: document.getElementById('company2'),
+                jobDesc2: document.getElementById('jobDesc2'),
+                uniName1: document.getElementById('uniName1'),
+                degree1: document.getElementById('degree1'),
+                eduYears1: document.getElementById('eduYears1'),
+                uniName2: document.getElementById('uniName2'),
+                degree2: document.getElementById('degree2'),
+                eduYears2: document.getElementById('eduYears2'),
+                skills: document.getElementById('skills'),
+                languages: document.getElementById('languages'),
+                certificates: document.getElementById('certificates')
+            };
 
-</body>
+            const previews = {
+                fullName: document.getElementById('preview-fullName'),
+                aboutMe: document.getElementById('preview-about'),
+                profilePic: document.getElementById('preview-pic'),
+                phone: document.getElementById('preview-phone'),
+                email: document.getElementById('preview-email'),
+                address: document.getElementById('preview-address'),
+                jobTitle1: document.getElementById('preview-jobTitle1'),
+                company1: document.getElementById('preview-company1'),
+                jobDesc1: document.getElementById('preview-jobDesc1'),
+                jobTitle2: document.getElementById('preview-jobTitle2'),
+                company2: document.getElementById('preview-company2'),
+                jobDesc2: document.getElementById('preview-jobDesc2'),
+                uniName1: document.getElementById('preview-uniName1'),
+                degree1: document.getElementById('preview-degree1'),
+                eduYears1: document.getElementById('preview-eduYears1'),
+                uniName2: document.getElementById('preview-uniName2'),
+                degree2: document.getElementById('preview-degree2'),
+                eduYears2: document.getElementById('preview-eduYears2'),
+                skills: document.getElementById('preview-skills'),
+                languages: document.getElementById('preview-languages'),
+                certificates: document.getElementById('preview-certificates')
+            };
+
+            // Formdakı hər hansı bir dəyişikliyi anında CV-də göstərən funksiya
+            function updatePreview() {
+                // Sadə mətn sahələri
+                for (const key of ['fullName', 'aboutMe', 'phone', 'email', 'address', 'jobTitle1', 'company1', 'jobDesc1', 'jobTitle2', 'company2', 'jobDesc2', 'uniName1', 'degree1', 'eduYears1', 'uniName2', 'degree2', 'eduYears2']) {
+                    if (inputs[key] && previews[key]) {
+                        previews[key].innerText = inputs[key].value;
+                    }
+                }
+
+                // Bacarıqlar (vergüllə ayrılmış)
+                previews.skills.innerHTML = inputs.skills.value.split(',')
+                    .map(skill => `<li>${skill.trim()}</li>`).join('');
+
+                // Dillər (vergüllə ayrılmış)
+                previews.languages.innerHTML = inputs.languages.value.split(',')
+                    .map(lang => `<li>${lang.trim()}</li>`).join('');
+                    
+                // Sertifikatlar (hər sətir bir element)
+                previews.certificates.innerHTML = inputs.certificates.value.split('\n')
+                    .map(cert => `<p>${cert.trim()}</p>`).join('');
+            }
+
+            // Bütün inputlara 'input' hadisəsi əlavə edirik
+            Object.values(inputs).forEach(input => {
+                if (input.type !== 'file') {
+                    input.addEventListener('input', updatePreview);
+                }
+            });
+
+            // Profil şəkli dəyişdirildikdə
+            inputs.profilePic.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previews.profilePic.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Düymələr
+            const editBtn = document.getElementById('editBtn');
+            const savePdfBtn = document.getElementById('savePdfBtn');
+            const saveWordBtn = document.getElementById('saveWordBtn');
+            const cvContainer = document.getElementById('cv-container');
+
+            editBtn.addEventListener('click', () => {
+                alert("Siz artıq redaktə rejimindəsiniz. Sahələri dolduraraq CV-nizi redaktə edə bilərsiniz.");
+            });
+            
+            // PDF olaraq yadda saxlamaq
+            savePdfBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                html2canvas(cvContainer, { scale: 2 }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save("cv.pdf");
+                });
+            });
+
+            // Word olaraq yadda saxlamaq (HTML formatında .doc kimi)
+            saveWordBtn.addEventListener('click', () => {
+                const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+                    "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+                    "xmlns='http://www.w3.org/TR/REC-html40'>"+
+                    "<head><meta charset='utf-8'><title>CV</title><style>"+ document.querySelector("style").innerHTML +"</style></head><body>";
+                const footer = "</body></html>";
+                const sourceHTML = header + cvContainer.innerHTML + footer;
+                
+                const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+                const fileDownload = document.createElement("a");
+                document.body.appendChild(fileDownload);
+                fileDownload.href = source;
+                fileDownload.download = 'cv.doc';
+                fileDownload.click();
+                document.body.removeChild(fileDownload);
+            });
+            
+            // Səhifə yüklənəndə ilkin məlumatları göstər
+            updatePreview();
+        });
+    </script>
+    </body>
 </html>
