@@ -1,1 +1,547 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinamik CV Hazırlama Aləti</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.1/css/flag-icon.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --gradient: linear-gradient(135deg, #3498db, #2980b9);
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #34495e;
+            --gray-color: #7f8c8d;
+            --border-color: #bdc3c7;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --cv-left-bg: #2c3e50;
+        }
 
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Editor View --- */
+        #editor-view {
+            width: 900px;
+            max-width: 100%;
+        }
+
+        .editor-container {
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .editor-container h1 { text-align: center; color: var(--primary-color); margin-bottom: 10px; font-weight: 700; }
+        .editor-container .subtitle { text-align: center; color: var(--gray-color); margin-bottom: 40px; }
+
+        .form-section {
+            margin-bottom: 35px;
+            animation: fadeInDown 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        .form-section:nth-child(2) { animation-delay: 0.1s; }
+        .form-section:nth-child(3) { animation-delay: 0.2s; }
+        .form-section:nth-child(4) { animation-delay: 0.3s; }
+        .form-section:nth-child(5) { animation-delay: 0.4s; }
+
+        .form-section h2 {
+            font-size: 22px; font-weight: 600; color: var(--primary-color);
+            margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid var(--background-color);
+            display: flex; align-items: center;
+        }
+        .form-section h2 i { margin-right: 12px; color: var(--secondary-color); }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        label { margin-bottom: 8px; font-weight: 600; color: var(--text-color); }
+        
+        input[type="text"], input[type="email"], input[type="tel"], textarea, select, .tag-input-container {
+            width: 100%; padding: 12px 15px; border: 2px solid var(--border-color);
+            border-radius: 8px; font-size: 15px; font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus, .tag-input-container:focus-within {
+            outline: none; border-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea { resize: vertical; min-height: 120px; }
+
+        /* Dynamic Sections */
+        .dynamic-entry {
+            background: #f8f9fa; padding: 20px; border-radius: 8px;
+            border-left: 4px solid var(--secondary-color); margin-bottom: 20px;
+            position: relative; animation: popIn 0.4s ease-out;
+        }
+        .language-entry { display: flex; gap: 15px; align-items: center; }
+        .language-entry .form-group { flex: 1; }
+
+        .remove-btn {
+            background: var(--danger-color); color: white; border: none; width: 28px; height: 28px;
+            border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 28px;
+            text-align: center; transition: all 0.3s ease;
+        }
+        .experience-entry .remove-btn, .education-entry .remove-btn { position: absolute; top: 15px; right: 15px; }
+        .remove-btn:hover { background: #c0392b; transform: scale(1.1); }
+        
+        .add-btn {
+            display: inline-flex; align-items: center; padding: 10px 20px;
+            background: var(--success-color); color: white; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .add-btn i { margin-right: 8px; }
+        .add-btn:hover { background: #27ae60; transform: translateY(-2px); }
+
+        /* Tag Input System */
+        .tag-input-container { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; }
+        .tag-input { flex-grow: 1; border: none; outline: none; padding: 4px; background: transparent; }
+        .tag {
+            display: inline-flex; align-items: center; background: var(--secondary-color);
+            color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px;
+            animation: popIn 0.3s ease;
+        }
+        .tag .remove-tag { margin-left: 8px; cursor: pointer; font-weight: bold; }
+        
+        .action-button {
+            display: block; width: 100%; padding: 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 18px; font-weight: 700; color: white; background: var(--gradient);
+            transition: all 0.3s ease; margin-top: 30px;
+        }
+        .action-button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+
+        /* --- CV Preview View --- */
+        #preview-view {
+            display: none; width: 100%; max-width: 900px; flex-direction: column;
+            align-items: center; animation: fadeInDown 0.8s ease-out;
+        }
+        .preview-controls { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .control-btn {
+            padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 16px; font-weight: 600; color: white; transition: all 0.3s ease;
+        }
+        #backToEditorBtn { background-color: var(--gray-color); }
+        #savePdfBtn { background-color: var(--danger-color); }
+        #saveWordBtn { background-color: var(--success-color); }
+        .control-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .cv-container {
+            width: 100%; min-height: 1272px; display: flex; background-color: var(--card-background);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2); border-radius: 8px; overflow: hidden;
+        }
+
+        .left-column { background-color: var(--cv-left-bg); width: 35%; padding: 40px; color: #ecf0f1; }
+        .right-column { width: 65%; padding: 50px; }
+        .profile-pic {
+            width: 160px; height: 160px; border-radius: 50%; border: 6px solid var(--secondary-color);
+            display: block; margin: 0 auto 30px; object-fit: cover;
+        }
+
+        .left-column .section-title {
+            font-size: 18px; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 8px; margin-bottom: 20px;
+        }
+        .contact-item { display: flex; align-items: center; margin-bottom: 15px; }
+        .contact-item i { width: 20px; text-align: center; margin-right: 15px; color: var(--secondary-color); font-size: 16px; }
+        .left-column p { font-size: 15px; line-height: 1.7; margin: 0; word-break: break-word; }
+
+        /* --- Skills & Languages Preview --- */
+        .left-column ul { list-style: none; padding-left: 0; margin-top: 0; }
+        .left-column li { margin-bottom: 12px; display: flex; align-items: center; font-size: 15px; font-weight: 500; }
+        .skill-icon { color: var(--secondary-color); margin-right: 10px; font-size: 16px; }
+        .preview-placeholder { font-style: italic; color: rgba(255, 255, 255, 0.7); font-size: 14px; }
+        .flag-icon { margin-right: 12px; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.2); font-size: 1.2em; }
+        
+        .right-column .full-name { font-size: 52px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; line-height: 1.1; }
+        .right-column .job-title-main { font-size: 24px; color: var(--secondary-color); margin-bottom: 40px; font-weight: 500; }
+        .right-column .section-title-right {
+            font-size: 24px; font-weight: 700; color: var(--primary-color); border-bottom: 3px solid var(--background-color);
+            padding-bottom: 12px; margin-bottom: 25px; text-transform: uppercase;
+        }
+        
+        .experience, .education { margin-bottom: 30px; }
+        .job-title, .uni-name { font-size: 20px; font-weight: 600; color: var(--text-color); }
+        .company, .degree, .edu-years { font-size: 16px; color: var(--secondary-color); margin: 5px 0 10px; font-style: italic; }
+        .experience p, .education p { font-size: 15px; line-height: 1.6; color: var(--gray-color); }
+        .placeholder { color: var(--gray-color); font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div id="editor-view">
+        <div class="editor-container">
+            <h1>CV Məlumatlarınızı Daxil Edin</h1>
+            <p class="subtitle">Məlumatları daxil edərək peşəkar CV-nizi yaradın.</p>
+
+            <div class="form-section">
+                <h2><i class="fas fa-user-circle"></i> Şəxsi Məlumatlar</h2>
+                <div class="form-grid">
+                    <div class="form-group"><label for="fullName">Ad Soyad:</label><input type="text" id="fullName" placeholder="Məs: Əli Vəliyev"></div>
+                    <div class="form-group"><label for="jobTitleMain">Vəzifəniz:</label><input type="text" id="jobTitleMain" placeholder="Məs: Proqram Mühəndisi"></div>
+                    <div class="form-group full-width"><label for="profilePic">Profil Şəkli:</label><input type="file" id="profilePic" accept="image/*"></div>
+                    <div class="form-group full-width"><label for="aboutMe">Haqqımda:</label><textarea id="aboutMe" placeholder="Özünüz haqqında qısa və təsiredici məlumat daxil edin..."></textarea></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-address-book"></i> Əlaqə Məlumatları</h2>
+                <div class="form-grid">
+                    <div class="form-group"><label for="phone">Telefon:</label><input type="tel" id="phone" placeholder="+994 50 123 45 67"></div>
+                    <div class="form-group"><label for="email">E-poçt:</label><input type="email" id="email" placeholder="nümunə@email.com"></div>
+                    <div class="form-group full-width"><label for="address">Ünvan:</label><textarea id="address" placeholder="Atatürk pr. 12, Bakı, Azərbaycan"></textarea></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-briefcase"></i> İş Təcrübəsi</h2>
+                <div id="experience-container"></div>
+                <button id="add-experience-btn" class="add-btn"><i class="fas fa-plus"></i> Təcrübə Əlavə Et</button>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-graduation-cap"></i> Təhsil</h2>
+                <div id="education-container"></div>
+                <button id="add-education-btn" class="add-btn"><i class="fas fa-plus"></i> Təhsil Əlavə Et</button>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-laptop-code"></i> Kompüter və Dil Bilikləri</h2>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Kompüter Bilikləri (Yazıb 'Enter' vurun):</label>
+                        <div id="skills-container" class="tag-input-container">
+                            <input type="text" id="skill-input" class="tag-input" placeholder="Yeni bilik əlavə et...">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Dil Bilikləri:</label>
+                        <div id="language-entries-container"></div>
+                        <button id="add-language-btn" class="add-btn" style="margin-top:10px;"><i class="fas fa-plus"></i> Dil Əlavə Et</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="previewBtn" class="action-button">CV-yə Baxış Keçir <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+    
+    <div id="preview-view">
+        <div class="preview-controls">
+            <button id="backToEditorBtn" class="control-btn"><i class="fas fa-arrow-left"></i> Redaktora Geri Dön</button>
+            <button id="savePdfBtn" class="control-btn"><i class="fas fa-file-pdf"></i> PDF Yadda Saxla</button>
+            <button id="saveWordBtn" class="control-btn"><i class="fas fa-file-word"></i> Word Yadda Saxla</button>
+        </div>
+        <div class="cv-container" id="cv-container">
+            <div class="left-column">
+                <img src="https://via.placeholder.com/160" alt="Profil Şəkli" class="profile-pic" id="preview-pic">
+                <div class="section"><h3 class="section-title">Haqqımda</h3><p id="preview-aboutMe"></p></div>
+                <div class="section"><h3 class="section-title">Əlaqə</h3>
+                    <div class="contact-item"><i class="fas fa-phone"></i><p id="preview-phone"></p></div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i><p id="preview-email"></p></div>
+                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i><p id="preview-address"></p></div>
+                </div>
+                <div class="section"><h3 class="section-title">Kompüter Bilikləri</h3><ul id="preview-skills"></ul></div>
+                <div class="section"><h3 class="section-title">Dil Bilikləri</h3><ul id="preview-languages"></ul></div>
+            </div>
+            <div class="right-column">
+                <h1 class="full-name" id="preview-fullName"></h1>
+                <h2 class="job-title-main" id="preview-jobTitleMain"></h2>
+                <div class="section">
+                    <h2 class="section-title-right">İş Təcrübəsi</h2>
+                    <div id="preview-experience"></div>
+                </div>
+                <div class="section">
+                    <h2 class="section-title-right">Təhsil</h2>
+                    <div id="preview-education"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editorView = document.getElementById('editor-view');
+        const previewView = document.getElementById('preview-view');
+        
+        // --- İş Təcrübəsi ---
+        const experienceContainer = document.getElementById('experience-container');
+        const addExperienceBtn = document.getElementById('add-experience-btn');
+        const createExperienceEntry = () => {
+            const entry = document.createElement('div');
+            entry.className = 'dynamic-entry experience-entry';
+            entry.innerHTML = `
+                <button class="remove-btn" title="Bu təcrübəni sil">X</button>
+                <div class="form-grid">
+                    <div class="form-group"><label>Vəzifə:</label><input type="text" class="jobTitle" placeholder="Baş Proqram Mühəndisi"></div>
+                    <div class="form-group"><label>Şirkət, Şəhər, İllər:</label><input type="text" class="company" placeholder="Tech Solutions Inc. - Bakı - 2020-Hazırda"></div>
+                    <div class="form-group full-width"><label>Açıqlama:</label><textarea class="jobDesc" placeholder="Vəzifə öhdəlikləriniz..."></textarea></div>
+                </div>`;
+            experienceContainer.appendChild(entry);
+        };
+        addExperienceBtn.addEventListener('click', createExperienceEntry);
+        experienceContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-btn')) {
+                if (experienceContainer.children.length > 1) {
+                    e.target.closest('.dynamic-entry').remove();
+                } else {
+                    alert("Ən az bir təcrübə xanası qalmalıdır.");
+                }
+            }
+        });
+        createExperienceEntry(); // İlk girişi yarat
+
+        // --- Təhsil ---
+        const educationContainer = document.getElementById('education-container');
+        const addEducationBtn = document.getElementById('add-education-btn');
+        const createEducationEntry = () => {
+             const entry = document.createElement('div');
+             entry.className = 'dynamic-entry education-entry';
+             entry.innerHTML = `
+                <button class="remove-btn" title="Bu təhsili sil">X</button>
+                <div class="form-grid">
+                    <div class="form-group"><label>Universitet Adı:</label><input type="text" class="uniName" placeholder="Bakı Dövlət Universiteti"></div>
+                    <div class="form-group"><label>Fakültə/İxtisas:</label><input type="text" class="degree" placeholder="Kompüter Elmləri (Magistr)"></div>
+                    <div class="form-group full-width"><label>İllər:</label><input type="text" class="eduYears" placeholder="2018-2020"></div>
+                </div>`;
+            educationContainer.appendChild(entry);
+        };
+        addEducationBtn.addEventListener('click', createEducationEntry);
+        educationContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-btn')) {
+                if (educationContainer.children.length > 1) {
+                     e.target.closest('.dynamic-entry').remove();
+                } else {
+                    alert("Ən az bir təhsil xanası qalmalıdır.");
+                }
+            }
+        });
+        createEducationEntry(); // İlk girişi yarat
+
+        // --- Kompüter Bilikləri (Tag Input) ---
+        const skillsContainer = document.getElementById('skills-container');
+        const skillInput = document.getElementById('skill-input');
+        skillsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-tag')) { e.target.parentElement.remove(); }
+        });
+        skillInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+                const text = skillInput.value.replace(/,/g, '').trim();
+                if (text) {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.innerHTML = `${text} <span class="remove-tag" title="Sil">x</span>`;
+                    skillsContainer.insertBefore(tag, skillInput);
+                    skillInput.value = '';
+                }
+            }
+        });
+
+        // --- Dinamik Dil Bölməsi ---
+        const languageEntriesContainer = document.getElementById('language-entries-container');
+        const addLanguageBtn = document.getElementById('add-language-btn');
+        const createLanguageEntry = () => {
+             const entry = document.createElement('div');
+             entry.className = 'dynamic-entry language-entry';
+             entry.innerHTML = `
+                <div class="form-group">
+                    <select class="language-select">
+                        <option value="" disabled selected>Dil seçin</option>
+                        <option value="az">Azərbaycan dili</option>
+                        <option value="tr">Türk dili</option>
+                        <option value="gb">İngilis dili</option>
+                        <option value="ru">Rus dili</option>
+                        <option value="de">Alman dili</option>
+                        <option value="fr">Fransız dili</option>
+                        <option value="es">İspan dili</option>
+                        <option value="it">İtalyan dili</option>
+                        <option value="cn">Çin dili</option>
+                        <option value="jp">Yapon dili</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select class="level-select">
+                        <option value="" disabled selected>Səviyyə seçin</option>
+                        <option value="Ana dili">Ana dili</option>
+                        <option value="C2">C2 (Mükəmməl)</option>
+                        <option value="C1">C1 (Yaxşı)</option>
+                        <option value="B2">B2 (Orta-yaxşı)</option>
+                        <option value="B1">B1 (Orta)</option>
+                        <option value="A2">A2 (Elementar)</option>
+                        <option value="A1">A1 (Başlanğıc)</option>
+                    </select>
+                </div>
+                <button class="remove-btn" title="Bu dili sil">X</button>
+            `;
+            languageEntriesContainer.appendChild(entry);
+        };
+        addLanguageBtn.addEventListener('click', createLanguageEntry);
+        languageEntriesContainer.addEventListener('click', e => {
+             if (e.target.classList.contains('remove-btn')) {
+                 if (languageEntriesContainer.children.length > 1) {
+                     e.target.closest('.dynamic-entry').remove();
+                 } else {
+                     alert("Ən az bir dil xanası qalmalıdır.");
+                 }
+             }
+        });
+        createLanguageEntry(); 
+
+        // --- CV YENİLƏMƏ FUNKSİYASI ---
+        function updatePreview() {
+            // Sadə xanalar
+            const simpleFields = ['fullName', 'jobTitleMain', 'aboutMe', 'phone', 'email', 'address'];
+            simpleFields.forEach(id => {
+                // Bu blokda ID uyğunsuzluğu aradan qaldırıldı
+                const previewElement = document.getElementById(`preview-${id}`);
+                const inputElement = document.getElementById(id);
+                if (previewElement && inputElement) {
+                    previewElement.innerText = inputElement.value || '';
+                }
+            });
+
+            // Profil şəkli
+            const picInput = document.getElementById('profilePic');
+            if (picInput.files && picInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => document.getElementById('preview-pic').src = e.target.result;
+                reader.readAsDataURL(picInput.files[0]);
+            }
+            
+            const updateDynamicPreview = (containerId, previewId, placeholder, renderHtml) => {
+                const previewContainer = document.getElementById(previewId);
+                const entries = document.querySelectorAll(`#${containerId} > .dynamic-entry`);
+                previewContainer.innerHTML = '';
+                let contentExists = false;
+                entries.forEach(entry => {
+                    const html = renderHtml(entry);
+                    if(html && html.trim()) {
+                        previewContainer.innerHTML += html;
+                        contentExists = true;
+                    }
+                });
+                if (!contentExists) {
+                     previewContainer.innerHTML = `<p class="placeholder">${placeholder}</p>`;
+                }
+            };
+
+            updateDynamicPreview('experience-container', 'preview-experience', 'İş təcrübəsi daxil edilməyib.', entry => {
+                const title = entry.querySelector('.jobTitle').value;
+                return title ? `<div class="experience"><h4 class="job-title">${title}</h4><p class="company">${entry.querySelector('.company').value}</p><p>${entry.querySelector('.jobDesc').value}</p></div>` : null;
+            });
+
+            updateDynamicPreview('education-container', 'preview-education', 'Təhsil məlumatı daxil edilməyib.', entry => {
+                const uniName = entry.querySelector('.uniName').value;
+                 return uniName ? `<div class="education"><h4 class="uni-name">${uniName}</h4><p class="degree">${entry.querySelector('.degree').value}</p><p class="edu-years">${entry.querySelector('.eduYears').value}</p></div>` : null;
+            });
+
+            const skillsPreview = document.getElementById('preview-skills');
+            skillsPreview.innerHTML = '';
+            const tags = document.querySelectorAll('#skills-container .tag');
+            if (tags.length > 0) {
+                tags.forEach(tag => {
+                    skillsPreview.innerHTML += `<li><i class="fas fa-check-circle skill-icon"></i><span>${tag.innerText.slice(0, -2).trim()}</span></li>`;
+                });
+            } else {
+                skillsPreview.innerHTML = `<p class="preview-placeholder">Kompüter biliyi daxil edilməyib.</p>`;
+            }
+
+            const languagesPreview = document.getElementById('preview-languages');
+            languagesPreview.innerHTML = '';
+            const langEntries = document.querySelectorAll('.language-entry');
+            let langAdded = false;
+            langEntries.forEach(entry => {
+                const langSelect = entry.querySelector('.language-select');
+                const levelSelect = entry.querySelector('.level-select');
+                if (langSelect.value && levelSelect.value) {
+                    const langCode = langSelect.value;
+                    const level = levelSelect.value;
+                    const langText = langSelect.selectedOptions[0].text;
+                    languagesPreview.innerHTML += `<li><span class="flag-icon flag-icon-${langCode}"></span><span>${langText} (${level})</span></li>`;
+                    langAdded = true;
+                }
+            });
+            if (!langAdded) {
+                languagesPreview.innerHTML = `<p class="preview-placeholder">Dil biliyi daxil edilməyib.</p>`;
+            }
+        }
+
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            updatePreview();
+            editorView.style.display = 'none';
+            previewView.style.display = 'flex';
+        });
+
+        document.getElementById('backToEditorBtn').addEventListener('click', () => {
+            previewView.style.display = 'none';
+            editorView.style.display = 'block';
+        });
+
+        document.getElementById('savePdfBtn').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            html2canvas(document.getElementById('cv-container'), { scale: 3 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+                pdf.save("cv-senedi.pdf");
+            });
+        });
+
+        document.getElementById('saveWordBtn').addEventListener('click', () => {
+            let cssText = '';
+            for (const sheet of document.styleSheets) {
+                try {
+                    for (const rule of sheet.cssRules) cssText += rule.cssText;
+                } catch (e) { console.warn("Cannot read stylesheet", e); }
+            }
+            const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>CV</title><style>${cssText}</style></head><body>`;
+            const footer = "</body></html>";
+            const sourceHTML = header + document.getElementById('cv-container').innerHTML + footer;
+            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            const fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'cv-senedi.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        });
+    });
+    </script>
+
+</body>
+</html>
