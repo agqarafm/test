@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Hazırlama Aləti (Düzəldilmiş Versiya)</title>
+    <title>CV Hazırlama Aləti (Stabil Versiya)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f2f5;
@@ -66,15 +68,17 @@
         input[type="tel"],
         textarea {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 14px;
             font-family: inherit;
         }
 
         textarea {
             resize: vertical;
+            min-height: 80px;
         }
 
         .buttons {
@@ -85,13 +89,19 @@
         }
 
         button {
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
             color: white;
             flex-grow: 1;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            opacity: 0.9;
         }
 
         #editBtn { background-color: #ffc107; }
@@ -100,21 +110,20 @@
 
         /* CV Nümunəsi Stili */
         #cv-preview {
-            display: flex;
-            justify-content: center;
+            width: 800px;
+            max-width: 100%;
         }
         
         .cv-container {
-            width: 800px; /* A4 ölçüsünə yaxın */
-            min-height: 1131px; /* A4 hündürlüyü */
+            width: 100%;
+            min-height: 1131px;
             display: flex;
             background-color: #fff;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            margin-top: 20px;
         }
 
         .left-column {
-            background-color: #e9ecef; /* PDF-dəki rəngə uyğun */
+            background-color: #e9ecef;
             width: 35%;
             padding: 30px;
             color: #343a40;
@@ -133,6 +142,7 @@
             display: block;
             margin: 0 auto 30px;
             object-fit: cover;
+            background-color: #ccc;
         }
 
         .left-column .section {
@@ -148,7 +158,7 @@
             margin-bottom: 15px;
         }
 
-        .left-column p {
+        .left-column p, .left-column ul li {
             font-size: 14px;
             line-height: 1.6;
             margin: 5px 0;
@@ -158,11 +168,6 @@
         .left-column ul {
             list-style: none;
             padding-left: 0;
-        }
-
-        .left-column ul li {
-            margin-bottom: 8px;
-            font-size: 14px;
         }
 
         .right-column h1 {
@@ -191,12 +196,14 @@
             font-size: 18px;
             font-weight: 500;
             margin: 0;
+            padding-top: 5px;
         }
 
         .company, .degree, .edu-years {
             font-size: 15px;
             color: #555;
             margin: 5px 0;
+            font-style: italic;
         }
 
         .experience p, .education p {
@@ -208,145 +215,41 @@
     </style>
 </head>
 <body>
+
     <div class="editor-container">
         <h1>CV Məlumatlarınızı Daxil Edin</h1>
         <p>Aşağıdakı xanaları doldurun. Dəyişikliklər sağ tərəfdəki CV-də avtomatik göstəriləcək.</p>
 
         <div class="form-grid">
-            <fieldset>
-                <legend>Şəxsi Məlumatlar</legend>
-                <label for="fullName">Ad Soyad:</label>
-                <input type="text" id="fullName" value="HARUN DÜRÜST">
-                <label for="aboutMe">Haqqımda:</label>
-                <textarea id="aboutMe" rows="4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea>
-                <label for="profilePic">Profil Şəkli:</label>
-                <input type="file" id="profilePic" accept="image/*">
-            </fieldset>
-            <fieldset>
-                <legend>Əlaqə Məlumatları</legend>
-                <label for="phone">Telefon:</label>
-                <input type="tel" id="phone" value="+0 212 123 24 25">
-                <label for="email">E-poçt:</label>
-                <input type="email" id="email" value="merhaba@harikasite.web.tr">
-                <label for="address">Ünvan:</label>
-                <textarea id="address" rows="3">Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir</textarea>
-            </fieldset>
-            <fieldset>
-                <legend>İş Təcrübəsi (1)</legend>
-                <label for="jobTitle1">Vəzifə:</label>
-                <input type="text" id="jobTitle1" value="ÜNVANINIZI BURAYA GİRİN">
-                <label for="company1">Şirkət, Şəhər, İllər:</label>
-                <input type="text" id="company1" value="Şirket ismi - Şehir ismi - Çalıştığınız yıllar">
-                <label for="jobDesc1">Açıqlama:</label>
-                <textarea id="jobDesc1" rows="4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea>
-            </fieldset>
-            <fieldset>
-                <legend>İş Təcrübəsi (2)</legend>
-                <label for="jobTitle2">Vəzifə:</label>
-                <input type="text" id="jobTitle2" value="ÜNVANINIZI BURAYA GİRİN">
-                <label for="company2">Şirkət, Şəhər, İllər:</label>
-                <input type="text" id="company2" value="Şirket ismi - Şehir ismi - Çalıştığınız yıllar">
-                <label for="jobDesc2">Açıqlama:</label>
-                <textarea id="jobDesc2" rows="4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea>
-            </fieldset>
-            <fieldset>
-                <legend>Təhsil (1)</legend>
-                <label for="uniName1">Universitet Adı:</label>
-                <input type="text" id="uniName1" value="ÜNİVERSİTE ADINI BURAYA GİRİN">
-                <label for="degree1">Fakültə/İxtisas:</label>
-                <input type="text" id="degree1" value="Bölüm adı">
-                <label for="eduYears1">İllər:</label>
-                <input type="text" id="eduYears1" value="2012-2018">
-            </fieldset>
-            <fieldset>
-                <legend>Təhsil (2)</legend>
-                <label for="uniName2">Universitet Adı:</label>
-                <input type="text" id="uniName2" value="ÜNİVERSİTE ADINI BURAYA GİRİN">
-                <label for="degree2">Fakültə/İxtisas:</label>
-                <input type="text" id="degree2" value="Bölüm adı">
-                <label for="eduYears2">İllər:</label>
-                <input type="text" id="eduYears2" value="2018-2022">
-            </fieldset>
-            <fieldset>
-                <legend>Bacarıqlar</legend>
-                <label>Bacarıqları vergül ilə ayıraraq yazın:</label>
-                <input type="text" id="skills" value="Proje yönetimi, Takım Oyuncusu, Analitik Düşünme, İkna Becerisi">
-            </fieldset>
-            <fieldset>
-                <legend>Dil Bilikləri</legend>
-                <label>Dilləri vergül ilə ayıraraq yazın (səviyyə ilə):</label>
-                <input type="text" id="languages" value="İngilizce C2, Almanca C2, Korece B1">
-            </fieldset>
-            <fieldset>
-                <legend>Kompüter Bilikləri / Sertifikatlar</legend>
-                <label>Hər birini yeni sətirdən yazın:</label>
-                 <textarea id="certificates" rows="4">2012-2013 Sertifika Adını Buraya Girin
+            <fieldset><legend>Şəxsi Məlumatlar</legend><label for="fullName">Ad Soyad:</label><input type="text" id="fullName" value="HARUN DÜRÜST"><label for="aboutMe">Haqqımda:</label><textarea id="aboutMe">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea><label for="profilePic">Profil Şəkli:</label><input type="file" id="profilePic" accept="image/*"></fieldset>
+            <fieldset><legend>Əlaqə Məlumatları</legend><label for="phone">Telefon:</label><input type="tel" id="phone" value="+0 212 123 24 25"><label for="email">E-poçt:</label><input type="email" id="email" value="merhaba@harikasite.web.tr"><label for="address">Ünvan:</label><textarea id="address">Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir</textarea></fieldset>
+            <fieldset><legend>İş Təcrübəsi (1)</legend><label for="jobTitle1">Vəzifə:</label><input type="text" id="jobTitle1" value="ÜNVANINIZI BURAYA GİRİN"><label for="company1">Şirkət, Şəhər, İllər:</label><input type="text" id="company1" value="Şirket ismi - Şehir ismi - Çalıştığınız yıllar"><label for="jobDesc1">Açıqlama:</label><textarea id="jobDesc1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea></fieldset>
+            <fieldset><legend>İş Təcrübəsi (2)</legend><label for="jobTitle2">Vəzifə:</label><input type="text" id="jobTitle2" value="ÜNVANINIZI BURAYA GİRİN"><label for="company2">Şirkət, Şəhər, İllər:</label><input type="text" id="company2" value="Şirket ismi - Şehir ismi - Çalıştığınız yıllar"><label for="jobDesc2">Açıqlama:</label><textarea id="jobDesc2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</textarea></fieldset>
+            <fieldset><legend>Təhsil (1)</legend><label for="uniName1">Universitet Adı:</label><input type="text" id="uniName1" value="ÜNİVERSİTE ADINI BURAYA GİRİN"><label for="degree1">Fakültə/İxtisas:</label><input type="text" id="degree1" value="Bölüm adı"><label for="eduYears1">İllər:</label><input type="text" id="eduYears1" value="2012-2018"></fieldset>
+            <fieldset><legend>Təhsil (2)</legend><label for="uniName2">Universitet Adı:</label><input type="text" id="uniName2" value="ÜNİVERSİTE ADINI BURAYA GİRİN"><label for="degree2">Fakültə/İxtisas:</label><input type="text" id="degree2" value="Bölüm adı"><label for="eduYears2">İllər:</label><input type="text" id="eduYears2" value="2018-2022"></fieldset>
+            <fieldset><legend>Bacarıqlar</legend><label>Bacarıqları vergül ilə ayıraraq yazın:</label><input type="text" id="skills" value="Proje yönetimi, Takım Oyuncusu, Analitik Düşünme, İkna Becerisi"></fieldset>
+            <fieldset><legend>Dil Bilikləri</legend><label>Dilləri vergül ilə ayıraraq yazın (səviyyə ilə):</label><input type="text" id="languages" value="İngilizce C2, Almanca C2, Korece B1"></fieldset>
+            <fieldset><legend>Kompüter Bilikləri / Sertifikatlar</legend><label>Hər birini yeni sətirdən yazın:</label><textarea id="certificates">2012-2013 Sertifika Adını Buraya Girin
 2012-2013 Sertifika Adını Buraya Girin
-2012-2013 Sertifika Adını Buraya Girin</textarea>
-            </fieldset>
+2012-2013 Sertifika Adını Buraya Girin</textarea></fieldset>
         </div>
-        <div class="buttons">
-            <button id="editBtn">Düzəliş Et</button>
-            <button id="savePdfBtn">PDF Yadda Saxla</button>
-            <button id="saveWordBtn">Word Yadda Saxla</button>
-        </div>
+        <div class="buttons"><button id="editBtn">Düzəliş Et</button><button id="savePdfBtn">PDF Yadda Saxla</button><button id="saveWordBtn">Word Yadda Saxla</button></div>
     </div>
     
     <div id="cv-preview">
         <div class="cv-container" id="cv-container">
             <div class="left-column">
-                <img src="https://i.imgur.com/8QZQZ1C.png" alt="Profil Şəkli" class="profile-pic" id="preview-pic">
-                <div class="section">
-                    <h3 class="section-title">ƏLAQƏ</h3>
-                    <p id="preview-phone">+0 212 123 24 25</p>
-                    <p id="preview-email">merhaba@harikasite.web.tr</p>
-                    <p id="preview-address">Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir</p>
-                </div>
-                <div class="section">
-                    <h3 class="section-title">HAQQIMDA</h3>
-                    <p id="preview-about">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean id imperdiet arcu, vitae efficitur nulla. Suspendisse blandit sagittis aliquet. Sed mollis dapibus congue.</p>
-                </div>
-                <div class="section">
-                    <h3 class="section-title">BACARIQLAR</h3>
-                    <ul id="preview-skills"></ul>
-                </div>
-                <div class="section">
-                    <h3 class="section-title">DİL BİLİKLƏRİ</h3>
-                     <ul id="preview-languages"></ul>
-                </div>
-                <div class="section">
-                    <h3 class="section-title">KOMPÜTER BİLİKLƏRİ</h3>
-                    <div id="preview-certificates"></div>
-                </div>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Profil Şəkli" class="profile-pic" id="preview-pic">
+                <div class="section"><h3 class="section-title">ƏLAQƏ</h3><p id="preview-phone"></p><p id="preview-email"></p><p id="preview-address"></p></div>
+                <div class="section"><h3 class="section-title">HAQQIMDA</h3><p id="preview-about"></p></div>
+                <div class="section"><h3 class="section-title">BACARIQLAR</h3><ul id="preview-skills"></ul></div>
+                <div class="section"><h3 class="section-title">DİL BİLİKLƏRİ</h3><ul id="preview-languages"></ul></div>
+                <div class="section"><h3 class="section-title">KOMPÜTER BİLİKLƏRİ</h3><div id="preview-certificates"></div></div>
             </div>
             <div class="right-column">
-                <h1 id="preview-fullName">HARUN DÜRÜST</h1>
-                <div class="section">
-                    <h2 class="section-title-right">İŞ TƏCRÜBƏSİ</h2>
-                    <div class="experience">
-                        <h4 id="preview-jobTitle1"></h4>
-                        <p class="company" id="preview-company1"></p>
-                        <p id="preview-jobDesc1"></p>
-                    </div>
-                    <div class="experience">
-                        <h4 id="preview-jobTitle2"></h4>
-                        <p class="company" id="preview-company2"></p>
-                        <p id="preview-jobDesc2"></p>
-                    </div>
-                </div>
-                <div class="section">
-                    <h2 class="section-title-right">TƏHSİL</h2>
-                    <div class="education">
-                        <h4 id="preview-uniName1"></h4>
-                        <p class="degree" id="preview-degree1"></p>
-                        <p class="edu-years" id="preview-eduYears1"></p>
-                    </div>
-                     <div class="education">
-                        <h4 id="preview-uniName2"></h4>
-                        <p class="degree" id="preview-degree2"></p>
-                        <p class="edu-years" id="preview-eduYears2"></p>
-                    </div>
-                </div>
+                <h1 id="preview-fullName"></h1>
+                <div class="section"><h2 class="section-title-right">İŞ TƏCRÜBƏSİ</h2><div class="experience"><h4 id="preview-jobTitle1"></h4><p class="company" id="preview-company1"></p><p id="preview-jobDesc1"></p></div><div class="experience"><h4 id="preview-jobTitle2"></h4><p class="company" id="preview-company2"></p><p id="preview-jobDesc2"></p></div></div>
+                <div class="section"><h2 class="section-title-right">TƏHSİL</h2><div class="education"><h4 id="preview-uniName1"></h4><p class="degree" id="preview-degree1"></p><p class="edu-years" id="preview-eduYears1"></p></div><div class="education"><h4 id="preview-uniName2"></h4><p class="degree" id="preview-degree2"></p><p class="edu-years" id="preview-eduYears2"></p></div></div>
             </div>
         </div>
     </div>
@@ -356,27 +259,34 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Bütün redaktor sahələrini (input) və önizləmə (preview) elementlərini seçirik
             const inputs = {
                 fullName: document.getElementById('fullName'), aboutMe: document.getElementById('aboutMe'), profilePic: document.getElementById('profilePic'), phone: document.getElementById('phone'), email: document.getElementById('email'), address: document.getElementById('address'), jobTitle1: document.getElementById('jobTitle1'), company1: document.getElementById('company1'), jobDesc1: document.getElementById('jobDesc1'), jobTitle2: document.getElementById('jobTitle2'), company2: document.getElementById('company2'), jobDesc2: document.getElementById('jobDesc2'), uniName1: document.getElementById('uniName1'), degree1: document.getElementById('degree1'), eduYears1: document.getElementById('eduYears1'), uniName2: document.getElementById('uniName2'), degree2: document.getElementById('degree2'), eduYears2: document.getElementById('eduYears2'), skills: document.getElementById('skills'), languages: document.getElementById('languages'), certificates: document.getElementById('certificates')
             };
-
             const previews = {
                 fullName: document.getElementById('preview-fullName'), aboutMe: document.getElementById('preview-about'), profilePic: document.getElementById('preview-pic'), phone: document.getElementById('preview-phone'), email: document.getElementById('preview-email'), address: document.getElementById('preview-address'), jobTitle1: document.getElementById('preview-jobTitle1'), company1: document.getElementById('preview-company1'), jobDesc1: document.getElementById('preview-jobDesc1'), jobTitle2: document.getElementById('preview-jobTitle2'), company2: document.getElementById('preview-company2'), jobDesc2: document.getElementById('preview-jobDesc2'), uniName1: document.getElementById('preview-uniName1'), degree1: document.getElementById('preview-degree1'), eduYears1: document.getElementById('preview-eduYears1'), uniName2: document.getElementById('preview-uniName2'), degree2: document.getElementById('preview-degree2'), eduYears2: document.getElementById('preview-eduYears2'), skills: document.getElementById('preview-skills'), languages: document.getElementById('preview-languages'), certificates: document.getElementById('preview-certificates')
             };
-
+            
+            // Məlumatları anında yeniləyən funksiya
             function updatePreview() {
-                for (const key of ['fullName', 'aboutMe', 'phone', 'email', 'address', 'jobTitle1', 'company1', 'jobDesc1', 'jobTitle2', 'company2', 'jobDesc2', 'uniName1', 'degree1', 'eduYears1', 'uniName2', 'degree2', 'eduYears2']) {
-                    if (inputs[key] && previews[key]) previews[key].innerText = inputs[key].value;
-                }
-                previews.skills.innerHTML = inputs.skills.value.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
-                previews.languages.innerHTML = inputs.languages.value.split(',').map(lang => `<li>${lang.trim()}</li>`).join('');
-                previews.certificates.innerHTML = inputs.certificates.value.split('\n').map(cert => `<p>${cert.trim()}</p>`).join('');
+                Object.keys(inputs).forEach(key => {
+                    if (inputs[key].type === 'file' || !previews[key]) return;
+                    if (key === 'skills' || key === 'languages') {
+                        previews[key].innerHTML = inputs[key].value.split(',').filter(item => item.trim() !== '').map(item => `<li>${item.trim()}</li>`).join('');
+                    } else if (key === 'certificates') {
+                        previews[key].innerHTML = inputs[key].value.split('\n').filter(item => item.trim() !== '').map(item => `<p>${item.trim()}</p>`).join('');
+                    } else {
+                        previews[key].innerText = inputs[key].value;
+                    }
+                });
             }
 
+            // Bütün sahələrə 'input' hadisəsi əlavə edirik ki, yazdıqca CV yenilənsin
             Object.values(inputs).forEach(input => {
                 if (input.type !== 'file') input.addEventListener('input', updatePreview);
             });
 
+            // Profil şəkli yükləndikdə
             inputs.profilePic.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -385,43 +295,27 @@
                     reader.readAsDataURL(file);
                 }
             });
-
-            const editBtn = document.getElementById('editBtn');
-            const savePdfBtn = document.getElementById('savePdfBtn');
-            const saveWordBtn = document.getElementById('saveWordBtn');
-            const cvContainer = document.getElementById('cv-container');
-
-            editBtn.addEventListener('click', () => {
-                alert("Siz artıq redaktə rejimindəsiniz. Sahələri dolduraraq CV-nizi redaktə edə bilərsiniz.");
-            });
             
-            savePdfBtn.addEventListener('click', () => {
+            // Düymələrin funksionallığı
+            document.getElementById('editBtn').addEventListener('click', () => alert("Siz artıq redaktə rejimindəsiniz. Sahələri dolduraraq CV-nizi redaktə edə bilərsiniz."));
+            
+            // PDF YADDA SAXLA
+            document.getElementById('savePdfBtn').addEventListener('click', () => {
                 const { jsPDF } = window.jspdf;
-                html2canvas(cvContainer, { scale: 2, useCORS: true }).then(canvas => {
+                html2canvas(document.getElementById('cv-container'), { scale: 2, useCORS: true }).then(canvas => {
                     const imgData = canvas.toDataURL('image/png');
                     const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = 210;
-                    const pdfHeight = 297;
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // A4 ölçüləri
                     pdf.save("cv-sənədi.pdf");
                 });
             });
 
-            saveWordBtn.addEventListener('click', () => {
+            // WORD YADDA SAXLA
+            document.getElementById('saveWordBtn').addEventListener('click', () => {
                 const cssStyles = document.querySelector('style').innerHTML;
-                const header = `
-                    <html xmlns:o='urn:schemas-microsoft-com:office:office'
-                          xmlns:w='urn:schemas-microsoft-com:office:word'
-                          xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head>
-                        <meta charset='utf-8'>
-                        <title>CV</title>
-                        <style>${cssStyles}</style>
-                    </head>
-                    <body>`;
+                const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>CV</title><style>${cssStyles}</style></head><body>`;
                 const footer = "</body></html>";
-                const sourceHTML = header + cvContainer.innerHTML + footer;
-                
+                const sourceHTML = header + document.getElementById('cv-container').innerHTML + footer;
                 const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
                 const fileDownload = document.createElement("a");
                 document.body.appendChild(fileDownload);
@@ -431,8 +325,10 @@
                 document.body.removeChild(fileDownload);
             });
             
+            // Səhifə ilk dəfə açılanda məlumatları CV-yə yaz
             updatePreview();
         });
     </script>
+
 </body>
 </html>
