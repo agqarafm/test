@@ -119,8 +119,10 @@
 
         #qr-canvas {
             margin: 30px auto 0;
-            width: 250px;
-            height: 250px;
+            padding: 15px; /* Ağ fon üçün daxili boşluq */
+            background: white; /* Fonu ağ etdik */
+            width: fit-content; /* Ölçünü avtomatik tənzimləmək üçün */
+            height: fit-content;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 20px var(--shadow-color);
@@ -165,7 +167,7 @@
         
         <button id="download-btn">Yüklə (.png)</button>
         
-        <p class="footer">Gemini tərəfindən hazırlandı</p>
+        <p class="footer">Arzu Məmmədov tərəfindən hazırlandı</p>
     </div>
 
     <script>
@@ -175,37 +177,31 @@
         const textInput = document.getElementById('text-input');
         const qrCanvas = document.getElementById('qr-canvas');
 
-        // QR Kod üçün vizual tənzimləmələr
+        // --- DƏYİŞİKLİK BURADA BAŞLAYIR ---
+        // QR Kod üçün vizual tənzimləmələr (Ağ-Qara versiya)
         const qrCode = new QRCodeStyling({
             width: 250,
             height: 250,
             data: "https://google.com", // Başlanğıc üçün data
-            margin: 5,
+            margin: 0,
             dotsOptions: {
-                color: "#ffffff",
-                type: "rounded",
-                gradient: {
-                    type: 'linear',
-                    rotation: 0.785, // 45 dərəcə
-                    colorStops: [{ offset: 0, color: '#00aaff' }, { offset: 1, color: '#3a4b8a' }]
-                }
+                color: "#000000", // Nöqtələr qara rəngdə
+                type: "rounded"
             },
             backgroundOptions: {
-                color: "transparent",
+                color: "#ffffff", // Fon ağ rəngdə
             },
             cornersSquareOptions: {
                 type: "extra-rounded",
-                gradient: {
-                    type: 'linear',
-                    rotation: 0.785,
-                    colorStops: [{ offset: 0, color: '#1f263e' }, { offset: 1, color: '#00aaff' }]
-                }
+                color: "#000000" // Künclər qara rəngdə
             },
             cornersDotOptions: {
                 type: "dot",
-                color: "#1f263e"
+                color: "#000000" // Künc nöqtələri qara rəngdə
             }
         });
+        // --- DƏYİŞİKLİK BURADA BİTİR ---
+
 
         // "Enter" düyməsi ilə də işləməsi üçün
         textInput.addEventListener('keydown', (event) => {
