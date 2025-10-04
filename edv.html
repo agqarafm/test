@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ƏDV Çeki Generatoru</title>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .input-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .payment-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .payment-options label {
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        
+        .payment-options input[type="radio"]{
+            margin-right: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        #add-item-btn {
+            background-color: #007bff;
+        }
+        #add-item-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #generate-receipt-btn {
+            background-color: #28a745;
+            margin-top: 15px;
+        }
+        #generate-receipt-btn:hover {
+            background-color: #218838;
+        }
+        
+        #added-items-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        #added-items-list li {
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .receipt-wrapper {
+            width: 340px;
+            perspective: 1000px;
+            display: none; /* Initially hidden */
+        }
+        
+        .receipt-wrapper.show {
+            display: block;
+        }
+
+        .receipt {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #fff;
+            width: 320px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid #333;
+            animation: slide-in 0.8s ease-out forwards;
+            transform-origin: top center;
+        }
+        
+        @keyframes slide-in {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) rotateX(20deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .receipt-header, .receipt-footer {
+            text-align: center;
+        }
+
+        .receipt-header h3 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+
+        .receipt-header p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+
+        .receipt-body {
+            margin: 20px 0;
+        }
+        
+        .receipt-body .info p {
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+        }
+
+        .divider {
+            border-top: 1px dashed #555;
+            margin: 10px 0;
+        }
+
+        .items-table {
+            width: 100%;
+            font-size: 12px;
+        }
+        .items-table thead th {
+            text-align: left;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .items-table td {
+            padding: 4px 0;
+        }
+        .items-table .price-col {
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .totals p {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .totals .total-amount {
+            font-weight: bold;
+            font-size: 16px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .vat-refund {
+            background-color: #eef7ff;
+            border: 1px solid #b3d7ff;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .vat-refund p {
+            margin: 4px 0;
+        }
+        .vat-refund .refund-amount {
+            font-weight: bold;
+            font-size: 16px;
+            color: #0056b3;
+        }
+
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .fiscal-info p {
+            font-size: 12px;
+            text-align: center;
+            margin: 2px 0;
+            word-break: break-all;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="input-container">
+        <h2>Məlumatları Daxil Edin</h2>
+        <div class="form-group">
+            <label for="item-name">Məhsulun adı</label>
+            <input type="text" id="item-name" placeholder="Məs: Çörək">
+        </div>
+        <div class="form-group">
+            <label for="item-quantity">Miqdar</label>
+            <input type="number" id="item-quantity" value="1" min="1">
+        </div>
+        <div class="form-group">
+            <label for="item-price">Qiymət (1 ədəd üçün, AZN)</label>
+            <input type="number" id="item-price" placeholder="Məs: 0.60" step="0.01">
+        </div>
+        <button id="add-item-btn">Məhsulu Əlavə Et</button>
+        
+        <ul id="added-items-list"></ul>
+
+        <div class="form-group">
+            <label>Ödəniş növünü seçin</label>
+            <div class="payment-options">
+                <label><input type="radio" name="payment-type" value="cashless" checked> Nağdsız</label>
+                <label><input type="radio" name="payment-type" value="cash"> Nağd</label>
+            </div>
+        </div>
+        <button id="generate-receipt-btn">Çeki Hazırla</button>
+    </div>
+
+    <div class="receipt-wrapper" id="receipt-wrapper">
+        <div class="receipt">
+            <div class="receipt-header">
+                <h3>"GEMINI" SUPERMARKET</h3>
+                <p>Bakı ş., Nizami küç. 123</p>
+                <p>VÖEN: 1234567890</p>
+                <p>www.gemini-market.az</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="receipt-body">
+                <div class="info">
+                     <p><span>KASSA ÇEKİ #<span id="receipt-number"></span></span></p>
+                     <p><span>Tarix:</span><span id="receipt-date"></span></p>
+                     <p><span>Vaxt:</span><span id="receipt-time"></span></p>
+                </div>
+                <div class="divider"></div>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Malın adı</th>
+                            <th>Sayı</th>
+                            <th class="price-col">Məbləğ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receipt-items">
+                        </tbody>
+                </table>
+                <div class="divider"></div>
+                <div class="totals">
+                    <p><span>CƏMİ:</span><span id="subtotal">0.00 AZN</span></p>
+                    <p><span>O CÜMLƏDƏN ƏDV 18%:</span><span id="vat-amount">0.00 AZN</span></p>
+                    <p class="total-amount"><span>YEKUN MƏBLƏĞ:</span><span id="total-amount">0.00 AZN</span></p>
+                </div>
+                
+                 <div class="vat-refund">
+                    <p><strong>GERİ QAYTARILACAQ ƏDV</strong></p>
+                    <p id="vat-refund-calculation"></p>
+                    <p class="refund-amount" id="vat-refund-amount">0.00 AZN</p>
+                </div>
+
+            </div>
+
+            <div class="qr-code" id="qrcode"></div>
+            
+            <div class="fiscal-info">
+                 <p><strong>FISKAL ID:</strong></p>
+                 <p id="fiscal-id"></p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="receipt-footer">
+                <p><strong>BİZİ SEÇDİYİNİZ ÜÇÜN TƏŞƏKKÜRLƏR!</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const addItemBtn = document.getElementById('add-item-btn');
+        const generateReceiptBtn = document.getElementById('generate-receipt-btn');
+        
+        const itemNameInput = document.getElementById('item-name');
+        const itemQuantityInput = document.getElementById('item-quantity');
+        const itemPriceInput = document.getElementById('item-price');
+        const addedItemsList = document.getElementById('added-items-list');
+
+        let items = [];
+
+        // Add item to the list
+        addItemBtn.addEventListener('click', () => {
+            const name = itemNameInput.value.trim();
+            const quantity = parseFloat(itemQuantityInput.value);
+            const price = parseFloat(itemPriceInput.value);
+
+            if (name && quantity > 0 && price > 0) {
+                items.push({ name, quantity, price });
+                
+                const listItem = document.createElement('li');
+                listItem.textContent = `${quantity} x ${name} - ${(quantity * price).toFixed(2)} AZN`;
+                addedItemsList.appendChild(listItem);
+
+                // Clear inputs
+                itemNameInput.value = '';
+                itemQuantityInput.value = '1';
+                itemPriceInput.value = '';
+                itemNameInput.focus();
+            } else {
+                alert('Zəhmət olmasa, bütün məlumatları düzgün daxil edin.');
+            }
+        });
+
+        // Generate the receipt
+        generateReceiptBtn.addEventListener('click', () => {
+            if (items.length === 0) {
+                alert('Çek yaratmaq üçün ən azı bir məhsul əlavə edin.');
+                return;
+            }
+
+            const paymentType = document.querySelector('input[name="payment-type"]:checked').value;
+            const VAT_RATE = 0.18; // 18% ƏDV
+            
+            let subtotal = 0;
+            const receiptItemsBody = document.getElementById('receipt-items');
+            receiptItemsBody.innerHTML = ''; // Clear previous items
+
+            items.forEach(item => {
+                const totalItemPrice = item.quantity * item.price;
+                subtotal += totalItemPrice;
+                
+                const row = `
+                    <tr>
+                        <td colspan="3">${item.name}</td>
+                    </tr>
+                    <tr>
+                        <td>${item.quantity} x ${item.price.toFixed(2)}</td>
+                        <td></td>
+                        <td class="price-col">${totalItemPrice.toFixed(2)}</td>
+                    </tr>`;
+                receiptItemsBody.innerHTML += row;
+            });
+            
+            // Calculations based on Azerbaijan rules
+            // ƏDV daxil məbləğdən ƏDV-ni ayırmaq üçün: Cəmi Məbləğ * (18 / 118)
+            const totalVat = subtotal * (VAT_RATE / (1 + VAT_RATE));
+            let refundableVat = 0;
+            let refundPercentage = 0;
+            let calculationText = '';
+
+            if (paymentType === 'cashless') {
+                refundPercentage = 17.5; // Nağdsız ödənişlər üzrə
+                refundableVat = totalVat * (refundPercentage / 100);
+                calculationText = `Nağdsız (${(totalVat).toFixed(2)} AZN * ${refundPercentage}%)`;
+            } else {
+                refundPercentage = 5; // Nağd ödənişlər üzrə
+                refundableVat = totalVat * (refundPercentage / 100);
+                calculationText = `Nağd (${(totalVat).toFixed(2)} AZN * ${refundPercentage}%)`;
+            }
+
+            // Update receipt display
+            const now = new Date();
+            document.getElementById('receipt-number').textContent = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('receipt-date').textContent = now.toLocaleDateString('az-AZ');
+            document.getElementById('receipt-time').textContent = now.toLocaleTimeString('az-AZ');
+
+            document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)} AZN`;
+            document.getElementById('vat-amount').textContent = `${totalVat.toFixed(2)} AZN`;
+            document.getElementById('total-amount').textContent = `${subtotal.toFixed(2)} AZN`;
+            
+            document.getElementById('vat-refund-calculation').textContent = calculationText;
+            document.getElementById('vat-refund-amount').textContent = `${refundableVat.toFixed(2)} AZN`;
+            
+            const fiscalId = 'FN' + Date.now().toString().slice(2);
+            document.getElementById('fiscal-id').textContent = fiscalId;
+
+            // Generate QR Code
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = ""; // Clear previous QR code
+            const qrData = `FiscalID: ${fiscalId}\nDate: ${now.toISOString()}\nAmount: ${subtotal.toFixed(2)} AZN`;
+            new QRCode(qrcodeContainer, {
+                text: qrData,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Show the receipt with animation
+            const receiptWrapper = document.getElementById('receipt-wrapper');
+            receiptWrapper.classList.add('show');
+        });
+
+    </script>
+</body>
+</html>
