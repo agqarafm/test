@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animasiyalı ƏDV Çeki</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
+
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Roboto Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .receipt-container {
+            width: 340px;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            animation: fadeInSlideUp 1s ease-out forwards;
+            border-top: 5px solid #007bff;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 20px;
+        }
+
+        .receipt-header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .receipt-header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .receipt-body {
+            margin-bottom: 25px;
+        }
+
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .info-line span:first-child {
+            font-weight: 500;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .items-table th, .items-table td {
+            padding: 10px 0;
+            font-size: 13px;
+        }
+
+        .items-table th {
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .items-table td {
+            color: #555;
+        }
+        
+        .item-name {
+            font-weight: 500;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 25px;
+            border-top: 2px dashed #ccc;
+            padding-top: 15px;
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .total-line.grand-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #007bff;
+            margin-top: 10px;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .qr-code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .qr-code-container canvas {
+            border: 1px solid #eee;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .fiscal-id {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            padding: 8px 12px;
+            background-color: #f0f2f5;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body>
+
+    <div class="receipt-container">
+        <header class="receipt-header">
+            <h1>"SİZİN MARKET" MMC</h1>
+            <p>Bakı ş., Nəsimi r-nu, Azadlıq pr. 10</p>
+            <p>VÖEN: 1234567890</p>
+        </header>
+
+        <section class="receipt-body">
+            <div class="info-line">
+                <span>Kassir:</span>
+                <span id="cashier-name">Aynurə Məmmədova</span>
+            </div>
+            <div class="info-line">
+                <span>Tarix:</span>
+                <span id="date"></span>
+            </div>
+            <div class="info-line">
+                <span>Vaxt:</span>
+                <span id="time"></span>
+            </div>
+            <div class="info-line">
+                <span>Çek №:</span>
+                <span id="receipt-number"></span>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Malın adı</th>
+                        <th class="align-right">Miqdar</th>
+                        <th class="align-right">Məbləğ</th>
+                    </tr>
+                </thead>
+                <tbody id="items-list">
+                    </tbody>
+            </table>
+
+            <div class="totals">
+                <div class="total-line">
+                    <span>Cəmi (ƏDV-siz):</span>
+                    <span id="subtotal" class="align-right">0.00 AZN</span>
+                </div>
+                <div class="total-line">
+                    <span>ƏDV (18%):</span>
+                    <span id="vat" class="align-right">0.00 AZN</span>
+                </div>
+                <div class="total-line grand-total">
+                    <span>YEKUN MƏBLƏĞ:</span>
+                    <span id="total" class="align-right">0.00 AZN</span>
+                </div>
+            </div>
+        </section>
+
+        <footer class="receipt-footer">
+            <div class="qr-code-container">
+                <canvas id="qr-code"></canvas>
+            </div>
+            <div class="fiscal-id" id="fiscal-id"></div>
+            <p class="footer-note">Çeki təqdim etdiyiniz üçün təşəkkür edirik!</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- NÜMUNƏ MƏLUMATLAR ---
+            const items = [
+                { name: 'Çörək', quantity: 2, price: 0.60 },
+                { name: 'Süd 1L', quantity: 1, price: 2.50 },
+                { name: 'Yumurta (10 əd.)', quantity: 1, price: 3.20 },
+                { name: 'Alma 1kq', quantity: 1, price: 2.80 },
+            ];
+            const VAT_RATE = 0.18; // ƏDV dərəcəsi 18%
+
+            // --- HESABLAMALAR ---
+            let subtotal = 0;
+            const itemsList = document.getElementById('items-list');
+
+            items.forEach(item => {
+                const totalItemPrice = item.quantity * item.price;
+                subtotal += totalItemPrice;
+                
+                const row = `
+                    <tr>
+                        <td class="item-name">${item.name}</td>
+                        <td class="align-right">${item.quantity}</td>
+                        <td class="align-right">${totalItemPrice.toFixed(2)}</td>
+                    </tr>
+                `;
+                itemsList.innerHTML += row;
+            });
+
+            const vatAmount = subtotal * VAT_RATE;
+            const totalAmount = subtotal + vatAmount;
+            
+            // Məbləğləri formatlayaraq yerləşdirmək
+            document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)} AZN`;
+            document.getElementById('vat').textContent = `${vatAmount.toFixed(2)} AZN`;
+            document.getElementById('total').textContent = `${totalAmount.toFixed(2)} AZN`;
+
+            // --- TARİX VƏ SAAT ---
+            const now = new Date();
+            document.getElementById('date').textContent = now.toLocaleDateString('az-AZ');
+            document.getElementById('time').textContent = now.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
+            
+            // --- UNİKAL İD-LƏR ---
+            document.getElementById('receipt-number').textContent = Math.floor(100000 + Math.random() * 900000);
+            
+            function generateFiscalId() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                for (let i = 0; i < 12; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+            const fiscalId = generateFiscalId();
+            document.getElementById('fiscal-id').textContent = fiscalId;
+
+            // --- QR KOD GENERASİYASI ---
+            const qrData = {
+                receiptId: document.getElementById('receipt-number').textContent,
+                fiscalId: fiscalId,
+                date: now.toISOString(),
+                total: totalAmount.toFixed(2),
+                vat: vatAmount.toFixed(2)
+            };
+
+            new QRious({
+                element: document.getElementById('qr-code'),
+                value: JSON.stringify(qrData),
+                size: 150,
+                background: '#ffffff',
+                foreground: '#000000',
+                level: 'H' 
+            });
+        });
+    </script>
+
+</body>
+</html>
