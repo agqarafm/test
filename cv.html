@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müasir CV Hazırlama Aləti</title>
+    <title>Dinamik CV Hazırlama Aləti</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
-            --primary-color: #005f73;
-            --secondary-color: #0a9396;
-            --background-color: #f4f4f4;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --gradient: linear-gradient(135deg, #3498db, #2980b9);
+            --background-color: #ecf0f1;
             --card-background: #ffffff;
-            --text-color: #333;
-            --light-text-color: #f1faee;
-            --gray-color: #6c757d;
-            --border-color: #dee2e6;
-            --cv-left-bg: #1d3557;
+            --text-color: #34495e;
+            --gray-color: #7f8c8d;
+            --border-color: #bdc3c7;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --cv-left-bg: #2c3e50;
         }
 
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             margin: 0;
-            padding: 30px;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
         }
 
-        /* --- Redaktor Stili --- */
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Editor View --- */
         #editor-view {
-            width: 800px;
+            width: 900px;
             max-width: 100%;
         }
 
         .editor-container {
             background: var(--card-background);
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
         }
 
         .editor-container h1 {
@@ -54,110 +68,163 @@
             margin-bottom: 10px;
             font-weight: 700;
         }
-        
         .editor-container .subtitle {
             text-align: center;
             color: var(--gray-color);
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .form-section {
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 25px;
+            margin-bottom: 35px;
+            animation: fadeInDown 0.5s ease-out forwards;
+            opacity: 0;
         }
-        .form-section:last-child {
-            border-bottom: none;
-        }
+        .form-section:nth-child(2) { animation-delay: 0.1s; }
+        .form-section:nth-child(3) { animation-delay: 0.2s; }
+        .form-section:nth-child(4) { animation-delay: 0.3s; }
+        .form-section:nth-child(5) { animation-delay: 0.4s; }
+
 
         .form-section h2 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--background-color);
+            display: flex;
+            align-items: center;
+        }
+        .form-section h2 i {
+            margin-right: 12px;
             color: var(--secondary-color);
-            margin-bottom: 20px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .form-group.full-width { grid-column: 1 / -1; }
+
+        label { margin-bottom: 8px; font-weight: 600; color: var(--text-color); }
         
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        textarea {
+        input[type="text"], input[type="email"], input[type="tel"], textarea, .tag-input-container {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            box-sizing: border-box;
             font-size: 15px;
             font-family: inherit;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        input[type="file"] {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, .tag-input-container:focus-within {
             outline: none;
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(10, 147, 150, 0.15);
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+        textarea { resize: vertical; min-height: 120px; }
 
-        .action-button {
-            display: block;
-            width: 100%;
-            padding: 15px;
+        /* Dynamic Experience Section */
+        .experience-entry {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 20px;
+            position: relative;
+            animation: popIn 0.4s ease-out;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .remove-btn:hover { background: #c0392b; transform: scale(1.1); }
+        
+        #add-experience-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--success-color);
+            color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
             font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        #add-experience-btn i { margin-right: 8px; }
+        #add-experience-btn:hover { background: #27ae60; transform: translateY(-2px); }
+
+        /* Tag Input System */
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+        }
+        .tag-input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 4px;
+            background: transparent;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--secondary-color);
             color: white;
-            background-color: var(--primary-color);
-            transition: background-color 0.3s, transform 0.2s;
-            margin-top: 20px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            animation: popIn 0.3s ease;
+        }
+        .tag .remove-tag {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
         }
         
+        /* Main Action Button */
+        .action-button {
+            display: block; width: 100%; padding: 16px;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-size: 18px; font-weight: 700; color: white;
+            background: var(--gradient);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
         .action-button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* --- CV Nümunəsi Stili --- */
+        /* --- CV Preview View --- */
         #preview-view {
-            display: none; /* Initially hidden */
+            display: none;
             width: 100%;
-            max-width: 850px;
+            max-width: 900px;
             flex-direction: column;
             align-items: center;
+            animation: fadeInDown 0.8s ease-out;
         }
-
         .preview-controls {
             width: 100%;
             display: flex;
@@ -165,132 +232,64 @@
             gap: 15px;
             margin-bottom: 30px;
         }
-
         .control-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            color: white;
-            transition: background-color 0.3s, transform 0.2s;
+            padding: 12px 25px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 16px; font-weight: 600;
+            color: white; transition: all 0.3s ease;
         }
-        #backToEditorBtn { background-color: #6c757d; }
-        #savePdfBtn { background-color: #d62828; }
-        #saveWordBtn { background-color: #2a9d8f; }
-        
-        .control-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
+        #backToEditorBtn { background-color: var(--gray-color); }
+        #savePdfBtn { background-color: var(--danger-color); }
+        #saveWordBtn { background-color: var(--success-color); }
+        .control-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         
         .cv-container {
-            width: 100%;
-            min-height: 1131px;
-            display: flex;
+            width: 100%; min-height: 1272px; display: flex;
             background-color: var(--card-background);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .left-column {
             background-color: var(--cv-left-bg);
-            width: 38%;
-            padding: 40px;
-            color: var(--light-text-color);
+            width: 35%; padding: 40px; color: #ecf0f1;
         }
-
-        .right-column {
-            width: 62%;
-            padding: 50px;
-        }
+        .right-column { width: 65%; padding: 50px; }
 
         .profile-pic {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
+            width: 160px; height: 160px; border-radius: 50%;
             border: 6px solid var(--secondary-color);
-            display: block;
-            margin: 0 auto 30px;
-            object-fit: cover;
+            display: block; margin: 0 auto 30px; object-fit: cover;
         }
-
-        .left-column .section { margin-bottom: 35px; }
 
         .left-column .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            text-transform: uppercase;
+            font-size: 18px; font-weight: 600; text-transform: uppercase;
             border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 8px;
-            margin-bottom: 20px;
+            padding-bottom: 8px; margin-bottom: 20px;
         }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .contact-item i {
-            width: 20px;
-            text-align: center;
-            margin-right: 15px;
-            color: var(--secondary-color);
-            font-size: 16px;
-        }
-
-        .left-column p, .left-column ul li {
-            font-size: 14px;
-            line-height: 1.7;
-            margin: 0;
-            word-wrap: break-word;
-        }
-
+        .contact-item { display: flex; align-items: center; margin-bottom: 15px; }
+        .contact-item i { width: 20px; text-align: center; margin-right: 15px; color: var(--secondary-color); font-size: 16px; }
+        .left-column p, .left-column ul li { font-size: 15px; line-height: 1.7; margin: 0; word-break: break-word; }
         .left-column ul { list-style: none; padding-left: 0; }
-        .left-column li { margin-bottom: 10px; }
+        .left-column li { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 20px; margin-bottom: 10px; }
 
         .right-column .full-name {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            word-wrap: break-word;
-            line-height: 1.2;
+            font-size: 52px; font-weight: 700; color: var(--primary-color);
+            margin-bottom: 10px; line-height: 1.1;
         }
+        .right-column .job-title-main { font-size: 24px; color: var(--secondary-color); margin-bottom: 40px; font-weight: 500; }
 
         .right-column .section-title-right {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--cv-left-bg);
-            border-bottom: 3px solid #f0f0f0;
-            padding-bottom: 12px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
+            font-size: 24px; font-weight: 700; color: var(--primary-color);
+            border-bottom: 3px solid var(--background-color);
+            padding-bottom: 12px; margin-bottom: 25px; text-transform: uppercase;
         }
-
+        
         .experience, .education { margin-bottom: 30px; }
-
-        .job-title, .uni-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin: 0;
-        }
-
-        .company, .degree, .edu-years {
-            font-size: 16px;
-            color: var(--secondary-color);
-            margin: 5px 0 10px;
-            font-style: italic;
-        }
-
-        .experience p, .education p {
-            font-size: 15px;
-            line-height: 1.6;
-            color: var(--gray-color);
-            word-wrap: break-word;
-        }
+        .job-title, .uni-name { font-size: 20px; font-weight: 600; color: var(--text-color); }
+        .company, .degree, .edu-years { font-size: 16px; color: var(--secondary-color); margin: 5px 0 10px; font-style: italic; }
+        .experience p, .education p { font-size: 15px; line-height: 1.6; color: var(--gray-color); }
+        .placeholder { color: var(--gray-color); font-style: italic; }
     </style>
 </head>
 <body>
@@ -298,68 +297,60 @@
     <div id="editor-view">
         <div class="editor-container">
             <h1>CV Məlumatlarınızı Daxil Edin</h1>
-            <p class="subtitle">Aşağıdakı xanaları doldurun və hazır CV-nizə baxış keçirin.</p>
+            <p class="subtitle">Məlumatları daxil edərək peşəkar CV-nizi yaradın.</p>
 
             <div class="form-section">
                 <h2><i class="fas fa-user-circle"></i> Şəxsi Məlumatlar</h2>
                 <div class="form-grid">
-                    <div class="form-group"><label for="fullName">Ad Soyad:</label><input type="text" id="fullName" value="HARUN DÜRÜST"></div>
-                    <div class="form-group"><label for="profilePic">Profil Şəkli:</label><input type="file" id="profilePic" accept="image/*"></div>
-                    <div class="form-group full-width"><label for="aboutMe">Haqqımda:</label><textarea id="aboutMe">Mən nəticəyönümlü və yüksək motivasiyalı bir peşəkaram. Problem həll etmə bacarıqlarım və komanda ilə işləmə qabiliyyətimlə şirkətinizin hədəflərinə çatmaqda dəstək olmağa hazıram.</textarea></div>
+                    <div class="form-group"><label for="fullName">Ad Soyad:</label><input type="text" id="fullName" placeholder="Məs: Əli Vəliyev"></div>
+                    <div class="form-group"><label for="jobTitleMain">Vəzifəniz:</label><input type="text" id="jobTitleMain" placeholder="Məs: Proqram Mühəndisi"></div>
+                    <div class="form-group full-width"><label for="profilePic">Profil Şəkli:</label><input type="file" id="profilePic" accept="image/*"></div>
+                    <div class="form-group full-width"><label for="aboutMe">Haqqımda:</label><textarea id="aboutMe" placeholder="Özünüz haqqında qısa və təsiredici məlumat daxil edin..."></textarea></div>
                 </div>
             </div>
 
             <div class="form-section">
                 <h2><i class="fas fa-address-book"></i> Əlaqə Məlumatları</h2>
                 <div class="form-grid">
-                    <div class="form-group"><label for="phone">Telefon:</label><input type="tel" id="phone" value="+994 50 123 45 67"></div>
-                    <div class="form-group"><label for="email">E-poçt:</label><input type="email" id="email" value="nümunə@email.com"></div>
-                    <div class="form-group full-width"><label for="address">Ünvan:</label><textarea id="address">Atatürk pr. 12, Bakı, Azərbaycan</textarea></div>
+                    <div class="form-group"><label for="phone">Telefon:</label><input type="tel" id="phone" placeholder="+994 50 123 45 67"></div>
+                    <div class="form-group"><label for="email">E-poçt:</label><input type="email" id="email" placeholder="nümunə@email.com"></div>
+                    <div class="form-group full-width"><label for="address">Ünvan:</label><textarea id="address" placeholder="Atatürk pr. 12, Bakı, Azərbaycan"></textarea></div>
                 </div>
             </div>
 
             <div class="form-section">
                 <h2><i class="fas fa-briefcase"></i> İş Təcrübəsi</h2>
-                <div class="form-grid">
-                    <div class="form-group"><label for="jobTitle1">Vəzifə (1):</label><input type="text" id="jobTitle1" value="Baş Proqram Mühəndisi"></div>
-                    <div class="form-group"><label for="company1">Şirkət, Şəhər, İllər:</label><input type="text" id="company1" value="Tech Solutions Inc. - Bakı - 2020-Hazırda"></div>
-                    <div class="form-group full-width"><label for="jobDesc1">Açıqlama:</label><textarea id="jobDesc1">Mürəkkəb proqram təminatı layihələrinin hazırlanması və idarə olunması. Gənc developerlərdən ibarət komandaya mentorluq edilməsi və kod keyfiyyətinin təmin edilməsi.</textarea></div>
+                <div id="experience-container">
+                    <div class="experience-entry">
+                        <button class="remove-btn" title="Bu təcrübəni sil">X</button>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Vəzifə:</label><input type="text" class="jobTitle" placeholder="Baş Proqram Mühəndisi"></div>
+                            <div class="form-group"><label>Şirkət, Şəhər, İllər:</label><input type="text" class="company" placeholder="Tech Solutions Inc. - Bakı - 2020-Hazırda"></div>
+                            <div class="form-group full-width"><label>Açıqlama:</label><textarea class="jobDesc" placeholder="Vəzifə öhdəlikləriniz və əldə etdiyiniz nailiyyətlər..."></textarea></div>
+                        </div>
+                    </div>
                 </div>
-                <hr style="border: 1px solid #f0f0f0; margin: 25px 0;">
-                <div class="form-grid">
-                    <div class="form-group"><label for="jobTitle2">Vəzifə (2):</label><input type="text" id="jobTitle2" value="Proqram Təminatı Mühəndisi"></div>
-                    <div class="form-group"><label for="company2">Şirkət, Şəhər, İllər:</label><input type="text" id="company2" value="Web Innovators - Bakı - 2018-2020"></div>
-                    <div class="form-group full-width"><label for="jobDesc2">Açıqlama:</label><textarea id="jobDesc2">Müştəri tələblərinə uyğun veb-əsaslı tətbiqlərin yaradılması və texniki dəstəyin göstərilməsi. Agile/Scrum metodologiyası ilə iş təcrübəsi.</textarea></div>
-                </div>
+                <button id="add-experience-btn"><i class="fas fa-plus"></i> Təcrübə Əlavə Et</button>
             </div>
 
             <div class="form-section">
                 <h2><i class="fas fa-graduation-cap"></i> Təhsil</h2>
                 <div class="form-grid">
-                    <div class="form-group"><label for="uniName1">Universitet Adı (1):</label><input type="text" id="uniName1" value="Bakı Dövlət Universiteti"></div>
-                    <div class="form-group"><label for="degree1">Fakültə/İxtisas:</label><input type="text" id="degree1" value="Kompüter Elmləri (Magistr)"></div>
-                    <div class="form-group full-width"><label for="eduYears1">İllər:</label><input type="text" id="eduYears1" value="2018-2020"></div>
-                </div>
-                 <hr style="border: 1px solid #f0f0f0; margin: 25px 0;">
-                <div class="form-grid">
-                    <div class="form-group"><label for="uniName2">Universitet Adı (2):</label><input type="text" id="uniName2" value="Azərbaycan Dövlət Neft və Sənaye Universiteti"></div>
-                    <div class="form-group"><label for="degree2">Fakültə/İxtisas:</label><input type="text" id="degree2" value="İnformasiya Texnologiyaları (Bakalavr)"></div>
-                    <div class="form-group full-width"><label for="eduYears2">İllər:</label><input type="text" id="eduYears2" value="2014-2018"></div>
+                    <div class="form-group"><label for="uniName1">Universitet Adı:</label><input type="text" id="uniName1" placeholder="Bakı Dövlət Universiteti"></div>
+                    <div class="form-group"><label for="degree1">Fakültə/İxtisas:</label><input type="text" id="degree1" placeholder="Kompüter Elmləri (Magistr)"></div>
+                    <div class="form-group full-width"><label for="eduYears1">İllər:</label><input type="text" id="eduYears1" placeholder="2018-2020"></div>
                 </div>
             </div>
 
-             <div class="form-section">
+            <div class="form-section">
                 <h2><i class="fas fa-cogs"></i> Bacarıqlar və Biliklər</h2>
                 <div class="form-grid">
-                    <div class="form-group"><label>Bacarıqlar (vergül ilə ayırın):</label><input type="text" id="skills" value="Proqramlaşdırma, Analitik Düşünmə, Liderlik, Məntiqi Təfəkkür, Problem Həll Etmə"></div>
-                    <div class="form-group"><label>Dil Bilikləri (vergül ilə ayırın):</label><input type="text" id="languages" value="Azərbaycanca (Ana dili), İngiliscə (C1), Rusca (B2)"></div>
-                    <div class="form-group full-width"><label>Kompüter Bilikləri / Sertifikatlar (hər birini yeni sətirdən yazın):</label><textarea id="certificates">Microsoft Certified: Azure Developer Associate
-AWS Certified Solutions Architect
-Scrum Master Certified (SMC)</textarea></div>
+                    <div class="form-group"><label>Bacarıqlar (Yazıb 'Enter' vurun):</label><div id="skills-container" class="tag-input-container"><input type="text" id="skill-input" class="tag-input" placeholder="Yeni bacarıq əlavə et..."></div></div>
+                    <div class="form-group"><label>Dil Bilikləri (Yazıb 'Enter' vurun):</label><div id="languages-container" class="tag-input-container"><input type="text" id="language-input" class="tag-input" placeholder="Yeni dil əlavə et..."></div></div>
                 </div>
             </div>
             
-            <button id="previewBtn" class="action-button">CV-ə Baxış Keçir <i class="fas fa-arrow-right"></i></button>
+            <button id="previewBtn" class="action-button">CV-yə Baxış Keçir <i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
     
@@ -383,17 +374,14 @@ Scrum Master Certified (SMC)</textarea></div>
             </div>
             <div class="right-column">
                 <h1 class="full-name" id="preview-fullName"></h1>
-                <div class="section"><h2 class="section-title-right">İş Təcrübəsi</h2>
-                    <div class="experience"><h4 class="job-title" id="preview-jobTitle1"></h4><p class="company" id="preview-company1"></p><p id="preview-jobDesc1"></p></div>
-                    <div class="experience"><h4 class="job-title" id="preview-jobTitle2"></h4><p class="company" id="preview-company2"></p><p id="preview-jobDesc2"></p></div>
-                </div>
-                <div class="section"><h2 class="section-title-right">Təhsil</h2>
-                    <div class="education"><h4 class="uni-name" id="preview-uniName1"></h4><p class="degree" id="preview-degree1"></p><p class="edu-years" id="preview-eduYears1"></p></div>
-                    <div class="education"><h4 class="uni-name" id="preview-uniName2"></h4><p class="degree" id="preview-degree2"></p><p class="edu-years" id="preview-eduYears2"></p></div>
+                <h2 class="job-title-main" id="preview-jobTitleMain"></h2>
+                <div class="section">
+                    <h2 class="section-title-right">İş Təcrübəsi</h2>
+                    <div id="preview-experience"></div>
                 </div>
                 <div class="section">
-                    <h2 class="section-title-right">Sertifikatlar</h2>
-                    <div id="preview-certificates"></div>
+                    <h2 class="section-title-right">Təhsil</h2>
+                    <div id="preview-education"></div>
                 </div>
             </div>
         </div>
@@ -403,95 +391,176 @@ Scrum Master Certified (SMC)</textarea></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementlərin seçilməsi
-            const editorView = document.getElementById('editor-view');
-            const previewView = document.getElementById('preview-view');
-            
-            const inputs = {
-                fullName: document.getElementById('fullName'), aboutMe: document.getElementById('aboutMe'), profilePic: document.getElementById('profilePic'), phone: document.getElementById('phone'), email: document.getElementById('email'), address: document.getElementById('address'), jobTitle1: document.getElementById('jobTitle1'), company1: document.getElementById('company1'), jobDesc1: document.getElementById('jobDesc1'), jobTitle2: document.getElementById('jobTitle2'), company2: document.getElementById('company2'), jobDesc2: document.getElementById('jobDesc2'), uniName1: document.getElementById('uniName1'), degree1: document.getElementById('degree1'), eduYears1: document.getElementById('eduYears1'), uniName2: document.getElementById('uniName2'), degree2: document.getElementById('degree2'), eduYears2: document.getElementById('eduYears2'), skills: document.getElementById('skills'), languages: document.getElementById('languages'), certificates: document.getElementById('certificates')
-            };
+    document.addEventListener('DOMContentLoaded', function() {
+        const editorView = document.getElementById('editor-view');
+        const previewView = document.getElementById('preview-view');
+        
+        // --- Dynamic Experience Section ---
+        const experienceContainer = document.getElementById('experience-container');
+        document.getElementById('add-experience-btn').addEventListener('click', () => {
+            const newExperienceEntry = document.createElement('div');
+            newExperienceEntry.className = 'experience-entry';
+            newExperienceEntry.innerHTML = `
+                <button class="remove-btn" title="Bu təcrübəni sil">X</button>
+                <div class="form-grid">
+                    <div class="form-group"><label>Vəzifə:</label><input type="text" class="jobTitle" placeholder="Vəzifə"></div>
+                    <div class="form-group"><label>Şirkət, Şəhər, İllər:</label><input type="text" class="company" placeholder="Şirkət - Şəhər - İllər"></div>
+                    <div class="form-group full-width"><label>Açıqlama:</label><textarea class="jobDesc" placeholder="Vəzifə öhdəlikləri..."></textarea></div>
+                </div>
+            `;
+            experienceContainer.appendChild(newExperienceEntry);
+        });
 
-            const previews = {
-                fullName: document.getElementById('preview-fullName'), aboutMe: document.getElementById('preview-about'), profilePic: document.getElementById('preview-pic'), phone: document.getElementById('preview-phone'), email: document.getElementById('preview-email'), address: document.getElementById('preview-address'), jobTitle1: document.getElementById('preview-jobTitle1'), company1: document.getElementById('preview-company1'), jobDesc1: document.getElementById('preview-jobDesc1'), jobTitle2: document.getElementById('preview-jobTitle2'), company2: document.getElementById('preview-company2'), jobDesc2: document.getElementById('preview-jobDesc2'), uniName1: document.getElementById('preview-uniName1'), degree1: document.getElementById('preview-degree1'), eduYears1: document.getElementById('preview-eduYears1'), uniName2: document.getElementById('preview-uniName2'), degree2: document.getElementById('preview-degree2'), eduYears2: document.getElementById('preview-eduYears2'), skills: document.getElementById('preview-skills'), languages: document.getElementById('preview-languages'), certificates: document.getElementById('preview-certificates')
-            };
-            
-            // Məlumatları CV formasına yazan funksiya
-            function updatePreview() {
-                Object.keys(inputs).forEach(key => {
-                    if (inputs[key].type === 'file' || !previews[key]) return;
-                    if (key === 'skills' || key === 'languages') {
-                        previews[key].innerHTML = inputs[key].value.split(',').filter(item => item.trim() !== '').map(item => `<li>${item.trim()}</li>`).join('');
-                    } else if (key === 'certificates') {
-                        previews[key].innerHTML = inputs[key].value.split('\n').filter(item => item.trim() !== '').map(item => `<p class="certificate-item">${item.trim()}</p>`).join('');
-                    } else {
-                        previews[key].innerText = inputs[key].value;
+        experienceContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                e.target.closest('.experience-entry').remove();
+            }
+        });
+
+        // --- Tag Input System ---
+        function setupTagInput(containerId, inputId) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+
+            input.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    const text = input.value.replace(/,/g, '').trim();
+                    if (text) {
+                        const tag = document.createElement('span');
+                        tag.className = 'tag';
+                        tag.innerHTML = `${text} <span class="remove-tag" title="Sil">x</span>`;
+                        container.insertBefore(tag, input);
+                        input.value = '';
+                    }
+                }
+            });
+
+            container.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-tag')) {
+                    e.target.parentElement.remove();
+                }
+            });
+        }
+        setupTagInput('skills-container', 'skill-input');
+        setupTagInput('languages-container', 'language-input');
+
+        // --- Update Preview Function ---
+        function updatePreview() {
+            // Simple Fields
+            const simpleFields = ['fullName', 'jobTitleMain', 'aboutMe', 'phone', 'email', 'address', 'uniName1', 'degree1', 'eduYears1'];
+            simpleFields.forEach(id => {
+                const element = document.getElementById(`preview-${id}`);
+                const input = document.getElementById(id);
+                if (element && input) {
+                    element.innerText = input.value || '';
+                }
+            });
+
+            // Profile Picture
+            const picInput = document.getElementById('profilePic');
+            const picPreview = document.getElementById('preview-pic');
+            if (picInput.files && picInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => picPreview.src = e.target.result;
+                reader.readAsDataURL(picInput.files[0]);
+            }
+
+            // Dynamic Experience
+            const previewExperience = document.getElementById('preview-experience');
+            previewExperience.innerHTML = '';
+            const experiences = document.querySelectorAll('.experience-entry');
+            if(experiences.length === 0 || Array.from(experiences).every(exp => !exp.querySelector('.jobTitle').value.trim())) {
+                previewExperience.innerHTML = `<p class="placeholder">İş təcrübəsi daxil edilməyib.</p>`;
+            } else {
+                experiences.forEach(exp => {
+                    const title = exp.querySelector('.jobTitle').value;
+                    const company = exp.querySelector('.company').value;
+                    const desc = exp.querySelector('.jobDesc').value;
+                    if (title) { // Only add if there is a job title
+                        previewExperience.innerHTML += `
+                            <div class="experience">
+                                <h4 class="job-title">${title}</h4>
+                                <p class="company">${company}</p>
+                                <p>${desc}</p>
+                            </div>
+                        `;
                     }
                 });
             }
 
-            // Profil şəkli yükləndikdə
-            inputs.profilePic.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = e => previews.profilePic.src = e.target.result;
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Düymələrin funksionallığı
-            document.getElementById('previewBtn').addEventListener('click', () => {
-                updatePreview();
-                editorView.style.display = 'none';
-                previewView.style.display = 'flex';
-            });
-            
-            document.getElementById('backToEditorBtn').addEventListener('click', () => {
-                previewView.style.display = 'none';
-                editorView.style.display = 'block';
-            });
-            
-            // PDF YADDA SAXLA
-            document.getElementById('savePdfBtn').addEventListener('click', () => {
-                const { jsPDF } = window.jspdf;
-                const cvContainer = document.getElementById('cv-container');
-                html2canvas(cvContainer, { scale: 3, useCORS: true }).then(canvas => { // Scale artırıldı
-                    const imgData = canvas.toDataURL('image/png', 1.0); // keyfiyyət
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = pdf.internal.pageSize.getHeight();
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                    pdf.save("cv-sənədi.pdf");
-                });
-            });
+            // Education
+            const previewEducation = document.getElementById('preview-education');
+            const uniName = document.getElementById('uniName1').value;
+            if(uniName.trim()){
+                 previewEducation.innerHTML = `
+                    <div class="education">
+                        <h4 class="uni-name">${uniName}</h4>
+                        <p class="degree">${document.getElementById('degree1').value}</p>
+                        <p class="edu-years">${document.getElementById('eduYears1').value}</p>
+                    </div>
+                `;
+            } else {
+                previewEducation.innerHTML = `<p class="placeholder">Təhsil məlumatı daxil edilməyib.</p>`;
+            }
 
-            // WORD YADDA SAXLA
-            document.getElementById('saveWordBtn').addEventListener('click', () => {
-                // Style elementlərini toplamaq üçün daha etibarlı yol
-                let cssText = '';
-                for (const sheet of document.styleSheets) {
-                    try {
-                        for (const rule of sheet.cssRules) {
-                            cssText += rule.cssText;
-                        }
-                    } catch (e) {
-                        console.warn("Stylesheet oxuna bilmədi: ", e);
-                    }
-                }
 
-                const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>CV</title><style>${cssText}</style></head><body>`;
-                const footer = "</body></html>";
-                const sourceHTML = header + document.getElementById('cv-container').innerHTML + footer;
-                const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-                const fileDownload = document.createElement("a");
-                document.body.appendChild(fileDownload);
-                fileDownload.href = source;
-                fileDownload.download = 'cv-sənədi.doc';
-                fileDownload.click();
-                document.body.removeChild(fileDownload);
+            // Skills & Languages
+            function updateTagsPreview(containerId, previewId) {
+                const previewList = document.getElementById(previewId);
+                previewList.innerHTML = '';
+                const tags = document.querySelectorAll(`#${containerId} .tag`);
+                if(tags.length > 0){
+                    tags.forEach(tag => {
+                        previewList.innerHTML += `<li>${tag.innerText.slice(0, -2)}</li>`;
+                    });
+                }
+            }
+            updateTagsPreview('skills-container', 'preview-skills');
+            updateTagsPreview('languages-container', 'preview-languages');
+        }
+
+        // --- Button Clicks ---
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            updatePreview();
+            editorView.style.display = 'none';
+            previewView.style.display = 'flex';
+        });
+
+        document.getElementById('backToEditorBtn').addEventListener('click', () => {
+            previewView.style.display = 'none';
+            editorView.style.display = 'block';
+        });
+
+        // --- Save Functions ---
+        document.getElementById('savePdfBtn').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            html2canvas(document.getElementById('cv-container'), { scale: 3 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+                pdf.save("cv-senedi.pdf");
             });
         });
+
+        document.getElementById('saveWordBtn').addEventListener('click', () => {
+            let cssText = '';
+            for (const sheet of document.styleSheets) {
+                try {
+                    for (const rule of sheet.cssRules) cssText += rule.cssText;
+                } catch (e) { console.warn("Cannot read stylesheet", e); }
+            }
+            const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>CV</title><style>${cssText}</style></head><body>`;
+            const footer = "</body></html>";
+            const sourceHTML = header + document.getElementById('cv-container').innerHTML + footer;
+            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            const fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'cv-senedi.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        });
+    });
     </script>
 
 </body>
