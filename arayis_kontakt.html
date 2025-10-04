@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arayış Sistemi (Yenilənmiş)</title>
+    <style>
+        /* ----- ÜMUMİ VƏ ƏSAS STİLLƏR ----- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+            background-color: #f8f9fa; /* Açıq boz arxa fon */
+            margin: 20px;
+            color: #212529;
+        }
+
+        /* ----- FORM SƏHİFƏSİ ----- */
+        #form-page {
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .form-section {
+            background-color: #ffffff; /* Ağ panel fonu */
+            border: 1px solid #dee2e6; /* Açıq boz sərhəd */
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-section h3, .form-section h4 {
+            margin: 0;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .form-section h3 {
+             background-color: #343a40; /* Panel başlığı üçün tünd fon */
+             border-radius: 8px 8px 0 0;
+             font-size: 18px;
+        }
+
+        .form-section h4 {
+            background-color: #f8f9fa;
+            color: #495057; /* Başlıq üçün boz rəng */
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-inputs-container {
+             padding: 20px;
+        }
+
+        .form-input {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-input label {
+            width: 150px;
+            font-weight: bold;
+            flex-shrink: 0;
+            color: #495057;
+        }
+
+        .form-input input, .form-input select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da; /* İnput sərhədi */
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-input input:focus, .form-input select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        
+        .fullname-container { display: flex; width: 100%; gap: 5px; }
+        .fullname-container input { flex-grow: 1; }
+        .fullname-container select { width: 120px; flex-shrink: 0; }
+
+        hr { border: 0; border-top: 1px solid #dee2e6; margin: 25px 0; }
+
+        /* ----- CƏDVƏL STİLLƏRİ ----- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-block: 20px;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6; /* Cədvəl sərhədi */
+            padding: 12px;
+            text-align: center;
+        }
+
+        thead th {
+            background-color: #e9ecef; /* Cədvəl başlığı fonu */
+            font-weight: bold;
+            color: #495057;
+        }
+
+        tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* ----- DÜYMƏ STİLLƏRİ ----- */
+        .form-buttons {
+            text-align: center;
+            padding: 20px;
+            padding-top: 0;
+        }
+
+        .form-buttons button, button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            font-family: inherit;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .form-buttons button:hover, button:hover { opacity: 0.9; }
+
+        .action-button { background-color: #007bff; color: white; } /* Mavi düymə (Axtar kimi) */
+        .prepare-button { background-color: #28a745; color: white; } /* Yaşıl düymə (Yeni Müştəri kimi) */
+        .edit-button { background-color: #ffc107; color: black; } /* Sarı düymə */
+        .delete-button { background-color: #dc3545; color: white; } /* Qırmızı düymə */
+        button:not([class]) { background-color: #6c757d; color: white; } /* Neytral/Boz düymə */
+
+        #add-update-product-btn.prepare-button { background-color: #28a745 !important; }
+
+        /* ----- ARAYIŞ SƏHİFƏSİ (DƏYİŞİKLİKLƏR İLƏ) ----- */
+        #certificate-page { 
+            display: none; 
+            background-color: #fff; 
+            padding: 40px; 
+            max-width: 800px; 
+            margin: 20px auto;
+            border: 1px solid #dee2e6;
+        }
+        #certificate-page, #certificate-page p, #certificate-page b, #certificate-page span, #certificate-page div { font-size: 16px; font-family: 'Times New Roman', Times, serif; }
+        .header { border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .header img { width: 100%; max-width: 750px; }
+        .document-title { text-align: center; font-weight: bold; font-size: 18px !important; margin-block: 30px; }
+        .info-section p { text-indent: 20px; line-height: 1.6; }
+        .footer { margin-top: 40px; }
+        .footer-line { display: flex; justify-content: space-between; margin-top: 20px; }
+        .footer-line > span { flex: 1; }
+        .footer-line > span:nth-child(1) { text-align: left; }
+        .footer-line > span:nth-child(2) { text-align: center; }
+        #final-remark { margin-top: 40px; }
+        
+        #certificate-page table { font-size: 14px; }
+        #certificate-page th, #certificate-page td { border: 1px solid black; padding: 8px; }
+        #certificate-page th { background-color: #e9e9e9; }
+        #certificate-page tbody tr:nth-of-type(odd) { background-color: transparent; }
+
+        /* ----- ÇAP STİLİ ----- */
+        @media print {
+            body { margin: 0; padding: 0; width: 100%; background-color: #fff; }
+            #form-page, .no-print { display: none !important; }
+            #certificate-page { display: block !important; box-shadow: none; border: none; font-size: 12pt; padding: 0; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="form-page">
+        <input type="hidden" id="edit-row-index" value="">
+        <div class="form-section">
+            <h3>Məlumatların Daxil Edilməsi Paneli</h3>
+            <div class="form-inputs-container">
+                <h4>Ümumi Məlumatlar</h4>
+                <div class="form-input"><label for="date-input">Tarix:</label><input type="date" id="date-input"></div>
+                <div class="form-input"><label for="location-input">Rayon:</label><input type="text" id="location-input" value="Oğuz Rayonu"></div>
+                <div class="form-input"><label for="number-input">Arayış No:</label><input type="text" id="number-input" value="0044"></div>
+                <div class="form-input">
+                    <label for="fullname-input">Ad, Soyad, Ata adı:</label>
+                    <div class="fullname-container">
+                        <input type="text" id="fullname-input" value="">
+                        <select id="gender-suffix"><option value="oğluna">oğluna</option><option value="qızına">qızına</option></select>
+                    </div>
+                </div>
+                <div class="form-input"><label for="fin-input">FİN kod:</label><input type="text" id="fin-input" value=""></div>
+                <div class="form-input"><label for="manager-input">Mağaza rəhbəri:</label><input type="text" id="manager-input" value=""></div>
+                <hr>
+                <h4>Yeni Məhsul Əlavə Et / Düzəliş Et</h4>
+                <div class="form-input"><label for="product-name">Məhsulun adı:</label><input type="text" id="product-name" placeholder="Məhsulun adını daxil edin"></div>
+                <div class="form-input"><label for="sale-date">Satış tarixi:</label><input type="text" id="sale-date" placeholder="gg/aa/iiii"></div>
+                <div class="form-input"><label for="credit-value">Kredit dəyəri cəm:</label><input type="text" id="credit-value" placeholder="Məbləğ"></div>
+                <div class="form-input">
+                    <label for="credit-status">Kredit/statusu:</label>
+                    <select id="credit-status"><option value="BAĞLI">BAĞLI</option><option value="AÇIQ">AÇIQ</option></select>
+                </div>
+                <div class="form-input"><label for="contract-number">Müqavilə nömrəsi:</label><input type="text" id="contract-number" placeholder="Müqavilə nömrəsi"></div>
+                <div class="form-buttons">
+                    <button id="add-update-product-btn" onclick="handleProductSubmit()" class="action-button">Məhsul Əlavə Et</button>
+                    <button onclick="clearProductForm()">Formanı Təmizlə</button>
+                </div>
+            </div>
+        </div>
+        <h4>Əlavə Edilmiş Məhsullar</h4>
+        <table>
+            <thead><tr><th>Məhsulun adı</th><th>Satış tarixi</th><th>Kredit dəyəri cəm</th><th>Borc</th><th>Kredit/statusu</th><th>Müqavilə nömrəsi</th><th>Əməliyyat</th></tr></thead>
+            <tbody id="product-table-form"></tbody>
+        </table>
+        <div class="form-buttons"><button onclick="generateAndShowCertificate()" class="prepare-button">Arayışı Hazırla</button></div>
+    </div>
+
+    <div id="certificate-page">
+        <div class="header">
+            <img src="https://i.ibb.co/LQrW5w3/Screenshot-2024-05-23-143521.png" alt="ABC Telecom Logo">
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="text-align: left;"><span id="doc-location"></span><br><span id="doc-number"></span></div>
+            <span id="doc-date"></span>
+        </div>
+        <h1 class="document-title">A R A Y I Ş</h1>
+        <div class="info-section">
+            <p>Verilir <b id="doc-fullname"></b> (<b id="doc-fin"></b>) ondan ötrü ki ,“ABC Telecom ” MMC-yə məxsus “ Kontakt Home ” mağazalar şəbəkəsindən əldə edilmiş aşağıda göstərilən məhsul(lar) və müqavilə(lər) üzrə Cəmiyyətimizə olan hal-hazırda qalıq borcu aşağıdakı cədvəldə göstərilib:</p>
+        </div>
+        <table>
+            <thead><tr><th>Məhsulun adı</th><th>Satış tarixi</th><th>Kredit dəyəri cəm</th><th>Borc</th><th>Kredit/statusu</th><th>Müqavilə nömrəsi</th></tr></thead>
+            <tbody id="product-table-certificate"></tbody>
+        </table>
+        <p id="final-remark">Arayış tələb olunan yerə təqdim edilmək üçün verilir.</p>
+        <div class="footer">
+            <p>Hörmətlə</p>
+            <div class="footer-line"><span><b>Mağaza rəhbəri:</b></span><span id="doc-manager-name"></span><span></span></div>
+        </div>
+        <div class="form-buttons no-print">
+            <button onclick="window.print()" class="action-button">Çap Et</button>
+            <button onclick="showPage('form-page')">Geri Qayıt</button>
+        </div>
+    </div>
+
+    <script>
+        // Səhifə yüklənəndə tarixi təyin et
+        window.onload = function() {
+            document.getElementById('date-input').valueAsDate = new Date();
+        };
+
+        // Səhifələri dəyişdir
+        function showPage(pageId) {
+            document.getElementById('form-page').style.display = 'none';
+            document.getElementById('certificate-page').style.display = 'none';
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        // "Məhsul Əlavə Et" və "Dəyişikliyi Saxla" düymələrini idarə edən funksiya
+        function handleProductSubmit() {
+            const editIndex = document.getElementById('edit-row-index').value;
+            if (editIndex) {
+                updateExistingProduct(editIndex);
+            } else {
+                addNewProduct();
+            }
+        }
+
+        // Yeni məhsul əlavə edir
+        function addNewProduct() {
+            const tableBody = document.getElementById('product-table-form').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow();
+            const isDataValid = fillRowData(newRow);
+            if (isDataValid) {
+                clearProductForm();
+            }
+        }
+
+        // Mövcud məhsulu yeniləyir
+        function updateExistingProduct(rowIndex) {
+            const row = document.getElementById('product-table-form').rows[rowIndex];
+            const isDataValid = fillRowData(row);
+            if (isDataValid) {
+                clearProductForm();
+            }
+        }
+
+        // Sətir məlumatlarını dolduran köməkçi funksiya (həm əlavə etmək, həm də yeniləmək üçün)
+        function fillRowData(row) {
+            const productName = document.getElementById('product-name').value.trim();
+            const saleDate = document.getElementById('sale-date').value.trim();
+            const creditValue = document.getElementById('credit-value').value.trim();
+            const creditStatus = document.getElementById('credit-status').value;
+            const contractNumber = document.getElementById('contract-number').value.trim();
+
+            if (!productName || !saleDate || !creditValue || !contractNumber) {
+                alert("Zəhmət olmasa, bütün məhsul xanalarını doldurun.");
+                return false;
+            }
+            
+            row.innerHTML = `
+                <td>${productName}</td><td>${saleDate}</td><td>${creditValue} AZN</td><td>0 AZN</td>
+                <td>${creditStatus}</td><td>${contractNumber}</td>
+                <td>
+                    <button onclick="editRow(this)" class="edit-button">Düzəliş et</button>
+                    <button onclick="deleteRow(this)" class="delete-button">Sil</button>
+                </td>
+            `;
+            return true;
+        }
+
+        // Sətri düzəliş üçün formaya yükləyir
+        function editRow(button) {
+            const row = button.closest('tr');
+            document.getElementById('product-name').value = row.cells[0].innerText;
+            document.getElementById('sale-date').value = row.cells[1].innerText;
+            document.getElementById('credit-value').value = parseFloat(row.cells[2].innerText) || row.cells[2].innerText;
+            document.getElementById('credit-status').value = row.cells[4].innerText;
+            document.getElementById('contract-number').value = row.cells[5].innerText;
+            
+            // Sətrin nömrəsini gizli xanada saxla
+            document.getElementById('edit-row-index').value = row.rowIndex;
+
+            // Düyməni "Dəyişikliyi Saxla" vəziyyətinə gətir
+            const btn = document.getElementById('add-update-product-btn');
+            btn.innerText = 'Dəyişikliyi Saxla';
+            btn.className = 'prepare-button';
+        }
+
+        // Sətri silir
+        function deleteRow(button) {
+            button.closest('tr').remove();
+        }
+
+        // Məhsul formunu təmizləyir və "əlavə etmə" rejiminə qaytarır
+        function clearProductForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('sale-date').value = '';
+            document.getElementById('credit-value').value = '';
+            document.getElementById('contract-number').value = '';
+            document.getElementById('edit-row-index').value = ''; // Gizli xananı təmizlə
+            
+            // Düyməni ilkin vəziyyətinə qaytar
+            const btn = document.getElementById('add-update-product-btn');
+            btn.innerText = 'Məhsul Əlavə Et';
+            btn.className = 'action-button';
+        }
+
+        // Arayışı hazırlayır və göstərir
+        function generateAndShowCertificate() {
+            const data = {
+                date: document.getElementById('date-input').value,
+                location: document.getElementById('location-input').value,
+                number: document.getElementById('number-input').value,
+                fullname: document.getElementById('fullname-input').value,
+                genderSuffix: document.getElementById('gender-suffix').value,
+                fin: document.getElementById('fin-input').value,
+                manager: document.getElementById('manager-input').value,
+                products: []
+            };
+
+            const tableRows = document.getElementById('product-table-form').getElementsByTagName('tbody')[0].rows;
+            for (let row of tableRows) {
+                data.products.push({
+                    name: row.cells[0].innerText, saleDate: row.cells[1].innerText,
+                    creditValue: row.cells[2].innerText, debt: row.cells[3].innerText,
+                    status: row.cells[4].innerText, contract: row.cells[5].innerText
+                });
+            }
+            populateCertificate(data);
+            showPage('certificate-page');
+        }
+
+        // Arayış səhifəsini məlumatlarla doldurur
+        function populateCertificate(data) {
+            let formattedDate = '';
+            if (data.date) {
+                const date = new Date(data.date);
+                formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+            }
+            document.getElementById('doc-date').innerText = `Tarix: ${formattedDate}`;
+            document.getElementById('doc-location').innerText = data.location;
+            document.getElementById('doc-number').innerText = `No: ${data.number}`;
+            document.getElementById('doc-fullname').innerText = `${data.fullname} ${data.genderSuffix}`;
+            document.getElementById('doc-fin').innerText = data.fin;
+            document.getElementById('doc-manager-name').innerHTML = `<b>${data.manager}</b>`;
+
+            const tableBody = document.getElementById('product-table-certificate');
+            tableBody.innerHTML = '';
+            data.products.forEach(p => {
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `
+                    <td>${p.name}</td><td>${p.saleDate}</td><td>${p.creditValue}</td>
+                    <td>${p.debt}</td><td>${p.status}</td><td>${p.contract}</td>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
