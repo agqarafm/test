@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mağaza IP Axtarış Sistemi</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+        :root {
+            --primary-color: #4ca1af;
+            --secondary-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #ddd;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #searchInput {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.2em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput::placeholder {
+            color: #bbb;
+        }
+
+        #searchInput:focus {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(76, 161, 175, 0.7);
+        }
+
+        #searchButton {
+            padding: 0 30px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #searchButton:hover {
+            background-color: #5cc9d5;
+            box-shadow: 0 0 15px #5cc9d5;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            position: relative;
+            min-height: 100px; /* Loader üçün yer saxlamaq */
+        }
+        
+        /* Axtarış Göstəricisi (Loader) */
+        .loader {
+            position: absolute;
+            left: 50%;
+            top: 50px;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background-color: rgba(76, 161, 175, 0.8);
+            color: #fff;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s forwards;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(76, 161, 175, 0.5);
+        }
+
+        tbody td {
+            padding: 15px;
+            color: #eee;
+        }
+
+        /* Nəticə animasiyası */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    </head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Mağaza Şəbəkəsi Axtarış Sistemi</h1>
+            <p>Mağaza adını daxil edib "Axtar" düyməsinə basın</p>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Axtar...">
+            <button id="searchButton">Axtar</button>
+        </div>
+        
+        <div class="table-container">
+            <div id="loader" class="loader hidden"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mağaza Adı</th>
+                        <th>IP Mağaza Rəhbəri</th>
+                        <th>IP Mağaza Assistent</th>
+                        <th>IP Kassa</th>
+                        <th>IP Koordinator</th>
+                        <th>IP Rəqəmsal</th>
+                        <th>IP Maişət</th>
+                        <th>IP Mebel</th>
+                        <th>IP Anbar</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // === MƏLUMAT BAZASI BAŞLAYIR (BU HİSSƏ TAM OLMALIDIR) ===
+        const data = [
+            { "mağaza": "Kontakt (Ağstafa)", "rəhbər": 3077, "assistent": "", "kassa": 3277, "koordinator": "", "rəqəmsal": "", "maişət": "", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt (Ayna Sultanova)", "rəhbər": 1956, "assistent": "", "kassa": 1955, "koordinator": "", "rəqəmsal": 3983, "maişət": 3883, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt - (Hacıqabul)", "rəhbər": 3083, "assistent": "", "kassa": 3283, "koordinator": "", "rəqəmsal": 3782, "maişət": 3682, "mebel": 3882, "anbar": "" },
+            { "mağaza": "Kontakt - (Lənkəran)", "rəhbər": 3082, "assistent": 3179, "kassa": 3379, "koordinator": 3579, "rəqəmsal": 3679, "maişət": 3779, "mebel": 3979, "anbar": "" },
+            { "mağaza": "Kontakt - (Masallı)", "rəhbər": 3079, "assistent": "", "kassa": 3279, "koordinator": "", "rəqəmsal": 3879, "maişət": 3979, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt - (Sabirabad)", "rəhbər": 3078, "assistent": 3578, "kassa": 3278, "koordinator": 3278, "rəqəmsal": 3878, "maişət": 3778, "mebel": 3778, "anbar": 3878 },
+            { "mağaza": "Kontakt - Bakıxanov stansiya", "rəhbər": 3080, "assistent": 3180, "kassa": "3280, 3380", "koordinator": 3580, "rəqəmsal": 3880, "maişət": "3980/3780", "mebel": "", "anbar": 3480 },
+            { "mağaza": "Kontakt - Nərimanov Metrosu (Yeni)", "rəhbər": 3076, "assistent": 3176, "kassa": "3276, 3476", "koordinator": 3576, "rəqəmsal": "3776, 3676", "maişət": 3876, "mebel": "", "anbar": 2276 },
+            { "mağaza": "Kontakt (Elmlər Akademiyası)", "rəhbər": 3081, "assistent": 3181, "kassa": 3281, "koordinator": 3481, "rəqəmsal": 3781, "maişət": 3881, "mebel": "", "anbar": 3681 },
+            { "mağaza": "Kontakt HOME - (Ağ şəhər)", "rəhbər": 3069, "assistent": 3169, "kassa": 3269, "koordinator": "", "rəqəmsal": 3869, "maişət": 3769, "mebel": 3969, "anbar": "" },
+            { "mağaza": "Kontakt Home - (Balakən)", "rəhbər": 3074, "assistent": "", "kassa": 3274, "koordinator": 3374, "rəqəmsal": 3874, "maişət": 3974, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Binə-2)", "rəhbər": 3085, "assistent": 3185, "kassa": "3385, 3285", "koordinator": 3485, "rəqəmsal": 3785, "maişət": 3685, "mebel": 3985, "anbar": "" },
+            { "mağaza": "Kontakt Home - (Dəniz Mall)", "rəhbər": 3070, "assistent": 3170, "kassa": 3270, "koordinator": 3570, "rəqəmsal": 3870, "maişət": 3970, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Gənclik Mall)", "rəhbər": 3071, "assistent": 3171, "kassa": 3271, "koordinator": 3471, "rəqəmsal": 3871, "maişət": 3771, "mebel": 3771, "anbar": 3571 },
+            { "mağaza": "Kontakt Home - (İmişli)", "rəhbər": 3065, "assistent": "", "kassa": "3265, 3365", "koordinator": "", "rəqəmsal": 3865, "maişət": 3965, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Mərdəkan)", "rəhbər": 3062, "assistent": 3162, "kassa": 3462, "koordinator": 3562, "rəqəmsal": 3762, "maişət": 3862, "mebel": 3962, "anbar": 3262 },
+            { "mağaza": "Kontakt Home - (Q.Qarayev Reset)", "rəhbər": 2501, "assistent": "", "kassa": 2503, "koordinator": "", "rəqəmsal": 2507, "maişət": 2507, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Qusar)", "rəhbər": 3075, "assistent": 3075, "kassa": 3275, "koordinator": 3375, "rəqəmsal": 3775, "maişət": 3875, "mebel": 3875, "anbar": "" },
+            { "mağaza": "Kontakt Home - (Salyan)", "rəhbər": 3067, "assistent": 3367, "kassa": 3267, "koordinator": 3467, "rəqəmsal": 3867, "maişət": 3967, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Şamaxı)", "rəhbər": 3064, "assistent": 3164, "kassa": "3264, 3364", "koordinator": "", "rəqəmsal": 3864, "maişət": "3564 / 3964", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Sumqayıt Sülh küç)", "rəhbər": 3068, "assistent": 3168, "kassa": "3268, 3368", "koordinator": "3468, 3568", "rəqəmsal": 3768, "maişət": 3968, "mebel": 3868, "anbar": "" },
+            { "mağaza": "Kontakt Home - (Tovuz)", "rəhbər": 3073, "assistent": "", "kassa": 3273, "koordinator": 3473, "rəqəmsal": 3773, "maişət": 3973, "mebel": "", "anbar": 3873 },
+            { "mağaza": "Kontakt Home - (Vurğun Residence)", "rəhbər": 3066, "assistent": 3166, "kassa": "3266, 3366", "koordinator": 3466, "rəqəmsal": 3866, "maişət": 3966, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - (Xaçmaz)", "rəhbər": 3063, "assistent": "", "kassa": "3263, 3363", "koordinator": "", "rəqəmsal": 3863, "maişət": 3963, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 28 (Gənclik)", "rəhbər": 3023, "assistent": 3123, "kassa": 3223, "koordinator": "3423, 3523", "rəqəmsal": 3823, "maişət": "3723, 3923", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 28 (J-cə Mkr)", "rəhbər": 3028, "assistent": 3128, "kassa": 3228, "koordinator": "3428, 3528", "rəqəmsal": 3828, "maişət": 3928, "mebel": 3728, "anbar": "" },
+            { "mağaza": "Kontakt Home - 29 (Gəncə Mall)", "rəhbər": 3029, "assistent": 3129, "kassa": 3229, "koordinator": 3529, "rəqəmsal": "3829, 3929", "maişət": 3729, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home -3 (Xalqlar Dostluğu)", "rəhbər": 3003, "assistent": 3103, "kassa": "3203, 3303", "koordinator": 3503, "rəqəmsal": 3803, "maişət": 3903, "mebel": "", "anbar": 3703 },
+            { "mağaza": "Kontakt Home -36 (Kürdəxanı)", "rəhbər": 3036, "assistent": 3136, "kassa": 3236, "koordinator": 3536, "rəqəmsal": 3836, "maişət": 3936, "mebel": 3736, "anbar": "" },
+            { "mağaza": "Kontakt Home - 36 (Neftçilər - SMART)", "rəhbər": 3038, "assistent": 3138, "kassa": 3238, "koordinator": 3538, "rəqəmsal": 3938, "maişət": "", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 39 (Sahil)", "rəhbər": 3039, "assistent": 3139, "kassa": "3339, 3239", "koordinator": "3439, 3539", "rəqəmsal": 3839, "maişət": 3939, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 43 (Azadlıq metrosu)", "rəhbər": 3043, "assistent": 3143, "kassa": "3243, 3343", "koordinator": 3643, "rəqəmsal": 3843, "maişət": 3943, "mebel": 3543, "anbar": 3743 },
+            { "mağaza": "Kontakt Home - 44 (Memar Əcəmi)", "rəhbər": 3044, "assistent": 3144, "kassa": 3244, "koordinator": 3444, "rəqəmsal": 3944, "maişət": 3844, "mebel": 3544, "anbar": 3744 },
+            { "mağaza": "Kontakt Home - 45 (Masazır)", "rəhbər": 3045, "assistent": 3145, "kassa": 3245, "koordinator": 3545, "rəqəmsal": 3945, "maişət": 3645, "mebel": "", "anbar": 3745 },
+            { "mağaza": "Kontakt Home - 46 (Qəbələ)", "rəhbər": 3046, "assistent": "", "kassa": 3246, "koordinator": 3146, "rəqəmsal": 3946, "maişət": 3846, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 47 (Ukrayna dairəsi)", "rəhbər": 3047, "assistent": 3147, "kassa": "3247, 3347", "koordinator": 3547, "rəqəmsal": 3847, "maişət": 3947, "mebel": "", "anbar": 2234 },
+            { "mağaza": "Kontakt Home - 48 (Sumqayıt-3)", "rəhbər": 3048, "assistent": 3148, "kassa": 3248, "koordinator": "3448, 3748", "rəqəmsal": 3948, "maişət": 3848, "mebel": 3648, "anbar": 2948 },
+            { "mağaza": "Kontakt Home -50 (Bərdə)", "rəhbər": 3050, "assistent": 3150, "kassa": "3250, 3350", "koordinator": 3450, "rəqəmsal": 3950, "maişət": 3850, "mebel": 3650, "anbar": "" },
+            { "mağaza": "Kontakt Home - 51 (Sumqayıt-3)Outlet", "rəhbər": 3051, "assistent": "", "kassa": 3251, "koordinator": 3458, "rəqəmsal": 3351, "maişət": 3351, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 52 (Göyçay)", "rəhbər": 3052, "assistent": 3152, "kassa": 3252, "koordinator": 3452, "rəqəmsal": 3952, "maişət": 3852, "mebel": 3652, "anbar": "" },
+            { "mağaza": "Kontakt Home - 53 (Quba)", "rəhbər": 3053, "assistent": 3153, "kassa": 3253, "koordinator": "", "rəqəmsal": 3953, "maişət": 3853, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 54 (Lənkəran)", "rəhbər": 3054, "assistent": 3154, "kassa": 3254, "koordinator": 3554, "rəqəmsal": 3854, "maişət": 3954, "mebel": 3454, "anbar": "" },
+            { "mağaza": "Kontakt Home - 55 (Gəncə-2) Grand Qafqaz", "rəhbər": 3055, "assistent": 3155, "kassa": 3255, "koordinator": 3855, "rəqəmsal": 3855, "maişət": 3955, "mebel": 3655, "anbar": 2255 },
+            { "mağaza": "Kontakt Home - 57 (Mingəçevir-2)", "rəhbər": 3057, "assistent": 3157, "kassa": 3257, "koordinator": 3457, "rəqəmsal": 3857, "maişət": 3757, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 58 (Zaqatala)", "rəhbər": 3058, "assistent": 3158, "kassa": "3258, 3358", "koordinator": 3658, "rəqəmsal": 3858, "maişət": 3958, "mebel": 3458, "anbar": "" },
+            { "mağaza": "Kontakt Home - 59 (Şəmkir)", "rəhbər": 3059, "assistent": 3159, "kassa": "3259, 3559", "koordinator": "", "rəqəmsal": 3859, "maişət": "3759 / 3959", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home - 60 (Cəlilabad)", "rəhbər": 3060, "assistent": 3160, "kassa": "3260, 3360", "koordinator": 3560, "rəqəmsal": 3860, "maişət": 3960, "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt Home -2 (28 may)", "rəhbər": 3009, "assistent": 3109, "kassa": 3209, "koordinator": 3409, "rəqəmsal": 3809, "maişət": "", "mebel": "", "anbar": "" },
+            { "mağaza": "Kontakt MT (İnşaatçılar)", "rəhbər": 3010, "assistent": "", "kassa": "", "koordinator": "", "rəqəmsal": "", "maişət": "", "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery Naxçıvan", "rəhbər": 3086, "assistent": "", "kassa": 3286, "koordinator": 3386, "rəqəmsal": 3786, "maişət": 3886, "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery Əhmədli", "rəhbər": 3089, "assistent": "", "kassa": 3289, "koordinator": "", "rəqəmsal": 3789, "maişət": 3989, "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery İnqilab", "rəhbər": 3088, "assistent": "", "kassa": 3288, "koordinator": 3288, "rəqəmsal": 3888, "maişət": 3788, "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery Sumqayıt", "rəhbər": 3290, "assistent": "", "kassa": "", "koordinator": "", "rəqəmsal": 3890, "maişət": 3790, "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery Mərkəz", "rəhbər": "", "assistent": "", "kassa": 3287, "koordinator": "", "rəqəmsal": "", "maişət": 3387, "mebel": "", "anbar": "" },
+            { "mağaza": "Music Gallery Ağstafa", "rəhbər": 3092, "assistent": "", "kassa": 3292, "koordinator": 3492, "rəqəmsal": 3792, "maişət": 3692, "mebel": 3892, "anbar": "" }
+        ];
+        // === MƏLUMAT BAZASI BİTİR ===
+
+
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const dataTable = document.getElementById('dataTable');
+        const loader = document.getElementById('loader');
+
+        const renderTable = (data) => {
+            dataTable.innerHTML = '';
+            if (data.length === 0) {
+                dataTable.innerHTML = `<tr><td colspan="9" style="text-align:center;">Nəticə tapılmadı</td></tr>`;
+                return;
+            }
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.innerHTML = `
+                    <td>${item.mağaza || ''}</td>
+                    <td>${item.rəhbər || ''}</td>
+                    <td>${item.assistent || ''}</td>
+                    <td>${item.kassa || ''}</td>
+                    <td>${item.koordinator || ''}</td>
+                    <td>${item.rəqəmsal || ''}</td>
+                    <td>${item.maişət || ''}</td>
+                    <td>${item.mebel || ''}</td>
+                    <td>${item.anbar || ''}</td>
+                `;
+                dataTable.appendChild(row);
+            });
+        };
+
+        const performSearch = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            dataTable.innerHTML = ''; // Əvvəlki nəticələri təmizlə
+
+            if (!searchTerm) {
+                dataTable.innerHTML = `<tr><td colspan="9" style="text-align:center;">Axtarış üçün mağaza adı daxil edin.</td></tr>`;
+                return;
+            }
+            
+            loader.classList.remove('hidden'); // Loader-i göstər
+
+            // Axtarış animasiyasını görmək üçün qısa bir fasilə
+            setTimeout(() => {
+                const filteredData = data.filter(item => 
+                    item.mağaza.toLowerCase().includes(searchTerm)
+                );
+                
+                loader.classList.add('hidden'); // Loader-i gizlət
+                renderTable(filteredData); // Nəticələri cədvələ əlavə et
+            }, 500); // 0.5 saniyə
+        };
+
+        searchButton.addEventListener('click', performSearch);
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+    </script>
+    </body>
+</html>
